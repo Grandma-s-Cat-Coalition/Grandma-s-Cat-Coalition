@@ -1,0 +1,1 @@
+{"name":"grandmas-cat-coalition","private":true,"type":"module","scripts":{"dev":"vite","build":"node scripts/build.mjs","test":"node --test tests/*.test.js","preview":"vite preview"},"dependencies":{"@resend/node":"^0.1.0","gray-matter":"^4.0.3","marked":"^15.0.7","vite":"^7.1.3","yaml":"^2.8.1"},"devDependencies":{}}

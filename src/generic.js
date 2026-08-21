@@ -1,0 +1,1 @@
+import './main.js';import {pages} from './page.js';const p=pages[location.pathname];if(p){document.querySelector('[data-title]').textContent=p[0];document.querySelector('[data-intro]').textContent=p[1];document.querySelector('[data-body]').textContent=p[2];const a=document.querySelector('[data-cta]');a.textContent=p[3];a.href=p[4]}

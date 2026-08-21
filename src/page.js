@@ -1,0 +1,4 @@
+export const pages={
+  '/foster.html':['Foster a cat','A spare room and a little time can save a life.','We provide guidance while you provide a temporary, loving home.','Apply to foster','https://new.shelterluv.com/matchme/foster/GCCI/Cat'],
+  '/volunteer.html':['Volunteer','Put your time and talents to work for cats.','Help with transport, events, outreach, fundraising, and more.','Become a volunteer','https://new.shelterluv.com/form/volunteer/GCCI/176721-volunteer'],
+  '/found-a-cat.html':['Found a cat?','Start by checking whether the cat is injured, nursing kittens, or may belong to a neighbor.','If the cat is in immediate danger, call a veterinarian or local emergency service. Otherwise, tell us what you found through our intake form.','Submit a found-cat report','https://new.shelterluv.com/form/other/GCCI/179042-found-cat']};
