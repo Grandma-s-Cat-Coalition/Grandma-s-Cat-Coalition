@@ -1,0 +1,106 @@
+backend:
+  name: github
+  repo: NEW_GCC_ORG/website
+  branch: main
+  base_url: https://grandmascatcoalition.org
+  auth_endpoint: api/auth
+publish_mode: editorial_workflow
+media_folder: public/uploads
+public_folder: /uploads
+collections:
+  - name: settings
+    label: Site settings
+    files:
+      - name: settings
+        label: Organization settings
+        file: content/settings.json
+        fields:
+          - {label: Organization name, name: orgName, widget: string}
+          - {label: Phone, name: phone, widget: string}
+          - {label: Email, name: email, widget: string}
+          - {label: Address, name: address, widget: string}
+          - {label: EIN, name: ein, widget: string}
+          - {label: Facebook URL, name: facebook, widget: string}
+          - {label: Zeffy URL, name: zeffyUrl, widget: string}
+          - {label: PayPal URL, name: paypalUrl, widget: string}
+          - {label: Venmo URL, name: venmoUrl, widget: string}
+          - {label: Amazon wishlist, name: amazonWishlist, widget: string}
+          - {label: Chewy wishlist, name: chewyWishlist, widget: string}
+          - {label: Hero title, name: heroTitle, widget: string}
+          - {label: Hero text, name: heroText, widget: text}
+          - {label: Hero image, name: heroImage, widget: image, media_library: {config: {multiple: false}}}
+          - label: Impact
+            name: impact
+            widget: object
+            fields:
+              - {label: TNR, name: tnr, widget: number}
+              - {label: Adopted, name: adopted, widget: number}
+              - {label: In foster, name: foster, widget: number}
+  - name: pages
+    label: Pages
+    folder: content/pages
+    extension: json
+    create: false
+    fields:
+      - {label: Title, name: title, widget: string}
+      - {label: Introduction, name: intro, widget: text}
+      - {label: Body, name: body, widget: markdown, required: false}
+      - {label: Fees, name: fees, widget: markdown, required: false}
+      - {label: Mission, name: mission, widget: markdown, required: false}
+  - name: board
+    label: Board
+    folder: content/board
+    create: true
+    slug: '{{order}}-{{slug}}'
+    fields:
+      - {label: Name, name: name, widget: string}
+      - {label: Role, name: role, widget: string}
+      - {label: Photo, name: photo, widget: image}
+      - {label: Photo alt text, name: photo_alt, widget: string}
+      - {label: Order, name: order, widget: number}
+      - {label: Bio, name: body, widget: markdown}
+  - name: happy_tails
+    label: Happy tails
+    folder: content/happy-tails
+    create: true
+    fields:
+      - {label: Title, name: title, widget: string}
+      - {label: Cat name, name: cat_name, widget: string}
+      - {label: Date, name: date, widget: datetime}
+      - {label: Photos, name: photos, widget: list, field: {label: Photo, name: photo, widget: image}}
+      - {label: Photo alt text, name: photo_alt, widget: string}
+      - {label: Story, name: body, widget: markdown}
+      - {label: Adopter quote, name: adopter_quote, widget: text, required: false}
+  - name: news
+    label: News
+    folder: content/news
+    create: true
+    fields:
+      - {label: Title, name: title, widget: string}
+      - {label: Date, name: date, widget: datetime}
+      - {label: Cover image, name: cover, widget: image}
+      - {label: Cover alt text, name: cover_alt, widget: string}
+      - {label: Excerpt, name: excerpt, widget: text}
+      - {label: Body, name: body, widget: markdown}
+      - {label: Tags, name: tags, widget: list}
+  - name: events
+    label: Events
+    folder: content/events
+    create: true
+    fields:
+      - {label: Title, name: title, widget: string}
+      - {label: Start, name: start, widget: datetime}
+      - {label: End, name: end, widget: datetime}
+      - {label: Location, name: location, widget: string}
+      - {label: Description, name: body, widget: markdown}
+      - {label: Cover, name: cover, widget: image}
+      - {label: Cover alt text, name: cover_alt, widget: string}
+      - {label: Event link, name: link, widget: string, required: false}
+  - name: faq
+    label: FAQs
+    folder: content/faq
+    extension: json
+    create: false
+    fields:
+      - {label: Question, name: question, widget: string}
+      - {label: Answer, name: answer, widget: text}

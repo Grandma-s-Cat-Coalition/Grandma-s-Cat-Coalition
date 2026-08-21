@@ -1,6 +1,6 @@
 # Spec 01 — Site Foundation: stack, structure, pages, admin, deploy
 
-**Status:** 🟠 In progress — foundation, content model, integrations, and tests being built
+**Status:** 🟢 Implemented — build/tests pass; launch awaits GCC accounts, credentials, final content, EIN, imagery, and Claude's style tile
 **Owner:** Codex (build) · Claude (spec/review) · Cortney (approve)
 **Read first:** `../BRIEF.md`
 
@@ -109,9 +109,9 @@ Build step reads `content/` and injects it into pages (prerender script, Elite p
 
 Env vars (names only in `.env.example`): `SHELTERLUV_API_KEY`, `RESEND_API_KEY`, `FORM_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `RESEND_AUDIENCE_ID`, `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`, `SITE_URL`. Build must fail on missing/example values (Shoreline's `check-deployment-env.mjs` pattern).
 
-## 7. Design direction (Claude will supply a style tile before Codex styles anything)
+## 7. Design direction — see `docs/style-tile.html` (open it in a browser)
 
-Warm, trustworthy, "grandma's kitchen" — cream background, warm terracotta/rust accent, deep green secondary, rounded cards, big friendly photos, one display serif + one clean sans (Google Fonts). Not corporate, not cutesy-clipart. Logo: use existing FB profile image until Cortney provides a new one.
+Brand colors: **dark purple** (primary, #432B5C / #2A1A3A) + **sage green** (secondary, #6F8C6C) on **cream** (#FAF7F1), **gold** (#E0A83A) reserved for Donate only. Fonts: Fraunces (display) + Nunito (body) via Google Fonts. All tokens go in `src/tokens.css` as CSS variables — never raw hex in components. Pill buttons, 16px card radius, soft shadows, real photos over illustrations. Logo: existing FB profile image until Cortney supplies a new one.
 
 ## 8. Tests (`npm test`, Elite pattern — script per concern)
 

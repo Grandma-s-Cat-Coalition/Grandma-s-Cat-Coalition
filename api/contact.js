@@ -1,0 +1,1 @@
+import{guard,send}from'./_forms.js';export default async function handler(req,res){if(guard(req,res,['name','email','message']))return;return send(res,`Website message from ${req.body.name}`,`Name: ${req.body.name}\nEmail: ${req.body.email}\n\n${req.body.message}`)}

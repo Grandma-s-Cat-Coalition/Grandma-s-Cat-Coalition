@@ -1,0 +1,1 @@
+import{readdir}from'node:fs/promises';try{const files=await readdir('public/uploads');console.log(`Image optimization queue: ${files.length} upload(s). Add sharp processing when the first originals arrive.`)}catch{console.log('No uploaded images yet.')}

@@ -1,0 +1,1 @@
+import{guard,send}from'./_forms.js';export default async function handler(req,res){if(guard(req,res,['name','email','location','catCount','message']))return;return send(res,`TNR request from ${req.body.name}`,`Name: ${req.body.name}\nEmail: ${req.body.email}\nLocation: ${req.body.location}\nCats: ${req.body.catCount}\n\n${req.body.message}`)}
