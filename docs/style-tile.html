@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GCC Style Tile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     /* Brand */
@@ -18,32 +18,34 @@
     --primary:var(--purple-700); --primary-hover:var(--purple-900);
     --secondary:var(--sage-500); --secondary-hover:var(--sage-700);
     --accent:var(--gold);
-    --font-display:"Fraunces",Georgia,serif; --font-body:"Nunito",system-ui,sans-serif;
+    --font-display:"Kaushan Script",cursive; --font-body:"Lato",Arial,sans-serif;
     --radius:16px; --radius-sm:10px; --shadow:0 6px 24px rgba(64,2,54,.10);
   }
   *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6}
   .wrap{max-width:1040px;margin:0 auto;padding:40px 24px}
-  h1,h2,h3{font-family:var(--font-display);line-height:1.15;margin:0 0 .4em;color:var(--purple-900)}
-  h1{font-size:clamp(36px,5vw,56px);font-weight:700} h2{font-size:32px} h3{font-size:22px}
+  h1,h2{font-family:var(--font-display);font-weight:400;line-height:1.2;margin:0 0 .4em;color:var(--purple-900)}
+  h3{font-family:var(--font-body);font-weight:900;line-height:1.2;margin:0 0 .4em;color:var(--purple-900)}
+  h1{font-size:clamp(38px,5.5vw,62px)} h2{font-size:36px} h3{font-size:20px}
   .eyebrow{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--sage-700)}
   section{margin:48px 0} .grid{display:grid;gap:16px} .c4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))} .c3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   .swatch{border-radius:var(--radius-sm);padding:14px;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;font-size:13px;font-weight:700;border:1px solid var(--line)}
-  .btn{display:inline-block;padding:14px 26px;border-radius:999px;font-weight:800;text-decoration:none;font-size:16px;border:2px solid transparent;transition:.15s}
+  .btn{display:inline-block;padding:14px 28px;border-radius:999px;font-weight:900;letter-spacing:.02em;text-decoration:none;font-size:16px;border:2px solid transparent;transition:.15s}
   .btn-primary{background:var(--primary);color:#fff} .btn-primary:hover{background:var(--primary-hover)}
   .btn-secondary{background:var(--secondary);color:#fff} .btn-secondary:hover{background:var(--secondary-hover)}
   .btn-donate{background:var(--accent);color:var(--purple-900)} .btn-donate:hover{background:var(--gold-dark)}
-  .btn-outline{border-color:var(--primary);color:var(--primary)} .btn-outline:hover{background:var(--purple-100)}
+  .btn-soft{background:var(--purple-100);color:var(--purple-900);border-color:var(--purple-100)} .btn-soft:hover{background:#E4D0DE}
+  .btn-light{background:#fff;color:var(--purple-900)} .btn-light:hover{background:var(--purple-100)}
   .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--line)}
   .card .img{aspect-ratio:4/3;background:linear-gradient(135deg,var(--sage-300),var(--purple-100));display:grid;place-items:center;font-size:64px}
   .card .body{padding:18px} .tag{display:inline-block;background:var(--sage-100);color:var(--sage-700);font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-right:6px}
   .hero{background:var(--purple-900);color:#fff;border-radius:var(--radius);padding:56px 40px;position:relative;overflow:hidden}
   .hero h1{color:#fff} .hero p{font-size:19px;max-width:560px;color:#F0DDE9}
-  .hero::after{content:"🐈";position:absolute;right:40px;bottom:-10px;font-size:160px;opacity:.25}
+  .hero{background:linear-gradient(90deg,var(--purple-900) 45%,rgba(64,2,54,.55)),url(../public/images/brand/grandma-and-cat.jpg) right center/cover no-repeat}
   .stat{background:var(--sage-100);border-radius:var(--radius);padding:22px;text-align:center}
-  .stat b{display:block;font-family:var(--font-display);font-size:44px;color:var(--purple-700);line-height:1}
+  .stat b{display:block;font-family:var(--font-body);font-weight:900;font-size:44px;color:var(--purple-700);line-height:1}
   .stat span{font-weight:700;color:var(--sage-700);font-size:14px;text-transform:uppercase;letter-spacing:.08em}
   .type p{margin:.2em 0}
-  blockquote{border-left:4px solid var(--sage-500);margin:0;padding:8px 20px;font-family:var(--font-display);font-size:22px;color:var(--purple-700);font-style:italic}
+  blockquote{border-left:4px solid var(--sage-500);margin:0;padding:8px 20px;font-family:var(--font-display);font-size:26px;color:var(--purple-700)}
   code{background:var(--purple-100);padding:2px 6px;border-radius:6px;font-size:13px}
   .foot{border-top:1px solid var(--line);padding-top:24px;color:var(--muted);font-size:14px}
   .dark{background:var(--purple-900);color:#fff;border-radius:var(--radius);padding:24px} .dark a{color:var(--sage-300)}
@@ -52,9 +54,9 @@
 <body>
 <div class="wrap">
 
-<p class="eyebrow">Grandma's Cat Coalition · Style Tile v1</p>
+<p class="eyebrow">Grandma's Cat Coalition · Style Tile v2</p>
 <h1>Warm. Calm. Trustworthy.</h1>
-<p style="max-width:680px;font-size:18px;color:var(--muted)">Kim's existing plum purple (#520446, pulled from the current site and Facebook branding) carries authority and heart; sage green is the calm, healing counterweight; cream keeps it soft and "grandma's kitchen." Gold is reserved for one job: <strong>Donate</strong>.</p>
+<p style="max-width:680px;font-size:18px;color:var(--muted)">Everything here comes from Kim's current site: plum purple #520446, Kaushan Script + Lato, and the real Grandma-and-cat photo. Sage green is the new addition (she asked for it) tuned to sit against the plum; cream keeps it soft and "grandma's kitchen." Gold is reserved for one job: <strong>Donate</strong>.</p>
 
 <section>
   <h2>Color</h2>
@@ -77,21 +79,21 @@
 
 <section class="type">
   <h2>Type</h2>
-  <p class="eyebrow">Display · Fraunces (Google Fonts)</p>
+  <p class="eyebrow">Display · Kaushan Script (Kim's current heading font)</p>
   <h1>Every cat deserves a warm lap.</h1>
   <h2>Meet the cats waiting for a home</h2>
   <h3>How fostering works</h3>
-  <p class="eyebrow" style="margin-top:20px">Body · Nunito (Google Fonts)</p>
+  <p class="eyebrow" style="margin-top:20px">Body · Lato (Kim's current body font) — also used for h3 and smaller headings in Black 900</p>
   <p style="font-size:18px">Grandma's Cat Coalition is a volunteer-run 501(c)(3) rescue in Northeast Iowa. We trap, neuter, and return community cats, foster the ones who need us, and find them families who'll love them for life.</p>
   <p style="color:var(--muted)">Muted caption text — dates, metadata, photo credits.</p>
   <blockquote>"She came to us scared and skinny. Three weeks later she was asleep on my husband's chest."</blockquote>
-  <p style="font-size:13px;color:var(--muted)">Fallbacks: <code>Georgia, serif</code> · <code>system-ui, sans-serif</code>. Why these: Fraunces has the warmth of an old storybook without being cutesy; Nunito's rounded forms read friendly and stay legible at small sizes on phones.</p>
+  <p style="font-size:13px;color:var(--muted)">Fallbacks: <code>cursive</code> · <code>Arial, sans-serif</code>. Rule: Kaushan Script only for page titles, section titles, and pull quotes — never for body text, buttons, nav, or anything under 28px (it gets hard to read). Lato does everything else.</p>
 </section>
 
 <section>
   <h2>Buttons</h2>
-  <p><a class="btn btn-donate" href="#">♥ Donate</a> &nbsp; <a class="btn btn-primary" href="#">Adopt a cat</a> &nbsp; <a class="btn btn-secondary" href="#">Become a foster</a> &nbsp; <a class="btn btn-outline" href="#">Learn about TNR</a></p>
-  <p style="font-size:14px;color:var(--muted)">Pill shape, bold label. Gold = donate, purple = primary action, sage = supportive action, outline = low emphasis. Never more than one gold button in view.</p>
+  <p><a class="btn btn-donate" href="#">♥ Donate</a> &nbsp; <a class="btn btn-primary" href="#">Adopt a cat</a> &nbsp; <a class="btn btn-secondary" href="#">Become a foster</a> &nbsp; <a class="btn btn-soft" href="#">Learn about TNR</a></p>
+  <p style="font-size:14px;color:var(--muted)">Pill shape, bold label. Gold = donate, purple = primary action, sage = supportive action, soft lilac = low emphasis (solid fill, always legible — no outline buttons). Never more than one gold button in view.</p>
 </section>
 
 <section>
@@ -100,7 +102,7 @@
     <p class="eyebrow" style="color:var(--sage-300)">Lime Springs, Iowa · 501(c)(3)</p>
     <h1>Caring for cats,<br>fostering hope.</h1>
     <p>We trap, neuter, return, foster, and rehome cats across Northeast Iowa — powered entirely by volunteers and people like you.</p>
-    <p><a class="btn btn-donate" href="#">♥ Donate</a> &nbsp; <a class="btn btn-outline" style="border-color:#fff;color:#fff" href="#">Meet the cats</a></p>
+    <p><a class="btn btn-donate" href="#">♥ Donate</a> &nbsp; <a class="btn btn-light" href="#">Meet the cats</a></p>
   </div>
 </section>
 
@@ -125,7 +127,7 @@
 <section>
   <h2>Footer / dark surface</h2>
   <div class="dark">
-    <strong style="font-family:var(--font-display);font-size:20px">Grandma's Cat Coalition</strong><br>
+    <strong style="font-family:var(--font-display);font-size:26px">Grandma's Cat Coalition</strong><br>
     113 W Jackson St, Lime Springs, IA 52155 · (641) 229-7494 · <a href="#">info@grandmascatcoalition.org</a><br>
     <span style="font-size:13px;color:#D1B7CA">A 501(c)(3) nonprofit. EIN XX-XXXXXXX. Donations are tax-deductible.</span>
   </div>
