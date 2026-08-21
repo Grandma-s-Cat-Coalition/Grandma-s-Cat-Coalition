@@ -111,7 +111,7 @@ Env vars (names only in `.env.example`): `SHELTERLUV_API_KEY`, `RESEND_API_KEY`,
 
 ## 7. Design direction — see `docs/style-tile.html` (open it in a browser)
 
-Brand colors: **dark purple** (primary, #432B5C / #2A1A3A) + **sage green** (secondary, #6F8C6C) on **cream** (#FAF7F1), **gold** (#E0A83A) reserved for Donate only. Fonts: Fraunces (display) + Nunito (body) via Google Fonts. All tokens go in `src/tokens.css` as CSS variables — never raw hex in components. Pill buttons, 16px card radius, soft shadows, real photos over illustrations. Logo: existing FB profile image until Cortney supplies a new one.
+Brand colors: **dark plum purple** (primary, #520446 / #400236 — matches Kim's existing brand) + **sage green** (secondary, #6F8C6C) on **cream** (#FAF7F1), **gold** (#E0A83A) reserved for Donate only. Fonts: Fraunces (display) + Nunito (body) via Google Fonts. All tokens go in `src/tokens.css` as CSS variables — never raw hex in components. Pill buttons, 16px card radius, soft shadows, real photos over illustrations. Logo: existing FB profile image until Cortney supplies a new one.
 
 ## 8. Tests (`npm test`, Elite pattern — script per concern)
 

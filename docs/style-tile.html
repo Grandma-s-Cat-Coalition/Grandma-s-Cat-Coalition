@@ -9,17 +9,17 @@
 <style>
   :root{
     /* Brand */
-    --purple-900:#2A1A3A; --purple-700:#432B5C; --purple-500:#5E3F7E; --purple-100:#EDE6F3;
+    --purple-900:#400236; --purple-700:#520446; --purple-500:#780967; --purple-100:#F1E4EC;
     --sage-700:#4F6B4E;  --sage-500:#6F8C6C;  --sage-300:#A9BFA5;  --sage-100:#E6EEE3;
-    --cream:#FAF7F1;     --paper:#FFFFFF;     --ink:#241B2E;       --ink-muted:#5C5368;
-    --gold:#E0A83A;      --gold-dark:#B8851F; --line:#E4DDEA;
+    --cream:#FAF7F1;     --paper:#FFFFFF;     --ink:#2B1426;       --ink-muted:#5F4A5A;
+    --gold:#E0A83A;      --gold-dark:#B8851F; --line:#E6D9E1;
     /* Roles */
     --bg:var(--cream); --surface:var(--paper); --text:var(--ink); --muted:var(--ink-muted);
     --primary:var(--purple-700); --primary-hover:var(--purple-900);
     --secondary:var(--sage-500); --secondary-hover:var(--sage-700);
     --accent:var(--gold);
     --font-display:"Fraunces",Georgia,serif; --font-body:"Nunito",system-ui,sans-serif;
-    --radius:16px; --radius-sm:10px; --shadow:0 6px 24px rgba(42,26,58,.10);
+    --radius:16px; --radius-sm:10px; --shadow:0 6px 24px rgba(64,2,54,.10);
   }
   *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6}
   .wrap{max-width:1040px;margin:0 auto;padding:40px 24px}
@@ -37,7 +37,7 @@
   .card .img{aspect-ratio:4/3;background:linear-gradient(135deg,var(--sage-300),var(--purple-100));display:grid;place-items:center;font-size:64px}
   .card .body{padding:18px} .tag{display:inline-block;background:var(--sage-100);color:var(--sage-700);font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-right:6px}
   .hero{background:var(--purple-900);color:#fff;border-radius:var(--radius);padding:56px 40px;position:relative;overflow:hidden}
-  .hero h1{color:#fff} .hero p{font-size:19px;max-width:560px;color:#E9E1F0}
+  .hero h1{color:#fff} .hero p{font-size:19px;max-width:560px;color:#F0DDE9}
   .hero::after{content:"🐈";position:absolute;right:40px;bottom:-10px;font-size:160px;opacity:.25}
   .stat{background:var(--sage-100);border-radius:var(--radius);padding:22px;text-align:center}
   .stat b{display:block;font-family:var(--font-display);font-size:44px;color:var(--purple-700);line-height:1}
@@ -54,15 +54,15 @@
 
 <p class="eyebrow">Grandma's Cat Coalition · Style Tile v1</p>
 <h1>Warm. Calm. Trustworthy.</h1>
-<p style="max-width:680px;font-size:18px;color:var(--muted)">Dark purple carries authority and heart; sage green is the calm, healing counterweight; cream keeps it soft and "grandma's kitchen." Gold is reserved for one job: <strong>Donate</strong>.</p>
+<p style="max-width:680px;font-size:18px;color:var(--muted)">Kim's existing plum purple (#520446, pulled from the current site and Facebook branding) carries authority and heart; sage green is the calm, healing counterweight; cream keeps it soft and "grandma's kitchen." Gold is reserved for one job: <strong>Donate</strong>.</p>
 
 <section>
   <h2>Color</h2>
   <div class="grid c4">
-    <div class="swatch" style="background:#2A1A3A;color:#fff">Purple 900<br>#2A1A3A</div>
-    <div class="swatch" style="background:#432B5C;color:#fff">Purple 700 · primary<br>#432B5C</div>
-    <div class="swatch" style="background:#5E3F7E;color:#fff">Purple 500<br>#5E3F7E</div>
-    <div class="swatch" style="background:#EDE6F3">Purple 100 · tint<br>#EDE6F3</div>
+    <div class="swatch" style="background:#400236;color:#fff">Purple 900<br>#400236</div>
+    <div class="swatch" style="background:#520446;color:#fff">Purple 700 · primary<br>#520446</div>
+    <div class="swatch" style="background:#780967;color:#fff">Purple 500<br>#780967</div>
+    <div class="swatch" style="background:#F1E4EC">Purple 100 · tint<br>#F1E4EC</div>
     <div class="swatch" style="background:#4F6B4E;color:#fff">Sage 700<br>#4F6B4E</div>
     <div class="swatch" style="background:#6F8C6C;color:#fff">Sage 500 · secondary<br>#6F8C6C</div>
     <div class="swatch" style="background:#A9BFA5">Sage 300<br>#A9BFA5</div>
@@ -70,7 +70,7 @@
     <div class="swatch" style="background:#FAF7F1">Cream · page bg<br>#FAF7F1</div>
     <div class="swatch" style="background:#FFFFFF">Paper · cards<br>#FFFFFF</div>
     <div class="swatch" style="background:#E0A83A">Gold · donate only<br>#E0A83A</div>
-    <div class="swatch" style="background:#241B2E;color:#fff">Ink · body text<br>#241B2E</div>
+    <div class="swatch" style="background:#2B1426;color:#fff">Ink · body text<br>#2B1426</div>
   </div>
   <p style="font-size:14px;color:var(--muted)">Contrast: Purple 700 / Sage 700 on cream and white pass WCAG AA for body text. Sage 500 is for buttons and large text only (AA large). Sage 300 / tints are backgrounds, never text.</p>
 </section>
@@ -127,7 +127,7 @@
   <div class="dark">
     <strong style="font-family:var(--font-display);font-size:20px">Grandma's Cat Coalition</strong><br>
     113 W Jackson St, Lime Springs, IA 52155 · (641) 229-7494 · <a href="#">info@grandmascatcoalition.org</a><br>
-    <span style="font-size:13px;color:#C9BDD6">A 501(c)(3) nonprofit. EIN XX-XXXXXXX. Donations are tax-deductible.</span>
+    <span style="font-size:13px;color:#D1B7CA">A 501(c)(3) nonprofit. EIN XX-XXXXXXX. Donations are tax-deductible.</span>
   </div>
 </section>
 
