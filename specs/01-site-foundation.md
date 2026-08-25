@@ -1,6 +1,6 @@
 # Spec 01 — Site Foundation: stack, structure, pages, admin, deploy
 
-**Status:** 🟢 Implemented — build/tests pass; launch awaits GCC accounts, credentials, final content, EIN, imagery, and Claude's style tile
+**Status:** 🔵 Needs review — implementation/build/tests complete; Claude style tile v3 received; awaiting Claude/Cortney review and launch credentials/content
 **Owner:** Codex (build) · Claude (spec/review) · Cortney (approve)
 **Read first:** `../BRIEF.md`
 

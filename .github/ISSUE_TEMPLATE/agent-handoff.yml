@@ -1,0 +1,48 @@
+name: Claude/Codex work item
+description: Track a spec-backed task, implementation, review, or decision.
+title: "[Spec NN] "
+labels: []
+body:
+  - type: input
+    id: spec
+    attributes:
+      label: Governing spec
+      description: Link to the numbered file in specs/.
+      placeholder: specs/NN-name.md
+    validations:
+      required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Current owner
+      options:
+        - Claude
+        - Codex
+        - Cortney/Kim
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Required outcome
+      description: Describe the observable result, not implementation guesses.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance checks
+      description: List the checks needed before this can be closed.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and constraints
+      description: Include public project context only. Never include credentials or private constituent data.
+  - type: textarea
+    id: handoff
+    attributes:
+      label: Latest handoff
+      description: Summarize changed areas, verification, blockers, and the next requested action.
+

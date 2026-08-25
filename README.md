@@ -19,3 +19,7 @@ Use `npm test` for the foundation checks and `npm run build` for a production bu
 4. Choose **Set status → Ready** when the change is ready for review. The editor creates a reviewable change before it goes live.
 
 Do not paste private animal, adopter, donor, or payment information into the website editor.
+
+## Claude + Codex workflow
+
+See [COLLABORATION.md](COLLABORATION.md) for responsibilities and review rules. Active agent-to-agent handoffs are recorded in [specs/HANDOFF.md](specs/HANDOFF.md); numbered specs remain the source of truth for scope and status.
