@@ -1,7 +1,7 @@
 # Spec 01 — Site Foundation: stack, structure, pages, admin, deploy
 
-**Status:** 🔵 Needs review — implementation/build/tests complete; Claude style tile v3 received; awaiting Claude/Cortney review and launch credentials/content
-**Owner:** Codex (build) · Claude (spec/review) · Cortney (approve)
+**Status:** 🟠 Changes requested — Claude review 2026-08-25: functional skeleton sound, but design does not follow style tile v3 and CMS content is not wired into the build. See HANDOFF.md entry for acceptance criteria. Owner: Claude (roles flipped 2026-08-27).
+**Owner:** Claude (spec/build) · Codex (review) · Cortney (approve)
 **Read first:** `../BRIEF.md`
 
 ## 0. Goal
