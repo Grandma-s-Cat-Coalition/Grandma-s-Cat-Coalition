@@ -1,5 +1,7 @@
 // Renders every page of the site from content/ at build time.
 // Kim or Cortney edit content in Decap → commit → build → the site changes.
+import { md } from './content.mjs';
+
 const SITE = 'https://grandmascatcoalition.org';
 const shelter = {
   adopt: 'https://new.shelterluv.com/matchme/adopt/GCCI/Cat',
@@ -11,19 +13,17 @@ const shelter = {
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const tel = phone => 'tel:+1' + String(phone || '').replace(/\D/g, '');
 const isReal = url => typeof url === 'string' && /^https:\/\//.test(url);
-// Date-only strings parse as UTC midnight; anchor them to noon so the
-// rendered day doesn't shift in US timezones.
 const fmtDate = d => { const t = new Date(/^\d{4}-\d{2}-\d{2}$/.test(d) ? d + 'T12:00:00' : d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); };
 
 function postalAddress(address) {
-  // "113 W Jackson St, Lime Springs, IA 52155" → schema.org PostalAddress
   const [street = '', locality = '', regionZip = ''] = String(address || '').split(',').map(s => s.trim());
   const [region = '', zip = ''] = regionZip.split(/\s+/);
   return { '@type': 'PostalAddress', streetAddress: street, addressLocality: locality, addressRegion: region, postalCode: zip };
 }
 
 const ngoLd = s => JSON.stringify({ '@context': 'https://schema.org', '@type': 'NGO', name: s.orgName, url: SITE, telephone: '+1-' + s.phone, email: s.email, address: postalAddress(s.address) });
-const crumbLd = name => JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE }, { '@type': 'ListItem', position: 2, name }] });
+const crumb = (...trail) => ({ '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE }, ...trail.map((t, i) => ({ '@type': 'ListItem', position: i + 2, name: t.name, ...(t.item ? { item: t.item } : {}) }))] });
+const crumbLd = name => JSON.stringify({ '@context': 'https://schema.org', ...crumb({ name }) });
 
 const newsletterForm = id => `<form class="newsletter form" action="/api/newsletter" method="post" data-api><label for="${id}">Email address</label><input id="${id}" name="email" type="email" required maxlength="200"><label class="hp">Leave blank<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">Sign up</button><p role="status" aria-live="polite"></p></form>`;
 
@@ -43,12 +43,13 @@ function layout({ slug, title, description, ld, main, settings: s }) {
 
 const hero = (eyebrow, h1, text, actions = '') => `<section class="hero"><div class="wrap">${eyebrow ? `<p class="eyebrow">${eyebrow}</p>` : ''}<h1>${h1}</h1><p>${text}</p>${actions ? `<div class="actions">${actions}</div>` : ''}</div></section>`;
 
-const newsCard = n => `<article class="card"><img src="${esc(n.cover)}" alt="${esc(n.cover_alt)}" width="600" height="450"><h3>${esc(n.title)}</h3><p class="eyebrow">${fmtDate(n.date)}</p><p>${esc(n.excerpt)}</p></article>`;
+const tagList = tags => Array.isArray(tags) && tags.length ? `<p class="tags">${tags.map(t => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>` : '';
+const newsCard = n => `<article class="card"><img src="${esc(n.cover)}" alt="${esc(n.cover_alt)}" width="600" height="450"><h3><a href="/news/${esc(n.slug)}.html">${esc(n.title)}</a></h3><p class="eyebrow">${fmtDate(n.date)}</p><p>${esc(n.excerpt)}</p></article>`;
 
 export function renderHome(c) {
   const s = c.settings;
   const latest = c.news.slice(0, 3).map(newsCard).join('');
-  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><img class="hero-photo" src="${esc(s.heroImage)}" alt="Grandma holding a cat, the heart of our rescue" width="800" height="600"></div></section>` +
+  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button donate" href="/donate.html">Donate</a><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><img class="hero-photo" src="${esc(s.heroImage)}" alt="Grandma holding a cat, the heart of our rescue" width="800" height="600"></div></section>` +
     `<section class="section sage"><div class="wrap"><p class="eyebrow">Our impact</p><h2>Small rescue. Big-hearted work.</h2><div class="grid stats"><div class="card stat"><strong>${Number(s.impact?.tnr) || 0}</strong>Cats TNR'd</div><div class="card stat"><strong>${Number(s.impact?.adopted) || 0}</strong>Cats adopted</div><div class="card stat"><strong>${Number(s.impact?.foster) || 0}</strong>In foster care</div></div></div></section>` +
     `<section class="section"><div class="wrap"><p class="eyebrow">Looking for home</p><h2>Meet the cats</h2><div class="grid" data-cats data-limit="4"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div></section>` +
     `<section class="section sage"><div class="wrap"><h2>How you can help</h2><div class="grid four"><a class="card" href="/donate.html"><h3>Donate</h3><p>Fund food, veterinary care, and spay/neuter.</p></a><a class="card" href="/foster.html"><h3>Foster</h3><p>Open your home and save a life.</p></a><a class="card" href="/volunteer.html"><h3>Volunteer</h3><p>Share your time and talents.</p></a><a class="card" href="/adopt.html"><h3>Adopt</h3><p>Meet your new best friend.</p></a></div></div></section>` +
@@ -61,7 +62,7 @@ export function renderAdopt(c) {
   const p = c.pages.adopt || {};
   const main = hero('Find your new friend', esc(p.title || 'Adopt a cat'), esc(p.intro || ''), `<a class="button" href="${shelter.adopt}">Apply to adopt</a>`) +
     `<section class="section"><div class="wrap"><h2>Available cats</h2><div class="grid" data-cats><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div></section>` +
-    `<section class="section sage"><div class="wrap"><h2>How adoption works</h2><p>Browse available cats, complete the ShelterLuv application, and our volunteers will help you find a good match.</p><p>${esc(p.fees || '')}</p></div></section>`;
+    `<section class="section sage"><div class="wrap"><h2>How adoption works</h2><p>Browse available cats, complete the ShelterLuv application, and our volunteers will help you find a good match.</p>${md(p.fees || '')}</div></section>`;
   return layout({ slug: 'adopt', title: `Adopt a Cat | ${c.settings.orgName}`, description: 'Meet adoptable cats from Grandma\'s Cat Coalition and apply through ShelterLuv.', ld: crumbLd('Adopt'), main, settings: c.settings });
 }
 
@@ -69,14 +70,14 @@ export function renderFoster(c) {
   const p = c.pages.foster || {};
   const faq = (c.fosterFaq || []).map(f => `<details><summary>${esc(f.question)}</summary><p>${esc(f.answer)}</p></details>`).join('');
   const main = hero('Open your home', esc(p.title || 'Foster a cat'), esc(p.intro || ''), `<a class="button" href="${shelter.foster}">Apply to foster</a>`) +
-    `<section class="section"><div class="wrap"><h2>You provide love. We help with the rest.</h2><p>${esc(p.body || '')}</p><h2>Common questions</h2>${faq}</div></section>`;
+    `<section class="section"><div class="wrap"><h2>You provide love. We help with the rest.</h2>${md(p.body || '')}<h2>Common questions</h2>${faq}</div></section>`;
   return layout({ slug: 'foster', title: `Foster a Cat | ${c.settings.orgName}`, description: 'Foster a cat with Grandma\'s Cat Coalition and save a life from your own home.', ld: crumbLd('Foster'), main, settings: c.settings });
 }
 
 export function renderVolunteer(c) {
   const p = c.pages.volunteer || {};
   const main = hero('Join us', esc(p.title || 'Volunteer'), esc(p.intro || ''), `<a class="button" href="${shelter.volunteer}">Become a volunteer</a>`) +
-    `<section class="section"><div class="wrap"><h2>There is a place for you</h2><p>${esc(p.body || '')}</p></div></section>`;
+    `<section class="section"><div class="wrap"><h2>There is a place for you</h2>${md(p.body || '')}</div></section>`;
   return layout({ slug: 'volunteer', title: `Volunteer | ${c.settings.orgName}`, description: 'Volunteer with Grandma\'s Cat Coalition in Northeast Iowa.', ld: crumbLd('Volunteer'), main, settings: c.settings });
 }
 
@@ -100,7 +101,7 @@ export function renderDonate(c) {
 export function renderTnr(c) {
   const p = c.pages.tnr || {};
   const main = hero('Humane community care', esc(p.title || 'Trap-Neuter-Return'), esc(p.intro || '')) +
-    `<section class="section"><div class="wrap"><h2>How it works</h2><p>${esc(p.body || '')}</p><h2>Request TNR help</h2><form class="form" action="/api/tnr-request" method="post" data-api><label>Name<input name="name" required maxlength="100"></label><label>Email<input name="email" type="email" required maxlength="200"></label><label>Colony location<input name="location" required maxlength="300"></label><label>How many cats?<input name="catCount" inputmode="numeric" required maxlength="10"></label><label>What have you observed?<textarea name="message" required maxlength="5000"></textarea></label><label class="hp">Leave blank<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">Request help</button><p role="status" aria-live="polite"></p></form></div></section>`;
+    `<section class="section"><div class="wrap"><h2>How it works</h2>${md(p.body || '')}<h2>Request TNR help</h2><form class="form" action="/api/tnr-request" method="post" data-api><label>Name<input name="name" required maxlength="100"></label><label>Email<input name="email" type="email" required maxlength="200"></label><label>Colony location<input name="location" required maxlength="300"></label><label>How many cats?<input name="catCount" inputmode="numeric" required maxlength="10"></label><label>What have you observed?<textarea name="message" required maxlength="5000"></textarea></label><label class="hp">Leave blank<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">Request help</button><p role="status" aria-live="polite"></p></form></div></section>`;
   return layout({ slug: 'tnr', title: `TNR Help | ${c.settings.orgName}`, description: 'Learn about Trap-Neuter-Return and request help for a community cat colony.', ld: crumbLd('TNR'), main, settings: c.settings });
 }
 
@@ -108,35 +109,49 @@ export function renderAbout(c) {
   const s = c.settings, p = c.pages.about || {};
   const board = c.board.map(b => `<article class="card"><img src="${esc(b.photo)}" alt="${esc(b.photo_alt)}" width="600" height="450"><h3>${esc(b.name)}</h3><p class="eyebrow">${esc(b.role)}</p>${b.bodyHtml}</article>`).join('');
   const main = hero('Neighbors helping cats', esc(p.title || 'About us'), esc(p.intro || '')) +
-    `<section class="section"><div class="wrap"><h2>Our mission</h2><p>${esc(p.mission || '')}</p><h2>Our board</h2><div class="grid">${board}</div><h2>Nonprofit information</h2><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. EIN ${esc(s.ein)}. The determination letter will be posted when supplied.</p></div></section>`;
+    `<section class="section"><div class="wrap"><h2>Our mission</h2>${md(p.mission || '')}<h2>Our board</h2><div class="grid">${board}</div><h2>Nonprofit information</h2><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. EIN ${esc(s.ein)}. The determination letter will be posted when supplied.</p></div></section>`;
   return layout({ slug: 'about', title: `About | ${s.orgName}`, description: 'Learn about Grandma\'s Cat Coalition, our mission, board, and nonprofit status.', ld: ngoLd(s), main, settings: s });
 }
 
 export function renderFoundACat(c) {
   const p = c.pages['found-a-cat'] || {};
   const main = hero('Here to help', esc(p.title || 'Found a cat?'), esc(p.intro || '')) +
-    `<section class="section"><div class="wrap"><h2>What to do first</h2><p>${esc(p.body || '')}</p><a class="button" href="${shelter.found}">Submit a found-cat report</a></div></section>`;
+    `<section class="section"><div class="wrap"><h2>What to do first</h2>${md(p.body || '')}<a class="button" href="${shelter.found}">Submit a found-cat report</a></div></section>`;
   return layout({ slug: 'found-a-cat', title: `Found a Cat? | ${c.settings.orgName}`, description: 'What to do when you find a stray or community cat in Northeast Iowa.', ld: crumbLd('Found a Cat'), main, settings: c.settings });
 }
 
 export function renderNews(c) {
-  const posts = c.news.map(n => `<article class="card"><img src="${esc(n.cover)}" alt="${esc(n.cover_alt)}" width="600" height="450"><h3>${esc(n.title)}</h3><p class="eyebrow">${fmtDate(n.date)}</p>${n.bodyHtml}</article>`).join('');
+  const cards = c.news.map(newsCard).join('');
   const main = hero('', 'News and updates', 'Follow the latest work from our foster homes and community.') +
-    `<section class="section"><div class="wrap"><div class="grid">${posts || '<div class="notice"><p>Fresh news will appear here as our volunteers add it.</p></div>'}</div></div></section>`;
+    `<section class="section"><div class="wrap"><div class="grid">${cards || '<div class="notice"><p>Fresh news will appear here as our volunteers add it.</p></div>'}</div></div></section>`;
   return layout({ slug: 'news', title: `News | ${c.settings.orgName}`, description: 'News and updates from Grandma\'s Cat Coalition.', ld: crumbLd('News'), main, settings: c.settings });
 }
 
+// One prerendered detail page per news post, carrying Article structured data.
+export function renderNewsDetail(c, post) {
+  const s = c.settings;
+  const url = `${SITE}/news/${post.slug}.html`;
+  const article = { '@context': 'https://schema.org', '@type': 'Article', headline: post.title, datePublished: post.date, description: post.excerpt, image: SITE + (post.cover || ''), author: { '@type': 'Organization', name: s.orgName }, publisher: { '@type': 'Organization', name: s.orgName }, mainEntityOfPage: url };
+  const bc = { '@context': 'https://schema.org', ...crumb({ name: 'News', item: `${SITE}/news` }, { name: post.title }) };
+  const main = `<section class="hero"><div class="wrap"><p class="eyebrow">${fmtDate(post.date)}</p><h1>${esc(post.title)}</h1></div></section>` +
+    `<section class="section"><div class="wrap article"><img src="${esc(post.cover)}" alt="${esc(post.cover_alt)}" width="1000" height="560">${post.bodyHtml}${tagList(post.tags)}<p><a class="button soft" href="/news.html">← All news</a></p></div></section>`;
+  return layout({ slug: `news/${post.slug}`, title: `${post.title} | ${s.orgName}`, description: post.excerpt || post.title, ld: JSON.stringify([article, bc]), main, settings: s });
+}
+
 export function renderEvents(c, now = new Date()) {
-  const eventCard = e => `<article class="card event"><h3>${esc(e.title)}</h3><p class="eyebrow">${fmtDate(e.start)}${e.location ? ' · ' + esc(e.location) : ''}</p>${e.bodyHtml}${isReal(e.link) ? `<a class="button soft" href="${esc(e.link)}">Event details</a>` : ''}</article>`;
+  const eventCard = e => `<article class="card event">${e.cover ? `<img src="${esc(e.cover)}" alt="${esc(e.cover_alt)}" width="600" height="450">` : ''}<h3>${esc(e.title)}</h3><p class="eyebrow">${fmtDate(e.start)}${e.location ? ' · ' + esc(e.location) : ''}</p>${e.bodyHtml}${isReal(e.link) ? `<a class="button soft" href="${esc(e.link)}">Event details</a>` : ''}</article>`;
   const upcoming = c.events.filter(e => new Date(e.end || e.start) >= now);
   const past = c.events.filter(e => new Date(e.end || e.start) < now).reverse();
+  const eventLd = upcoming.map(e => ({ '@context': 'https://schema.org', '@type': 'Event', name: e.title, startDate: e.start, ...(e.end ? { endDate: e.end } : {}), ...(e.location ? { location: { '@type': 'Place', name: e.location } } : {}), description: e.title, organizer: { '@type': 'Organization', name: c.settings.orgName } }));
+  const ld = JSON.stringify([...eventLd, { '@context': 'https://schema.org', ...crumb({ name: 'Events' }) }]);
   const main = hero('', 'Upcoming events', 'Meet fellow cat lovers and support our rescue.') +
     `<section class="section"><div class="wrap">${upcoming.map(eventCard).join('') || '<div class="notice"><p>No upcoming events yet — check back soon or follow us on Facebook.</p></div>'}${past.length ? `<details class="past-events"><summary>Past events (${past.length})</summary>${past.map(eventCard).join('')}</details>` : ''}</div></section>`;
-  return layout({ slug: 'events', title: `Events | ${c.settings.orgName}`, description: 'Upcoming events from Grandma\'s Cat Coalition.', ld: crumbLd('Events'), main, settings: c.settings });
+  return layout({ slug: 'events', title: `Events | ${c.settings.orgName}`, description: 'Upcoming events from Grandma\'s Cat Coalition.', ld, main, settings: c.settings });
 }
 
 export function renderHappyTails(c) {
-  const tails = c.happyTails.map(t => `<article class="card"><h3>${esc(t.title)}</h3><p class="eyebrow">${esc(t.cat_name)} · ${fmtDate(t.date)}</p>${t.bodyHtml}${t.adopter_quote ? `<blockquote>${esc(t.adopter_quote)}</blockquote>` : ''}</article>`).join('');
+  const photos = t => Array.isArray(t.photos) && t.photos.length ? `<div class="grid tail-photos">${t.photos.map(p => `<img src="${esc(p)}" alt="${esc(t.photo_alt || t.cat_name + ', adopted')}" width="600" height="450">`).join('')}</div>` : '';
+  const tails = c.happyTails.map(t => `<article class="card">${photos(t)}<h3>${esc(t.title)}</h3><p class="eyebrow">${esc(t.cat_name)} · ${fmtDate(t.date)}</p>${t.bodyHtml}${t.adopter_quote ? `<blockquote>${esc(t.adopter_quote)}</blockquote>` : ''}</article>`).join('');
   const main = hero('', 'Happy adoption stories', 'Celebrating cats who found their people.') +
     `<section class="section"><div class="wrap"><div class="grid">${tails || '<div class="notice"><p>Happy endings will appear here as cats find their homes.</p></div>'}</div></div></section>`;
   return layout({ slug: 'happy-tails', title: `Happy Tails | ${c.settings.orgName}`, description: 'Happy adoption stories from Grandma\'s Cat Coalition.', ld: crumbLd('Happy Tails'), main, settings: c.settings });

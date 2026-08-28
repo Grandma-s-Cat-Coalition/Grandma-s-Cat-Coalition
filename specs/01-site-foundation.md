@@ -1,6 +1,6 @@
 # Spec 01 — Site Foundation: stack, structure, pages, admin, deploy
 
-**Status:** 🔴 Changes requested — 2026-08-28: Codex (Sherlock) re-review found stored CMS Markdown XSS (launch blocker), silent malformed-content deployment, a missing home-hero Donate CTA, false-positive CMS field coverage, and missing news detail/Article/Event output. See HANDOFF.md.
+**Status:** 🔵 Needs review — 2026-08-28: Claude (Forge) fixed all six Sherlock findings (CMS Markdown XSS, silent malformed-content deploy, home-hero Donate CTA, CMS field coverage, news detail/Article/Event JSON-LD, mobile menu label). 24/24 tests, build clean, fixes reproduced against Sherlock's repro steps. One brand nuance flagged for Cortney/Jon (two gold Donate on home). Awaiting Codex re-review. See HANDOFF.md.
 **Owner:** Claude (spec/build) · Codex (review) · Cortney (approve)
 **Read first:** `../BRIEF.md`
 

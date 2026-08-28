@@ -1,7 +1,13 @@
 import { readFile, readdir } from 'node:fs/promises';
 
 // Minimal front-matter + markdown support for Decap-authored content.
-// Decap writes simple YAML (scalars and [a, b] lists) — that's all we parse.
+// Decap writes simple YAML (scalars, [a, b] inline lists, and block lists).
+
+export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Link targets are restricted to safe schemes. CMS content is NOT trusted —
+// an editor (or anyone who opens a PR) must not be able to inject javascript:/data: URLs.
+const safeHref = url => /^(https?:\/\/|mailto:|\/|#)/i.test(String(url).trim()) ? String(url).trim() : '#';
 
 function parseScalar(v) {
   v = v.trim();
@@ -16,19 +22,31 @@ export function parseFrontMatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
   if (!m) return { data: {}, body: text };
   const data = {};
-  for (const line of m[1].split(/\r?\n/)) {
-    const kv = line.match(/^(\w[\w-]*):\s*(.*)$/);
-    if (kv) data[kv[1]] = parseScalar(kv[2]);
+  const lines = m[1].split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const kv = lines[i].match(/^(\w[\w-]*):\s*(.*)$/);
+    if (!kv) continue;
+    const [, key, rawVal] = kv;
+    if (rawVal === '') {
+      // Block list: subsequent indented "- item" lines.
+      const items = [];
+      while (i + 1 < lines.length && /^\s+-\s+/.test(lines[i + 1])) items.push(parseScalar(lines[++i].replace(/^\s+-\s+/, '')));
+      data[key] = items.length ? items : '';
+    } else {
+      data[key] = parseScalar(rawVal);
+    }
   }
   return { data, body: m[2].trim() };
 }
 
+// Markdown → HTML. HTML in the source is escaped FIRST, so a body containing
+// `<img onerror=...>` renders as inert text, not an executable element.
 export function md(text) {
   const inline = s => s
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => `<a href="${safeHref(u)}">${t}</a>`)
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  return text.split(/\r?\n\s*\r?\n/).filter(Boolean).map(block => {
+  return esc(text).split(/\r?\n\s*\r?\n/).filter(Boolean).map(block => {
     block = block.trim();
     const h = block.match(/^(#{2,3})\s+(.*)$/);
     if (h) return `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`;
@@ -40,18 +58,21 @@ export function md(text) {
 export async function loadCollection(dir) {
   let files = [];
   try { files = (await readdir(dir)).filter(f => f.endsWith('.md')); } catch { return []; }
-  const items = await Promise.all(files.map(async f => {
+  return Promise.all(files.map(async f => {
     const { data, body } = parseFrontMatter(await readFile(`${dir}/${f}`, 'utf8'));
     return { slug: f.replace(/\.md$/, ''), ...data, bodyHtml: md(body) };
   }));
-  return items;
 }
 
+// Missing file → fallback (optional content). Present-but-malformed → throw,
+// so an editorial JSON syntax error fails the build instead of silently
+// deploying empty content.
 export async function loadJson(path, fallback = null) {
-  try { return JSON.parse(await readFile(path, 'utf8')); } catch { return fallback; }
+  let text;
+  try { text = await readFile(path, 'utf8'); } catch { return fallback; }
+  try { return JSON.parse(text); } catch (e) { throw new Error(`Malformed JSON in ${path}: ${e.message}`); }
 }
 
-// Everything the page templates need, loaded once.
 export async function loadContent(root = '.') {
   const [settings, news, events, board, happyTails, fosterFaq] = await Promise.all([
     loadJson(`${root}/content/settings.json`, {}),
@@ -62,10 +83,11 @@ export async function loadContent(root = '.') {
     loadJson(`${root}/content/faq/foster.json`, []),
   ]);
   const pages = {};
-  try {
-    for (const f of (await readdir(`${root}/content/pages`)).filter(f => f.endsWith('.json')))
-      pages[f.replace(/\.json$/, '')] = await loadJson(`${root}/content/pages/${f}`, {});
-  } catch { /* no pages dir */ }
+  let pageFiles = [];
+  try { pageFiles = (await readdir(`${root}/content/pages`)).filter(f => f.endsWith('.json')); } catch { /* no pages dir */ }
+  // Loaded outside the try/catch so a malformed page file throws (fails the build)
+  // instead of being silently swallowed as a "missing directory".
+  for (const f of pageFiles) pages[f.replace(/\.json$/, '')] = await loadJson(`${root}/content/pages/${f}`, {});
   news.sort((a, b) => String(b.date).localeCompare(String(a.date)));
   happyTails.sort((a, b) => String(b.date).localeCompare(String(a.date)));
   board.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));

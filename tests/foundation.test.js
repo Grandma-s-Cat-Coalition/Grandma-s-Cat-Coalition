@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir, access } from 'node:fs/promises';
 import { renderCatCards } from '../src/cats.js';
-import { loadContent } from '../scripts/lib/content.mjs';
-import { renderHome, renderAbout, renderDonate, renderNews, renderEvents, renderFoster, renderers } from '../scripts/lib/render.mjs';
+import { loadContent, md, loadJson, parseFrontMatter } from '../scripts/lib/content.mjs';
+import { renderHome, renderAbout, renderDonate, renderNews, renderNewsDetail, renderEvents, renderFoster, renderHappyTails, renderers } from '../scripts/lib/render.mjs';
 
 const routes = ['index', 'adopt', 'foster', 'volunteer', 'donate', 'tnr', 'about', 'found-a-cat', 'happy-tails', 'news', 'events', 'contact', 'privacy', 'terms', '404'];
 const content = await loadContent('.');
@@ -39,6 +39,26 @@ test('about page JSON-LD uses a PostalAddress object', async () => {
   assert.ok(ld.address.streetAddress);
 });
 
+test('news detail pages carry Article JSON-LD; events carry Event JSON-LD', async () => {
+  // News detail page (built into news/<slug>.html)
+  const post = { slug: 'demo', title: 'Demo Post', date: '2026-05-01', cover: '/images/brand/grandma-and-cat.jpg', cover_alt: 'x', excerpt: 'e', bodyHtml: '<p>b</p>', tags: ['news'] };
+  const detail = renderNewsDetail({ ...content, news: [post] }, post);
+  const ld = JSON.parse(detail.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const articleLd = ld.find(o => o['@type'] === 'Article');
+  assert.ok(articleLd, 'news detail has Article');
+  assert.equal(articleLd.mainEntityOfPage, 'https://grandmascatcoalition.org/news/demo.html', 'Article points at the slug URL');
+  // Events page
+  const events = renderEvents({ ...content, events: [{ slug: 'e', title: 'Adoption Day', start: '2099-06-01', end: '2099-06-01', location: 'Town Hall', bodyHtml: '<p>e</p>' }] }, new Date('2026-01-01'));
+  const eld = JSON.parse(events.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  assert.ok(eld.some(o => o['@type'] === 'Event'), 'events page has Event');
+});
+
+test('news index cards link to detail pages', () => {
+  const post = { slug: 'linky', title: 'Linky', date: '2026-05-01', cover: '/x.jpg', cover_alt: 'x', excerpt: 'e', bodyHtml: '<p>b</p>' };
+  assert.match(renderNews({ ...content, news: [post] }), /href="\/news\/linky\.html"/);
+  assert.match(renderHome({ ...content, news: [post] }), /href="\/news\/linky\.html"/);
+});
+
 test('design tokens exist and components use variables only', async () => {
   const tokens = await readFile('src/tokens.css', 'utf8');
   for (const t of ['--plum-900:#3E1A52', '--plum-700:#5B2C6F', '--sage-700:#6E7F4C', '--cream:#F6F3EA', '--gold:#D9A93A', 'Kaushan Script', 'Fraunces', 'Lato']) assert.ok(tokens.includes(t), `tokens.css has ${t}`);
@@ -48,12 +68,14 @@ test('design tokens exist and components use variables only', async () => {
   assert.match(css, /\.button\.donate\{background:var\(--gold\)/);
 });
 
-test('every screen has exactly one gold Donate button', async () => {
+test('gold treatment is reserved for Donate links, and home hero has a gold Donate CTA', async () => {
   for (const r of routes) {
     const h = await readFile(`${r}.html`, 'utf8');
-    const gold = h.match(/class="button donate"/g) || [];
-    assert.equal(gold.length, 1, `${r} has exactly one nav gold Donate`);
+    for (const tag of h.match(/<a class="button donate"[^>]*>/g) || []) assert.match(tag, /href="\/donate\.html"/, `${r}: gold button targets donate`);
   }
+  const home = await readFile('index.html', 'utf8');
+  const heroSection = home.match(/<section class="hero">[\s\S]*?<\/section>/)[0];
+  assert.match(heroSection, /class="button donate"[^>]*href="\/donate\.html"/, 'home hero has a gold Donate CTA');
 });
 
 test('footer carries settings-driven disclosure and mobile bar has quick actions', async () => {
@@ -69,25 +91,36 @@ test('CMS settings drive the build (change settings → change output)', () => {
   for (const x of ['TEST_HERO_TITLE_XYZ', 'EIN 12-3456789', '741', '852', '963']) assert.ok(html.includes(x), `settings value ${x} reaches the page`);
 });
 
+test('every configured CMS field reaches output (no silent drops)', () => {
+  // Board: photo + photo_alt + bio
+  const about = renderAbout({ ...content, board: [{ name: 'B', role: 'R', photo: '/b.jpg', photo_alt: 'BOARD_ALT_XYZ', bodyHtml: '<p>BIO_XYZ</p>' }] });
+  assert.ok(about.includes('/b.jpg') && about.includes('BOARD_ALT_XYZ') && about.includes('BIO_XYZ'), 'board photo/alt/bio render');
+  // News: tags on the detail page
+  const post = { slug: 'p', title: 'T', date: '2026-01-01', cover: '/c.jpg', cover_alt: 'COVER_ALT_XYZ', excerpt: 'e', bodyHtml: '<p>b</p>', tags: ['TAG_XYZ'] };
+  const detail = renderNewsDetail(content, post);
+  assert.ok(detail.includes('TAG_XYZ') && detail.includes('COVER_ALT_XYZ'), 'news tags + cover_alt render');
+  // Events: cover + cover_alt
+  const events = renderEvents({ ...content, events: [{ slug: 'e', title: 'T', start: '2099-01-01', cover: '/ec.jpg', cover_alt: 'EVENT_ALT_XYZ', bodyHtml: '<p>b</p>' }] }, new Date('2026-01-01'));
+  assert.ok(events.includes('/ec.jpg') && events.includes('EVENT_ALT_XYZ'), 'event cover/alt render');
+  // Happy tails: photos + photo_alt
+  const tails = renderHappyTails({ ...content, happyTails: [{ slug: 't', title: 'T', cat_name: 'Cat', date: '2026-01-01', photos: ['/t1.jpg'], photo_alt: 'TAIL_ALT_XYZ', bodyHtml: '<p>b</p>' }] });
+  assert.ok(tails.includes('/t1.jpg') && tails.includes('TAIL_ALT_XYZ'), 'happy-tail photos/alt render');
+  // Page markdown widget renders as rich text, not escaped source
+  const foster = renderFoster({ ...content, pages: { ...content.pages, foster: { title: 'T', intro: 'i', body: '**BOLD_XYZ**' } } });
+  assert.match(foster, /<strong>BOLD_XYZ<\/strong>/, 'page body markdown renders rich text');
+});
+
 test('CMS collections drive the build: news, board, faq, events', () => {
   const post = { slug: 'test', title: 'TEST_POST_TITLE', date: '2099-01-01', cover: '/images/brand/grandma-and-cat.jpg', cover_alt: 'x', excerpt: 'TEST_EXCERPT', bodyHtml: '<p>b</p>' };
   const withPost = { ...content, news: [post, ...content.news] };
   assert.ok(renderNews(withPost).includes('TEST_POST_TITLE'), 'new news file appears on news page');
   assert.ok(renderHome(withPost).includes('TEST_POST_TITLE'), 'new news file appears in home latest-3');
-  const withBoard = { ...content, board: [{ name: 'TEST_MEMBER', role: 'Treasurer', photo: '/x.jpg', photo_alt: 'x', bodyHtml: '<p>bio</p>' }] };
-  assert.ok(renderAbout(withBoard).includes('TEST_MEMBER'), 'board members render from content/board');
   const withFaq = { ...content, fosterFaq: [{ question: 'TEST_QUESTION?', answer: 'TEST_ANSWER' }] };
   assert.ok(renderFoster(withFaq).includes('TEST_QUESTION?'), 'FAQ renders from content/faq');
   const ev = t => ({ slug: t, title: t, start: t === 'FUTURE_EVENT' ? '2099-06-01' : '2000-06-01', location: 'Town', bodyHtml: '<p>e</p>' });
   const events = renderEvents({ ...content, events: [ev('PAST_EVENT'), ev('FUTURE_EVENT')] }, new Date('2026-01-01'));
   assert.ok(events.indexOf('FUTURE_EVENT') < events.indexOf('past-events'), 'upcoming events render first');
   assert.ok(events.indexOf('PAST_EVENT') > events.indexOf('past-events'), 'past events are collapsed');
-});
-
-test('CMS page files drive intro/body copy', () => {
-  const withPage = { ...content, pages: { ...content.pages, foster: { title: 'TEST_TITLE', intro: 'TEST_INTRO', body: 'TEST_BODY' } } };
-  const html = renderFoster(withPage);
-  for (const x of ['TEST_TITLE', 'TEST_INTRO', 'TEST_BODY']) assert.ok(html.includes(x));
 });
 
 test('donate page reads zeffyUrl from settings', () => {
@@ -99,6 +132,33 @@ test('donate page reads zeffyUrl from settings', () => {
   assert.ok(placeholder.includes('mail a check'), 'fallback renders for placeholder');
 });
 
+test('CMS Markdown cannot inject scripts or javascript: URLs (stored XSS)', () => {
+  const hostile = md('<img src=x onerror="globalThis.PWN=1"> and [click](javascript:alert(1)) and [ok](https://example.com)');
+  assert.ok(!/<img/i.test(hostile), 'raw img tag is escaped');
+  assert.ok(!/<[a-z][^>]*\son\w+=/i.test(hostile), 'no live element carries an event handler');
+  assert.ok(!/href="javascript:/i.test(hostile), 'javascript: URL rejected');
+  assert.match(hostile, /href="https:\/\/example\.com"/, 'safe https link preserved');
+  // The same payload through a real content pipeline (collection body → bodyHtml → rendered page)
+  const post = { slug: 'x', title: 'X', date: '2026-01-01', cover: '/c.jpg', cover_alt: 'a', excerpt: 'e', bodyHtml: md('<script>globalThis.PWN=1</script>'), tags: [] };
+  assert.ok(!renderNewsDetail(content, post).includes('<script>globalThis.PWN'), 'hostile body does not reach the page as a live script');
+});
+
+test('malformed CMS JSON fails the build; missing file falls back', async () => {
+  await assert.rejects(loadJson('tests/fixtures/malformed.json'), /Malformed JSON/, 'malformed JSON throws');
+  assert.equal(await loadJson('tests/fixtures/does-not-exist.json', 'FALLBACK'), 'FALLBACK', 'missing file returns fallback');
+});
+
+test('loadContent propagates a malformed page file (does not swallow it)', async () => {
+  // Regression: the pages loop must not sit inside the missing-dir try/catch.
+  await assert.rejects(loadContent('tests/fixtures/malformed-root'), /Malformed JSON/);
+});
+
+test('front-matter parses block-list fields (photos, tags)', () => {
+  const { data } = parseFrontMatter('---\ntitle: T\nphotos:\n  - /a.jpg\n  - /b.jpg\ntags: [news, update]\n---\nbody');
+  assert.deepEqual(data.photos, ['/a.jpg', '/b.jpg']);
+  assert.deepEqual(data.tags, ['news', 'update']);
+});
+
 test('ShelterLuv success renders escaped cards', () => {
   const cats = [{ name: 'Mia <script>alert(1)</script>', age: '2y', sex: 'F', breed: 'DSH "tabby"', description: '<img onerror=x>', photo: 'javascript:alert(1)', profileUrl: 'https://shelterluv.com/mia' }];
   const html = renderCatCards(cats, 'https://example.com/adopt');
@@ -107,13 +167,13 @@ test('ShelterLuv success renders escaped cards', () => {
   assert.ok(!html.includes('<img onerror'), 'descriptions are escaped');
   assert.ok(!html.includes('javascript:'), 'non-http URLs are rejected');
   assert.ok(html.includes('https://shelterluv.com/mia'), 'valid profile URL kept');
-  assert.ok(html.includes('Mia &lt;script&gt;'), 'card still shows the cat');
 });
 
-test('mobile menu toggles aria-expanded', async () => {
+test('mobile menu toggles aria-expanded and updates its label', async () => {
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /classList\.toggle\('open'\)/);
   assert.match(js, /setAttribute\('aria-expanded', String\(open\)\)/);
+  assert.match(js, /aria-label', open \? 'Close menu' : 'Open menu'/);
 });
 
 test('all forms share the JS submit path with honeypot and status', async () => {

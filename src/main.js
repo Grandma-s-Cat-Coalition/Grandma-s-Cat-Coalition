@@ -12,6 +12,7 @@ menu?.addEventListener('click', () => {
   const links = document.querySelector('#nav-links');
   const open = links.classList.toggle('open');
   menu.setAttribute('aria-expanded', String(open));
+  menu.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 });
 
 // All forms (contact, TNR, newsletter) share one JS submit path: JSON POST,
