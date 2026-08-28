@@ -2,6 +2,22 @@
 
 Add new entries at the top. Keep entries concise and link the governing spec.
 
+## 2026-08-27 — Claude → Codex: Spec 01 rework complete, ready for review
+
+- **Spec:** [01-site-foundation.md](01-site-foundation.md) · **Issue:** [#1](https://github.com/Grandma-s-Cat-Coalition/website/issues/1)
+- **State:** All nine acceptance criteria from the 2026-08-25 review implemented. Requesting Sherlock review from Codex.
+- **Files/areas changed:**
+  - `src/tokens.css` (new): `:root` block copied verbatim from `docs/style-tile.html`. `src/styles.css` rewritten — variables only (no raw hex outside tokens), Fraunces/Kaushan Script/Lato, plum-900 hero/footer, cream page bg, sage-100 alternating sections, pill buttons, gold reserved for the nav Donate button (exactly one per screen; mobile bar Donate goes gold only when the nav is collapsed).
+  - CMS wired for real: `scripts/build.mjs` + new `scripts/lib/content.mjs` (front-matter/markdown/JSON loaders) + `scripts/lib/render.mjs` (renders all 15 routes from `content/`). Settings drive hero, impact counters, EIN, footer contact, donate URLs; news/board/faq/pages/events/happy-tails collections all render. Events sort upcoming-first with past collapsed. `src/generic.js`/`src/page.js` deleted (copy now lives in `content/pages/*.json`; added `found-a-cat.json`).
+  - Donate: real `https://` `zeffyUrl` → iframe embed; placeholder → phone/check fallback. PayPal/Venmo/wishlist buttons render only when set to real URLs.
+  - Home: `grandma-and-cat.jpg` hero photo, latest-3 news, newsletter signup section; footer newsletter form now uses the shared `data-api` JS submit path with honeypot and status output.
+  - ShelterLuv rendering moved to DOM-free `src/cats.js`: every API string HTML-escaped, URLs restricted to http(s).
+  - Minor: `og:image` on every page (hero photo until banner.jpg lands), about/home JSON-LD use `PostalAddress` objects, `admin/config.yml` repo set to `Grandma-s-Cat-Coalition/website`, build invokes `optimize-images.mjs`, date-only front-matter dates anchored to noon so they don't shift a day in US timezones.
+- **Verification:** `npm test` 18/18 pass (new tests: mocked ShelterLuv success renders escaped cards, settings/collections/page-files change build output, zeffy embed/fallback both paths, structured-data JSON parses everywhere, referenced images exist in `public/`, one gold Donate per screen). `npm run build` succeeds. Browser-verified at 1280px and 375px: computed styles show Fraunces h1 / Lato body / cream `#F6F3EA` bg / gold `#D9A93A` Donate / plum-900 `#3E1A52` hero+footer, menu toggles `aria-expanded`, mobile bar renders, no console errors, no horizontal scroll.
+- **Known limitations:** Lighthouse ≥95 still needs a deployed URL. Launch credentials (EIN, Zeffy URL, ShelterLuv key, Kim/Cortney GitHub accounts, final imagery) remain open items. `banner.jpg`/`logo.png` not yet supplied — hero photo doubles as og:image.
+- **Requested next action:** Codex reviews against the nine criteria and records approval or change requests above.
+- **Next owner:** Codex (review).
+
 ## 2026-08-27 — Cortney: role reassignment to the standard table
 
 - **Decision (Cortney):** Adopt the standard seat assignments used on all other projects. Claude Code (Forge) is now the builder; Codex (Sherlock) is now the reviewer. Chairs were previously reversed in this repo.

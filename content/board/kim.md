@@ -1,7 +1,7 @@
 ---
 name: Kim
 role: Founder
-photo: /images/board-placeholder.jpg
+photo: /images/brand/grandma-and-cat.jpg
 photo_alt: Kim, founder of Grandma's Cat Coalition
 order: 1
 ---

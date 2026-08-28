@@ -1,11 +1,50 @@
 import './styles.css';
-const shelter={adopt:'https://new.shelterluv.com/matchme/adopt/GCCI/Cat',foster:'https://new.shelterluv.com/matchme/foster/GCCI/Cat',volunteer:'https://new.shelterluv.com/form/volunteer/GCCI/176721-volunteer',found:'https://new.shelterluv.com/form/other/GCCI/179042-found-cat'};
-const nav=`<a class="brand" href="/">Grandma's Cat Coalition</a><button class="menu" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">☰</button><nav id="nav-links" class="nav-links" aria-label="Main"><a href="/adopt.html">Adopt</a><a href="/foster.html">Foster</a><a href="/volunteer.html">Volunteer</a><a href="/tnr.html">TNR</a><a href="/about.html">About</a><a href="/news.html">News</a><a class="button" href="/donate.html">Donate</a></nav>`;
-document.querySelector('[data-header]').innerHTML=`<div class="wrap nav">${nav}</div>`;
-document.querySelector('[data-footer]').innerHTML=`<div class="wrap footer-grid"><div><h2>Grandma's Cat Coalition</h2><p>113 W Jackson St<br>Lime Springs, IA 52155</p><p><a href="tel:+16412297494">641-229-7494</a><br><a href="mailto:info@grandmascatcoalition.org">info@grandmascatcoalition.org</a></p></div><div><h2>Get involved</h2><p><a href="/adopt.html">Adopt</a><br><a href="/foster.html">Foster</a><br><a href="/volunteer.html">Volunteer</a><br><a href="/donate.html">Donate</a></p></div><div><h2>Stay connected</h2><form class="newsletter form" action="/api/newsletter" method="post"><label for="newsletter-email">Email address</label><input id="newsletter-email" name="email" type="email" required><button class="button" type="submit">Sign up</button></form></div></div><div class="wrap"><p>Grandma's Cat Coalition is a 501(c)(3) nonprofit. EIN XX-XXXXXXX. Donations are tax-deductible.</p><p><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="https://facebook.com/grandmascatcoalition">Facebook</a></p></div>`;
-document.body.insertAdjacentHTML('beforeend',`<nav class="mobile-bar" aria-label="Quick actions"><a href="/donate.html">Donate</a><a href="/adopt.html">Adopt</a><a href="tel:+16412297494">Call</a></nav>`);
-const menu=document.querySelector('.menu');menu?.addEventListener('click',()=>{const links=document.querySelector('#nav-links');const open=links.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));});
-document.querySelectorAll('form[data-api]').forEach(form=>form.addEventListener('submit',async e=>{e.preventDefault();const out=form.querySelector('[role=status]');out.textContent='Sending…';try{const r=await fetch(form.action,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(form)))});const data=await r.json();if(!r.ok)throw new Error(data.error);form.reset();out.textContent='Thank you — your message was sent.'}catch{out.textContent='We could not send that right now. Please call 641-229-7494.'}}));
-export async function loadCats(target,limit){try{const r=await fetch('/api/shelterluv');if(!r.ok)throw 0;const cats=(await r.json()).slice(0,limit||999);target.innerHTML=cats.map(c=>`<article class="card"><img src="${c.photo||'/images/cat-placeholder.jpg'}" alt="${c.name}, an adoptable cat" width="600" height="450"><h3>${c.name}</h3><p>${[c.age,c.sex,c.breed].filter(Boolean).join(' · ')}</p><p>${c.description||''}</p><a class="button" href="${c.profileUrl||shelter.adopt}">Meet ${c.name}</a></article>`).join('')||fallback()}catch{target.innerHTML=fallback()}}
-const fallback=()=>`<div class="notice"><h3>Our cat list is taking a catnap.</h3><p>You can still <a href="${shelter.adopt}">see available cats and apply through ShelterLuv</a>.</p></div>`;
-const catGrid=document.querySelector('[data-cats]');if(catGrid)loadCats(catGrid,Number(catGrid.dataset.limit)||undefined);
+import { renderCatCards } from './cats.js';
+
+// Header, footer, and page content are rendered at build time from content/
+// (scripts/build.mjs). This file only wires up behavior.
+
+const phone = document.body.dataset.phone || '641-229-7494';
+
+// Mobile menu
+const menu = document.querySelector('.menu');
+menu?.addEventListener('click', () => {
+  const links = document.querySelector('#nav-links');
+  const open = links.classList.toggle('open');
+  menu.setAttribute('aria-expanded', String(open));
+});
+
+// All forms (contact, TNR, newsletter) share one JS submit path: JSON POST,
+// inline status message, no navigation to raw JSON.
+document.querySelectorAll('form[data-api]').forEach(form => form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const out = form.querySelector('[role=status]');
+  out.textContent = 'Sending…';
+  try {
+    const r = await fetch(form.action, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form))) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+    form.reset();
+    out.textContent = 'Thank you — your message was sent.';
+  } catch {
+    out.textContent = `We could not send that right now. Please call ${phone}.`;
+  }
+}));
+
+// Adoptable cats from ShelterLuv
+const adoptUrl = 'https://new.shelterluv.com/matchme/adopt/GCCI/Cat';
+const fallback = () => `<div class="notice"><h3>Our cat list is taking a catnap.</h3><p>You can still <a href="${adoptUrl}">see available cats and apply through ShelterLuv</a>.</p></div>`;
+
+export async function loadCats(target, limit) {
+  try {
+    const r = await fetch('/api/shelterluv');
+    if (!r.ok) throw 0;
+    const cats = (await r.json()).slice(0, limit || 999);
+    target.innerHTML = renderCatCards(cats, adoptUrl) || fallback();
+  } catch {
+    target.innerHTML = fallback();
+  }
+}
+
+const catGrid = document.querySelector('[data-cats]');
+if (catGrid) loadCats(catGrid, Number(catGrid.dataset.limit) || undefined);
