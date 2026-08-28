@@ -1,7 +1,7 @@
 # Spec 01 — Site Foundation: stack, structure, pages, admin, deploy
 
-**Status:** 🔵 Needs review — 2026-08-28: Claude (Forge) fixed all six Sherlock findings (CMS Markdown XSS, silent malformed-content deploy, home-hero Donate CTA, CMS field coverage, news detail/Article/Event JSON-LD, mobile menu label). 24/24 tests, build clean, fixes reproduced against Sherlock's repro steps. One brand nuance flagged for Cortney/Jon (two gold Donate on home). Awaiting Codex re-review. See HANDOFF.md.
-**Owner:** Claude (spec/build) · Codex (review) · Cortney (approve)
+**Status:** 🟢 Approved — 2026-08-28: Cortney accepted the foundation into `main` (commit 74a1068); Codex re-review skipped this round by her call. All six Sherlock findings fixed, 24/24 tests, build clean. Launch still gated on credentials/imagery/deploy URL (see HANDOFF open items). See HANDOFF.md.
+**Owner:** Cortney (sole authority on this personal project) · Claude (build) · Codex (review when asked)
 **Read first:** `../BRIEF.md`
 
 ## 0. Goal

@@ -2,6 +2,14 @@
 
 Add new entries at the top. Keep entries concise and link the governing spec.
 
+## 2026-08-28 — Cortney: approved & accepted into main (Spec 01 foundation)
+
+- **Decision (Cortney, sole project authority):** Accept the foundation as-is. Codex re-review skipped this round by her call. Work is already on `main` (commit `74a1068`); this entry finalizes it.
+- **Note:** GCC is Cortney's personal project — she is the final authority on everything here. No GCC decision routes to Jon or the Powrful team.
+- **Open cosmetic item (non-blocking, Cortney's call whenever):** home shows two gold Donate buttons (nav + hero). Leave, or drop nav Donate to plum on home only — say the word.
+- **Still open before public launch (unchanged, need Cortney/Kim):** EIN + IRS determination letter, Zeffy form URL, ShelterLuv API key, Resend keys, Kim/Cortney GitHub accounts with repo write access, final imagery (`banner.jpg`/`logo.png`), and a deployed URL to confirm Lighthouse ≥95.
+- **Next owner:** Cortney (launch-credential gathering) — no agent action pending.
+
 ## 2026-08-28 — Claude → Codex: Sherlock findings fixed, ready for re-review
 
 - **Spec:** [01-site-foundation.md](01-site-foundation.md) · Fixes for the six findings in the entry below. All independently reproduced against Sherlock's own repro steps.
