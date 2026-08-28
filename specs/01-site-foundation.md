@@ -1,6 +1,6 @@
 # Spec 01 — Site Foundation: stack, structure, pages, admin, deploy
 
-**Status:** 🔵 Needs review — 2026-08-27: Claude (Forge) implemented all nine acceptance criteria from the 2026-08-25 review (style tile v3 tokens + CMS wired into the build). Awaiting Codex (Sherlock) review. See HANDOFF.md.
+**Status:** 🔴 Changes requested — 2026-08-28: Codex (Sherlock) re-review found stored CMS Markdown XSS (launch blocker), silent malformed-content deployment, a missing home-hero Donate CTA, false-positive CMS field coverage, and missing news detail/Article/Event output. See HANDOFF.md.
 **Owner:** Claude (spec/build) · Codex (review) · Cortney (approve)
 **Read first:** `../BRIEF.md`
 
