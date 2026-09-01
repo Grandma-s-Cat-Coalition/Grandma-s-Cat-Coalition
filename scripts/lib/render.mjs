@@ -38,18 +38,18 @@ function footer(s) {
 function layout({ slug, title, description, ld, main, settings: s }) {
   const canonical = slug === 'index' ? `${SITE}/` : `${SITE}/${slug}`;
   const ogImage = SITE + (s.heroImage || '/images/brand/grandma-and-cat.jpg');
-  return `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:type" content="website"><meta property="og:url" content="${canonical}"><meta property="og:image" content="${ogImage}"><meta name="twitter:card" content="summary_large_image"><script type="application/ld+json">${ld}</script></head><body data-phone="${esc(s.phone)}"><a class="skip" href="#main">Skip to content</a>${header()}<main id="main">${main}</main>${footer(s)}<nav class="mobile-bar" aria-label="Quick actions"><a class="donate-link" href="/donate.html">Donate</a><a href="/adopt.html">Adopt</a><a href="${tel(s.phone)}">Call</a></nav><script type="module" src="/src/main.js"></script></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:type" content="website"><meta property="og:url" content="${canonical}"><meta property="og:image" content="${ogImage}"><meta name="twitter:card" content="summary_large_image"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Lato:wght@400;700;900&display=swap"><script type="application/ld+json">${ld}</script></head><body data-phone="${esc(s.phone)}"><a class="skip" href="#main">Skip to content</a>${header()}<main id="main">${main}</main>${footer(s)}<nav class="mobile-bar" aria-label="Quick actions"><a class="donate-link" href="/donate.html">Donate</a><a href="/adopt.html">Adopt</a><a href="${tel(s.phone)}">Call</a></nav><script type="module" src="/src/main.js"></script></body></html>`;
 }
 
 const hero = (eyebrow, h1, text, actions = '') => `<section class="hero"><div class="wrap">${eyebrow ? `<p class="eyebrow">${eyebrow}</p>` : ''}<h1>${h1}</h1><p>${text}</p>${actions ? `<div class="actions">${actions}</div>` : ''}</div></section>`;
 
 const tagList = tags => Array.isArray(tags) && tags.length ? `<p class="tags">${tags.map(t => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>` : '';
-const newsCard = n => `<article class="card"><img src="${esc(n.cover)}" alt="${esc(n.cover_alt)}" width="600" height="450"><h3><a href="/news/${esc(n.slug)}.html">${esc(n.title)}</a></h3><p class="eyebrow">${fmtDate(n.date)}</p><p>${esc(n.excerpt)}</p></article>`;
+const newsCard = n => `<article class="card"><img src="${esc(n.cover)}" alt="${esc(n.cover_alt)}" width="600" height="450" loading="lazy"><h3><a href="/news/${esc(n.slug)}.html">${esc(n.title)}</a></h3><p class="eyebrow">${fmtDate(n.date)}</p><p>${esc(n.excerpt)}</p></article>`;
 
 export function renderHome(c) {
   const s = c.settings;
   const latest = c.news.slice(0, 3).map(newsCard).join('');
-  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button donate" href="/donate.html">Donate</a><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><img class="hero-photo" src="${esc(s.heroImage)}" alt="Grandma holding a cat, the heart of our rescue" width="800" height="600"></div></section>` +
+  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button donate" href="/donate.html">Donate</a><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><img class="hero-photo" src="${esc(s.heroImage)}" alt="Grandma holding a cat, the heart of our rescue" width="800" height="600" fetchpriority="high"></div></section>` +
     `<section class="section sage"><div class="wrap"><p class="eyebrow">Our impact</p><h2>Small rescue. Big-hearted work.</h2><div class="grid stats"><div class="card stat"><strong>${Number(s.impact?.tnr) || 0}</strong>Cats TNR'd</div><div class="card stat"><strong>${Number(s.impact?.adopted) || 0}</strong>Cats adopted</div><div class="card stat"><strong>${Number(s.impact?.foster) || 0}</strong>In foster care</div></div></div></section>` +
     `<section class="section"><div class="wrap"><p class="eyebrow">Looking for home</p><h2>Meet the cats</h2><div class="grid" data-cats data-limit="4"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div></section>` +
     `<section class="section sage"><div class="wrap"><h2>How you can help</h2><div class="grid four"><a class="card" href="/donate.html"><h3>Donate</h3><p>Fund food, veterinary care, and spay/neuter.</p></a><a class="card" href="/foster.html"><h3>Foster</h3><p>Open your home and save a life.</p></a><a class="card" href="/volunteer.html"><h3>Volunteer</h3><p>Share your time and talents.</p></a><a class="card" href="/adopt.html"><h3>Adopt</h3><p>Meet your new best friend.</p></a></div></div></section>` +
@@ -107,7 +107,7 @@ export function renderTnr(c) {
 
 export function renderAbout(c) {
   const s = c.settings, p = c.pages.about || {};
-  const board = c.board.map(b => `<article class="card"><img src="${esc(b.photo)}" alt="${esc(b.photo_alt)}" width="600" height="450"><h3>${esc(b.name)}</h3><p class="eyebrow">${esc(b.role)}</p>${b.bodyHtml}</article>`).join('');
+  const board = c.board.map(b => `<article class="card"><img src="${esc(b.photo)}" alt="${esc(b.photo_alt)}" width="600" height="450" loading="lazy"><h3>${esc(b.name)}</h3><p class="eyebrow">${esc(b.role)}</p>${b.bodyHtml}</article>`).join('');
   const main = hero('Neighbors helping cats', esc(p.title || 'About us'), esc(p.intro || '')) +
     `<section class="section"><div class="wrap"><h2>Our mission</h2>${md(p.mission || '')}<h2>Our board</h2><div class="grid">${board}</div><h2>Nonprofit information</h2><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. EIN ${esc(s.ein)}. The determination letter will be posted when supplied.</p></div></section>`;
   return layout({ slug: 'about', title: `About | ${s.orgName}`, description: 'Learn about Grandma\'s Cat Coalition, our mission, board, and nonprofit status.', ld: ngoLd(s), main, settings: s });
@@ -139,7 +139,7 @@ export function renderNewsDetail(c, post) {
 }
 
 export function renderEvents(c, now = new Date()) {
-  const eventCard = e => `<article class="card event">${e.cover ? `<img src="${esc(e.cover)}" alt="${esc(e.cover_alt)}" width="600" height="450">` : ''}<h3>${esc(e.title)}</h3><p class="eyebrow">${fmtDate(e.start)}${e.location ? ' · ' + esc(e.location) : ''}</p>${e.bodyHtml}${isReal(e.link) ? `<a class="button soft" href="${esc(e.link)}">Event details</a>` : ''}</article>`;
+  const eventCard = e => `<article class="card event">${e.cover ? `<img src="${esc(e.cover)}" alt="${esc(e.cover_alt)}" width="600" height="450" loading="lazy">` : ''}<h3>${esc(e.title)}</h3><p class="eyebrow">${fmtDate(e.start)}${e.location ? ' · ' + esc(e.location) : ''}</p>${e.bodyHtml}${isReal(e.link) ? `<a class="button soft" href="${esc(e.link)}">Event details</a>` : ''}</article>`;
   const upcoming = c.events.filter(e => new Date(e.end || e.start) >= now);
   const past = c.events.filter(e => new Date(e.end || e.start) < now).reverse();
   const eventLd = upcoming.map(e => ({ '@context': 'https://schema.org', '@type': 'Event', name: e.title, startDate: e.start, ...(e.end ? { endDate: e.end } : {}), ...(e.location ? { location: { '@type': 'Place', name: e.location } } : {}), description: e.title, organizer: { '@type': 'Organization', name: c.settings.orgName } }));
@@ -150,7 +150,7 @@ export function renderEvents(c, now = new Date()) {
 }
 
 export function renderHappyTails(c) {
-  const photos = t => Array.isArray(t.photos) && t.photos.length ? `<div class="grid tail-photos">${t.photos.map(p => `<img src="${esc(p)}" alt="${esc(t.photo_alt || t.cat_name + ', adopted')}" width="600" height="450">`).join('')}</div>` : '';
+  const photos = t => Array.isArray(t.photos) && t.photos.length ? `<div class="grid tail-photos">${t.photos.map(p => `<img src="${esc(p)}" alt="${esc(t.photo_alt || t.cat_name + ', adopted')}" width="600" height="450" loading="lazy">`).join('')}</div>` : '';
   const tails = c.happyTails.map(t => `<article class="card">${photos(t)}<h3>${esc(t.title)}</h3><p class="eyebrow">${esc(t.cat_name)} · ${fmtDate(t.date)}</p>${t.bodyHtml}${t.adopter_quote ? `<blockquote>${esc(t.adopter_quote)}</blockquote>` : ''}</article>`).join('');
   const main = hero('', 'Happy adoption stories', 'Celebrating cats who found their people.') +
     `<section class="section"><div class="wrap"><div class="grid">${tails || '<div class="notice"><p>Happy endings will appear here as cats find their homes.</p></div>'}</div></div></section>`;
