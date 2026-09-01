@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: Grandma-s-Cat-Coalition/website
+  repo: Grandma-s-Cat-Coalition/Grandma-s-Cat-Coalition
   branch: main
   base_url: https://grandmascatcoalition.org
   auth_endpoint: api/auth

@@ -199,7 +199,7 @@ test('CMS image fields require alt text', async () => {
   const y = await readFile('admin/config.yml', 'utf8');
   for (const x of ['photo_alt', 'cover_alt']) assert.match(y, new RegExp(x));
   assert.match(y, /editorial_workflow/);
-  assert.match(y, /repo: Grandma-s-Cat-Coalition\/website/);
+  assert.match(y, /repo: Grandma-s-Cat-Coalition\/Grandma-s-Cat-Coalition/);
 });
 
 test('all img elements have alt and referenced local images exist in public/', async () => {

@@ -22,7 +22,7 @@ Replace the one-page GoDaddy site with a fast, SEO-ready static site that (a) ha
 | Analytics | Vercel Web Analytics + Google Search Console + GA4 | Free |
 | Errors | **Skip for v1.** Sentry can be added later (Elite pattern) if forms/cat feed fail silently. | |
 
-Repo: `github.com/<new-gcc-org>/website` — org and all accounts are **GCC-owned, separate from Powrful**. Cortney + Kim as org owners.
+Repo: `github.com/Grandma-s-Cat-Coalition/Grandma-s-Cat-Coalition` — org and all accounts are **GCC-owned, separate from Powrful**. Cortney + Kim as org owners.
 
 ## 2. Repo layout
 
