@@ -4,3 +4,6 @@ dist/
 .vercel/
 .claude/settings.local.json
 news/
+
+.vercel
+.env*
