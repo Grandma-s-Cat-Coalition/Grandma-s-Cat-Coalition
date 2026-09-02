@@ -15,3 +15,15 @@ This site lives in accounts owned by Grandma's Cat Coalition. Do not connect Pow
 Build command `npm run build`, output directory `dist`.
 
 Never commit credentials. Email sends only to `CONTACT_RECIPIENT_EMAIL`; the browser cannot choose a recipient.
+
+## Local Vercel CLI (two accounts on one machine)
+
+Cortney's PC has the Vercel CLI signed into the Powrful account by default. GCC lives on its own Vercel Hobby account, so GCC commands use a separate auth directory instead of switching logins:
+
+```bash
+vercel login -Q "$HOME/.vercel-gcc"      # one-time, interactive, sign in with the GCC account
+vercel link  -Q "$HOME/.vercel-gcc"      # one-time, pick the grandmas-cat-coalition project
+vercel env ls -Q "$HOME/.vercel-gcc"     # any later command: add -Q to target GCC
+```
+
+Never link or deploy this repo under a Powrful team. Add secrets with `vercel env add NAME production preview --sensitive -Q "$HOME/.vercel-gcc"` and type the value at the prompt so it never lands in shell history.
