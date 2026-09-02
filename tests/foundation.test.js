@@ -190,9 +190,24 @@ test('all forms share the JS submit path with honeypot and status', async () => 
   assert.doesNotMatch(f, /req\.body\.to/);
 });
 
-test('ShelterLuv API has cache and client has fallback', async () => {
+test('ShelterLuv API has cache; client falls back to embed widget, then notice', async () => {
   assert.match(await readFile('api/shelterluv.js', 'utf8'), /s-maxage=600/);
-  assert.match(await readFile('src/main.js', 'utf8'), /cat list is taking a catnap/);
+  const js = await readFile('src/main.js', 'utf8');
+  assert.match(js, /shelterluv_embed\.js/, 'adopt page mounts the ShelterLuv embed when the API is unavailable');
+  assert.match(js, /gid: 100003517/, 'embed uses the GCC shelter id');
+  assert.match(js, /cat list is taking a catnap/, 'last-resort notice still present');
+  assert.match(js, /if \(limit\) target\.innerHTML = teaser\(\)/, 'homepage teaser links to the adopt page instead of hosting the iframe');
+  assert.match(js, /teaser = \(\) => .*href="\/adopt\.html"/, 'teaser points at the adopt page');
+});
+
+test('SHELTERLUV_API_KEY is optional for deployment', async () => {
+  const { execFile } = await import('node:child_process');
+  const { promisify } = await import('node:util');
+  const env = { ...process.env, RESEND_API_KEY: 'k', FORM_FROM_EMAIL: 'a@b.org', CONTACT_RECIPIENT_EMAIL: 'c@d.org', RESEND_AUDIENCE_ID: 'aud', OAUTH_GITHUB_CLIENT_ID: 'id', OAUTH_GITHUB_CLIENT_SECRET: 's', SITE_URL: 'https://x.org' };
+  delete env.SHELTERLUV_API_KEY;
+  await promisify(execFile)(process.execPath, ['scripts/check-deployment-env.mjs'], { env });
+  delete env.RESEND_API_KEY;
+  await assert.rejects(promisify(execFile)(process.execPath, ['scripts/check-deployment-env.mjs'], { env }), /RESEND_API_KEY/);
 });
 
 test('CMS image fields require alt text', async () => {

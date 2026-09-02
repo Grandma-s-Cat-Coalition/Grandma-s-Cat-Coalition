@@ -32,18 +32,37 @@ document.querySelectorAll('form[data-api]').forEach(form => form.addEventListene
   }
 }));
 
-// Adoptable cats from ShelterLuv
+// Adoptable cats from ShelterLuv.
+// Two paths, in order: (1) /api/shelterluv gives custom-styled cards when a
+// SHELTERLUV_API_KEY is set; (2) otherwise, or if the API fails, the adopt page
+// mounts ShelterLuv's public embed widget (an iframe — no key, no styling).
+// Homepage teasers can't host the iframe, so they link to the adopt page.
 const adoptUrl = 'https://new.shelterluv.com/matchme/adopt/GCCI/Cat';
+const shelterluv = { gid: 100003517, domain: 'https://new.shelterluv.com', script: 'https://new.shelterluv.com/misc/shelterluv_embed.js' };
 const fallback = () => `<div class="notice"><h3>Our cat list is taking a catnap.</h3><p>You can still <a href="${adoptUrl}">see available cats and apply through ShelterLuv</a>.</p></div>`;
+// Homepage teaser when styled cards aren't available: a plain invitation, not an error.
+const teaser = () => `<div class="notice"><h3>Cats are waiting for homes right now.</h3><p><a class="button" href="/adopt.html">See available cats</a></p></div>`;
+
+export function mountEmbed(target) {
+  const id = 'shelterluv_wrap';
+  target.innerHTML = `<div id="${id}" class="shelterluv-embed"></div>`;
+  const s = document.createElement('script');
+  s.src = shelterluv.script;
+  s.onload = () => window.EmbedAvailablePets(id, shelterluv.gid, {}, 0, shelterluv.domain, '', 2);
+  s.onerror = () => { target.innerHTML = fallback(); };
+  document.head.appendChild(s);
+}
 
 export async function loadCats(target, limit) {
   try {
     const r = await fetch('/api/shelterluv');
     if (!r.ok) throw 0;
     const cats = (await r.json()).slice(0, limit || 999);
-    target.innerHTML = renderCatCards(cats, adoptUrl) || fallback();
+    if (!cats.length) throw 0;
+    target.innerHTML = renderCatCards(cats, adoptUrl);
   } catch {
-    target.innerHTML = fallback();
+    if (limit) target.innerHTML = teaser();
+    else mountEmbed(target);
   }
 }
 

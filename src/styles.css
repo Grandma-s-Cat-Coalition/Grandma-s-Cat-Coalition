@@ -55,6 +55,7 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 .eyebrow{text-transform:uppercase;letter-spacing:.14em;color:var(--sage-900);font-weight:900;font-size:.8rem}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
 .grid.four{grid-template-columns:repeat(4,1fr)}
+.shelterluv-embed{grid-column:1/-1;min-height:400px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow);color:var(--text);text-decoration:none}
 .card img{aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius-sm);width:100%}
 .stats{text-align:center}

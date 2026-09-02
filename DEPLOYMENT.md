@@ -7,7 +7,7 @@ This site lives in accounts owned by Grandma's Cat Coalition. Do not connect Pow
 
 ## Remaining launch steps
 
-1. In Vercel, add every variable named in `.env.example` (ShelterLuv key, Resend key + audience, form recipient, GitHub OAuth for Decap, `SITE_URL`). The build runs `node scripts/check-deployment-env.mjs` and fails if any are missing or still placeholders.
+1. In Vercel, add every variable named in `.env.example` (Resend key + audience, form recipient, GitHub OAuth for Decap, `SITE_URL`). The build runs `node scripts/check-deployment-env.mjs` and fails if any are missing or still placeholders. `SHELTERLUV_API_KEY` is optional: without it the adopt page shows ShelterLuv's embed widget (no styling); with it, the site renders its own styled cat cards and falls back to the embed if the API ever fails.
 2. Deploy to the preview URL. Cortney and Kim review every route and form.
 3. Export any content still needed from GoDaddy, then point `grandmascatcoalition.org` DNS to Vercel.
 4. Submit `/sitemap.xml` to Google Search Console and update the Facebook website link.
