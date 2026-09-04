@@ -32,7 +32,7 @@ function header() {
 }
 
 function footer(s) {
-  return `<footer class="site-footer" data-footer><div class="wrap footer-grid"><div><h2>${esc(s.orgName)}</h2><p>${esc(s.address).replace(/, /, '<br>')}</p><p><a href="${tel(s.phone)}">${esc(s.phone)}</a><br><a href="mailto:${esc(s.email)}">${esc(s.email)}</a></p></div><div><h2>Get involved</h2><p><a href="/adopt.html">Adopt</a><br><a href="/foster.html">Foster</a><br><a href="/volunteer.html">Volunteer</a><br><a href="/donate.html">Donate</a></p></div><div><h2>Stay connected</h2>${newsletterForm('newsletter-email-footer')}</div></div><div class="wrap"><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. EIN ${esc(s.ein)}. Donations are tax-deductible.</p><p><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="${esc(s.facebook)}">Facebook</a></p></div></footer>`;
+  return `<footer class="site-footer" data-footer><div class="wrap footer-grid"><div><h2>${esc(s.orgName)}</h2><p>${esc(s.address).replace(/, /, '<br>')}</p><p><a href="${tel(s.phone)}">${esc(s.phone)}</a><br><a href="mailto:${esc(s.email)}">${esc(s.email)}</a></p></div><div><h2>Get involved</h2><p><a href="/adopt.html">Adopt</a><br><a href="/foster.html">Foster</a><br><a href="/volunteer.html">Volunteer</a><br><a href="/donate.html">Donate</a></p></div><div><h2>Stay connected</h2>${newsletterForm('newsletter-email-footer')}</div></div><div class="wrap"><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. Donations are tax-deductible.</p><p><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="${esc(s.facebook)}">Facebook</a></p></div></footer>`;
 }
 
 const FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Lato:wght@400;700;900&display=swap';
@@ -51,12 +51,14 @@ const hero = (eyebrow, h1, text, actions = '') => `<section class="hero"><div cl
 
 const tagList = tags => Array.isArray(tags) && tags.length ? `<p class="tags">${tags.map(t => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>` : '';
 const newsCard = n => `<article class="card"><img src="${esc(n.cover)}" alt="${esc(n.cover_alt)}" width="600" height="450" loading="lazy"><h3><a href="/news/${esc(n.slug)}.html">${esc(n.title)}</a></h3><p class="eyebrow">${fmtDate(n.date)}</p><p>${esc(n.excerpt)}</p></article>`;
+const heroMedia = s => isReal(SITE + s.heroVideo) && String(s.heroVideo).startsWith('/videos/')
+  ? `<video class="hero-photo" autoplay loop muted playsinline poster="${esc(s.heroImage)}" aria-label="Rescue cat video"><source src="${esc(s.heroVideo)}" type="video/mp4"></video>`
+  : `<img class="hero-photo" src="${esc(s.heroImage)}" alt="Grandma holding a cat, the heart of our rescue" width="800" height="600" fetchpriority="high">`;
 
 export function renderHome(c) {
   const s = c.settings;
   const latest = c.news.slice(0, 3).map(newsCard).join('');
-  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button donate" href="/donate.html">Donate</a><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><img class="hero-photo" src="${esc(s.heroImage)}" alt="Grandma holding a cat, the heart of our rescue" width="800" height="600" fetchpriority="high"></div></section>` +
-    `<section class="section sage"><div class="wrap"><p class="eyebrow">Our impact</p><h2>Small rescue. Big-hearted work.</h2><div class="grid stats"><div class="card stat"><strong>${Number(s.impact?.tnr) || 0}</strong>Cats TNR'd</div><div class="card stat"><strong>${Number(s.impact?.adopted) || 0}</strong>Cats adopted</div><div class="card stat"><strong>${Number(s.impact?.foster) || 0}</strong>In foster care</div></div></div></section>` +
+  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button donate" href="/donate.html">Donate</a><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><div class="hero-media">${heroMedia(s)}</div></div></section>` +
     `<section class="section"><div class="wrap"><p class="eyebrow">Looking for home</p><h2>Meet the cats</h2><div class="grid" data-cats data-limit="4"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div></section>` +
     `<section class="section sage"><div class="wrap"><h2>How you can help</h2><div class="grid four"><a class="card" href="/donate.html"><h3>Donate</h3><p>Fund food, veterinary care, and spay/neuter.</p></a><a class="card" href="/foster.html"><h3>Foster</h3><p>Open your home and save a life.</p></a><a class="card" href="/volunteer.html"><h3>Volunteer</h3><p>Share your time and talents.</p></a><a class="card" href="/adopt.html"><h3>Adopt</h3><p>Meet your new best friend.</p></a></div></div></section>` +
     (latest ? `<section class="section"><div class="wrap"><p class="eyebrow">Latest news</p><h2>From our foster homes</h2><div class="grid">${latest}</div><p><a class="button soft" href="/news.html">All news</a></p></div></section>` : '') +
@@ -115,8 +117,14 @@ export function renderAbout(c) {
   const s = c.settings, p = c.pages.about || {};
   const board = c.board.map(b => `<article class="card"><img src="${esc(b.photo)}" alt="${esc(b.photo_alt)}" width="600" height="450" loading="lazy"><h3>${esc(b.name)}</h3><p class="eyebrow">${esc(b.role)}</p>${b.bodyHtml}</article>`).join('');
   const main = hero('Neighbors helping cats', esc(p.title || 'About us'), esc(p.intro || '')) +
-    `<section class="section"><div class="wrap"><h2>Our mission</h2>${md(p.mission || '')}<h2>Our board</h2><div class="grid">${board}</div><h2>Nonprofit information</h2><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. EIN ${esc(s.ein)}. The determination letter will be posted when supplied.</p></div></section>`;
+    `<section class="section"><div class="wrap"><h2>Our mission</h2>${md(p.mission || '')}<h2>Our board</h2><div class="grid">${board}</div><h2>Nonprofit information</h2><p>${esc(s.orgName)} is a 501(c)(3) nonprofit. Donations are tax-deductible. The determination letter will be posted when supplied.</p></div></section>`;
   return layout({ slug: 'about', title: `About | ${s.orgName}`, description: 'Learn about Grandma\'s Cat Coalition, our mission, board, and nonprofit status.', ld: ngoLd(s), main, settings: s });
+}
+
+export function renderCatDetail(c) {
+  const main = `<section class="hero"><div class="wrap"><p class="eyebrow">Adoptable cat</p><h1>Meet this cat</h1><p>Current details are pulled from ShelterLuv when you open the page.</p></div></section>` +
+    `<section class="section"><div class="wrap" data-cat-detail><div class="skeleton"></div></div></section>`;
+  return layout({ slug: 'meet-cat', title: `Meet an Adoptable Cat | ${c.settings.orgName}`, description: 'Learn more about an adoptable cat from Grandma\'s Cat Coalition.', ld: crumbLd('Meet an Adoptable Cat'), main, settings: c.settings });
 }
 
 export function renderFoundACat(c) {
@@ -177,7 +185,7 @@ const staticPage = (slug, title, heading, copy) => c => layout({
 export const renderers = {
   index: renderHome, adopt: renderAdopt, foster: renderFoster, volunteer: renderVolunteer,
   donate: renderDonate, tnr: renderTnr, about: renderAbout, 'found-a-cat': renderFoundACat,
-  news: renderNews, events: renderEvents, 'happy-tails': renderHappyTails, contact: renderContact,
+  news: renderNews, events: renderEvents, 'happy-tails': renderHappyTails, contact: renderContact, 'meet-cat': renderCatDetail,
   privacy: staticPage('privacy', 'Privacy policy', 'Your privacy matters', 'We collect only the information you choose to send through our forms and use it to respond to you. We do not sell personal information.'),
   terms: staticPage('terms', 'Website terms', 'Terms of use', 'This website provides general rescue information. Animal availability and services may change.'),
   404: staticPage('404', 'Page not found', 'That page wandered off', 'Try the home page or contact us if you need help.'),

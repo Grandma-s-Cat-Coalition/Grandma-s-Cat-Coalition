@@ -1,15 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir, access } from 'node:fs/promises';
-import { renderCatCards } from '../src/cats.js';
+import { renderCatCards, renderCatDetail } from '../src/cats.js';
 import { loadContent, md, loadJson, parseFrontMatter } from '../scripts/lib/content.mjs';
-import { renderHome, renderAbout, renderDonate, renderNews, renderNewsDetail, renderEvents, renderFoster, renderHappyTails, renderers } from '../scripts/lib/render.mjs';
+import { renderHome, renderAbout, renderDonate, renderNews, renderNewsDetail, renderEvents, renderFoster, renderHappyTails, renderCatDetail as renderCatDetailPage, renderers } from '../scripts/lib/render.mjs';
 
-const routes = ['index', 'adopt', 'foster', 'volunteer', 'donate', 'tnr', 'about', 'found-a-cat', 'happy-tails', 'news', 'events', 'contact', 'privacy', 'terms', '404'];
+const routes = ['index', 'adopt', 'foster', 'volunteer', 'donate', 'tnr', 'about', 'found-a-cat', 'happy-tails', 'news', 'events', 'contact', 'meet-cat', 'privacy', 'terms', '404'];
 const content = await loadContent('.');
 const settings = content.settings;
 
-test('all 15 routes exist with unique metadata', async () => {
+test('all 16 routes exist with unique metadata', async () => {
   const titles = new Set();
   for (const r of routes) {
     const h = await readFile(`${r}.html`, 'utf8');
@@ -61,7 +61,7 @@ test('news index cards link to detail pages', () => {
 
 test('design tokens exist and components use variables only', async () => {
   const tokens = await readFile('src/tokens.css', 'utf8');
-  for (const t of ['--plum-900:#3E1A52', '--plum-700:#5B2C6F', '--sage-700:#6E7F4C', '--cream:#F6F3EA', '--gold:#D9A93A', 'Kaushan Script', 'Fraunces', 'Lato']) assert.ok(tokens.includes(t), `tokens.css has ${t}`);
+  for (const t of ['--plum-900:#520446', '--sage-900:#215204', '--cream:#FFFFFE', '--gold:#E9967A', 'Kaushan Script', 'Fraunces', 'Lato']) assert.ok(tokens.includes(t), `tokens.css has ${t}`);
   const css = await readFile('src/styles.css', 'utf8');
   assert.match(css, /@import '\.\/tokens\.css'/);
   assert.doesNotMatch(css.replace(/@import url\([^)]*\)/, ''), /#[0-9a-fA-F]{3,8}\b/, 'styles.css has no raw hex outside tokens');
@@ -81,14 +81,31 @@ test('gold treatment is reserved for Donate links, and home hero has a gold Dona
 test('footer carries settings-driven disclosure and mobile bar has quick actions', async () => {
   const h = await readFile('index.html', 'utf8');
   assert.match(h, /501\(c\)\(3\)/);
-  assert.ok(h.includes(`EIN ${settings.ein}`));
+  assert.doesNotMatch(h, /EIN /);
   assert.match(h, /class="mobile-bar"[^>]*>[\s\S]*?Donate[\s\S]*?Adopt[\s\S]*?Call/);
 });
 
 test('CMS settings drive the build (change settings → change output)', () => {
   const modified = { ...content, settings: { ...settings, heroTitle: 'TEST_HERO_TITLE_XYZ', ein: '12-3456789', impact: { tnr: 741, adopted: 852, foster: 963 } } };
   const html = renderHome(modified);
-  for (const x of ['TEST_HERO_TITLE_XYZ', 'EIN 12-3456789', '741', '852', '963']) assert.ok(html.includes(x), `settings value ${x} reaches the page`);
+  assert.ok(html.includes('TEST_HERO_TITLE_XYZ'), 'hero title reaches the page');
+  for (const x of ['EIN 12-3456789', '741', '852', '963']) assert.ok(!html.includes(x), `removed setting ${x} is not rendered`);
+});
+
+test('home omits impact counters until real numbers are available', () => {
+  const html = renderHome({ ...content, settings: { ...settings, impact: { tnr: 741, adopted: 852, foster: 963 } } });
+  assert.doesNotMatch(html, /Our impact/);
+  assert.doesNotMatch(html, /Cats TNR'd|Cats adopted|In foster care/);
+});
+
+test('hero supports a self-hosted video only after a local asset is configured', () => {
+  const video = renderHome({ ...content, settings: { ...settings, heroVideo: '/videos/hero.mp4' } });
+  assert.match(video, /<video class="hero-photo" autoplay loop muted playsinline/);
+  assert.match(video, /poster="\/images\/brand\/grandma-and-cat\.jpg"/);
+  assert.match(video, /<source src="\/videos\/hero\.mp4" type="video\/mp4">/);
+  const remote = renderHome({ ...content, settings: { ...settings, heroVideo: 'https://blobby.wsimg.com/getty/videos/2207029593' } });
+  assert.doesNotMatch(remote, /<video/);
+  assert.match(remote, /<img class="hero-photo"/);
 });
 
 test('every configured CMS field reaches output (no silent drops)', () => {
@@ -160,13 +177,37 @@ test('front-matter parses block-list fields (photos, tags)', () => {
 });
 
 test('ShelterLuv success renders escaped cards', () => {
-  const cats = [{ name: 'Mia <script>alert(1)</script>', age: '2y', sex: 'F', breed: 'DSH "tabby"', description: '<img onerror=x>', photo: 'javascript:alert(1)', profileUrl: 'https://shelterluv.com/mia' }];
+  const cats = [{ id: 'GCCI-A-1', name: 'Mia <script>alert(1)</script>', age: '2y', sex: 'F', breed: 'DSH "tabby"', description: '<img onerror=x>', photo: 'javascript:alert(1)', profileUrl: 'https://shelterluv.com/mia' }];
   const html = renderCatCards(cats, 'https://example.com/adopt');
   assert.match(html, /<article class="card">/);
   assert.ok(!html.includes('<script>'), 'names are escaped');
   assert.ok(!html.includes('<img onerror'), 'descriptions are escaped');
   assert.ok(!html.includes('javascript:'), 'non-http URLs are rejected');
-  assert.ok(html.includes('https://shelterluv.com/mia'), 'valid profile URL kept');
+  assert.ok(html.includes('/meet-cat.html?id='), 'card links to local detail page when the API has an id');
+});
+
+test('cat detail page and renderer expose structured ShelterLuv facts safely', () => {
+  const page = renderCatDetailPage(content);
+  assert.match(page, /data-cat-detail/);
+  const html = renderCatDetail({
+    id: 'GCCI-A-1',
+    animalId: 'GCCI-A-1',
+    name: 'Mia <script>alert(1)</script>',
+    age: '0Y/3M/1W',
+    sex: 'Female',
+    breed: 'Domestic Short Hair',
+    weight: '3 lb',
+    adoptionFee: '$100',
+    intakeDate: '2026-09-01',
+    description: '<img onerror=x>',
+    photo: 'javascript:alert(1)',
+    profileUrl: 'https://shelterluv.com/mia',
+  }, 'https://example.com/adopt');
+  for (const text of ['Animal ID', 'GCCI-A-1', 'Breed', 'Domestic Short Hair', 'Sex', 'Female', 'Weight', '3 lb', 'Age', '0Y/3M/1W', 'Adoption Fee', '$100', 'Intake Date', '2026-09-01']) assert.ok(html.includes(text));
+  assert.ok(!html.includes('<script>'));
+  assert.ok(!html.includes('<img onerror'));
+  assert.ok(!html.includes('javascript:'));
+  assert.ok(html.includes('https://shelterluv.com/mia'), 'valid ShelterLuv application URL kept');
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
@@ -192,6 +233,7 @@ test('all forms share the JS submit path with honeypot and status', async () => 
 
 test('ShelterLuv API has cache; client falls back to embed widget, then notice', async () => {
   assert.match(await readFile('api/shelterluv.js', 'utf8'), /s-maxage=600/);
+  assert.match(await readFile('api/shelterluv/[id].js', 'utf8'), /s-maxage=600/);
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /shelterluv_embed\.js/, 'adopt page mounts the ShelterLuv embed when the API is unavailable');
   assert.match(js, /gid: 100003517/, 'embed uses the GCC shelter id');

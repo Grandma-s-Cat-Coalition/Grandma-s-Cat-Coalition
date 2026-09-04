@@ -1,5 +1,5 @@
 import './styles.css';
-import { renderCatCards } from './cats.js';
+import { renderCatCards, renderCatDetail } from './cats.js';
 
 // Header, footer, and page content are rendered at build time from content/
 // (scripts/build.mjs). This file only wires up behavior.
@@ -68,3 +68,19 @@ export async function loadCats(target, limit) {
 
 const catGrid = document.querySelector('[data-cats]');
 if (catGrid) loadCats(catGrid, Number(catGrid.dataset.limit) || undefined);
+
+const catDetail = document.querySelector('[data-cat-detail]');
+if (catDetail) {
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) {
+    catDetail.innerHTML = '<div class="notice"><h2>Cat not found</h2><p><a href="/adopt.html">See all adoptable cats</a>.</p></div>';
+  } else {
+    try {
+      const r = await fetch(`/api/shelterluv/${encodeURIComponent(id)}`);
+      if (!r.ok) throw 0;
+      catDetail.innerHTML = renderCatDetail(await r.json(), adoptUrl);
+    } catch {
+      catDetail.innerHTML = fallback();
+    }
+  }
+}

@@ -2,6 +2,17 @@
 
 Add new entries at the top. Keep entries concise and link the governing spec.
 
+## 2026-09-04 — Codex → Claude: round 2 implementation ready for re-review
+
+- **Spec:** [01-site-foundation.md](01-site-foundation.md) plus the 2026-09-04 round 2 brief below.
+- **State:** Implemented items 1, 2 support path, 3, 4, and 6. Item 5 remains blocked on adoption-fee content from Cortney/Kim.
+- **Files/areas changed:** Remapped `src/tokens.css` to the live-site palette: `#520446` as deep plum, `#215204` as the true green family, `#fffffe` as page cream, and `#e9967a` as the Donate accent role replacing the old gold token. Removed the home impact counter section. Removed EIN display copy from the footer and About nonprofit paragraph while leaving `content/settings.json.ein` in place. Added `meet-cat.html`, `renderCatDetail`, local cat-card links, `src` detail rendering, and `/api/shelterluv/[id]` for runtime ShelterLuv detail lookup with the same 10-minute edge cache pattern as the list endpoint. Generated pages and sitemap were rebuilt.
+- **Design calls made:** Color-role call: treat salmon/coral as the Donate accent by keeping the existing `--gold` role name for compatibility but changing its value to `#e9967a`; derive green/plum tints from the supplied live-site colors. Cat-detail architecture call: use one static `meet-cat.html?id=...` page plus a runtime Vercel function instead of build-time per-cat pages, because availability changes frequently and this stack has no SSR framework. Hero-video license call: do not hotlink or download the GoDaddy/Getty URL; the renderer now supports a self-hosted `/videos/*.mp4` `heroVideo` value with the current `heroImage` as poster/fallback, but production stays on the static image until Cortney confirms license or supplies owned footage.
+- **Still open:** Cortney needs to confirm the color-role remap, clear/provide hero footage before any video asset ships, provide adoption-fee copy, and share ShelterLuv API specs so the exact detail field names for weight/intake date/fee/internal animal ID can replace the current defensive fallback mapping if needed. Existing launch blockers for Zeffy, CMS OAuth/domain, ShelterLuv key, and final logo/imagery remain unchanged. Existing untracked `.claude/` and `docs/sponsor-a-foster-cat-program.md` were left untouched.
+- **Verification:** `npm.cmd run build` succeeded, including image optimization and Vite output with `meet-cat.html`; `npm.cmd test` passed 28/28; `git diff --check` passed with only Git's CRLF working-copy warnings.
+- **Requested next action:** Claude re-review the implementation, with special attention to the design calls above and the ShelterLuv detail-field fallback mapping.
+- **Next owner:** Claude.
+
 ## 2026-09-04 — Cortney (via Claude) → Codex: round 2 content + cat-profile feature — implement, don't just review
 
 - **Spec:** [01-site-foundation.md](01-site-foundation.md) plus the new work below (no formal Spec 02 written; treat this entry as the brief). **Role note:** Cortney asked for this round to be implemented by Codex directly, not reviewed after Claude builds it — same reversal as the original Spec 01 skeleton. Claude is not touching src/, scripts/, or content/ for these items; only two ops-only Vercel env var changes were made (below) and this log entry.

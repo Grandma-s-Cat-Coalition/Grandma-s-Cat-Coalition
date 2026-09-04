@@ -1,22 +1,21 @@
-/* Design tokens — copied from docs/style-tile.html (style tile v3).
-   Components use these variables only — never raw hex. */
+/* Design tokens. Components use these variables only — never raw hex. */
 :root{
-  /* ===== Brand palette — sampled from Kim's logo + banner ===== */
-  --plum-900:#3E1A52;   /* deepest purple: hero/footer bg, heading text */
-  --plum-700:#5B2C6F;   /* PRIMARY: buttons, links, script accents, icons */
-  --plum-500:#7A4A8C;   /* hover tint, watercolor washes */
-  --plum-200:#D9C9E0;   /* light lavender: text on dark, borders */
-  --plum-100:#F0E8F3;   /* lilac tint: soft buttons, highlights */
-  --sage-900:#4F5E36;   /* dark olive: green text on light, "CAT COALITION" */
-  --sage-700:#6E7F4C;   /* SECONDARY: ribbons, tags, secondary buttons */
-  --sage-500:#9AAB7E;   /* mid sage: dividers, silhouettes, icons — never text */
-  --sage-200:#D3DCC2;   /* pale sage: borders on light */
-  --sage-100:#E9EEDF;   /* palest sage: section backgrounds (from logo) */
-  --cream:#F6F3EA;      /* page background (from banner) */
+  /* Brand palette supplied from the live GoDaddy site. */
+  --plum-900:#520446;   /* deepest purple: hero/footer bg, heading text */
+  --plum-700:#6F145F;   /* primary: buttons, links, script accents, icons */
+  --plum-500:#955087;   /* hover tint, watercolor washes */
+  --plum-200:#DDC5D8;   /* light plum: text on dark, borders */
+  --plum-100:#F4EAF2;   /* pale plum: soft buttons, highlights */
+  --sage-900:#215204;   /* true green: green text on light, "CAT COALITION" */
+  --sage-700:#2F7210;   /* secondary: ribbons, tags, secondary buttons */
+  --sage-500:#66994A;   /* mid green: dividers, silhouettes, icons — never text */
+  --sage-200:#CBE3BE;   /* pale green: borders on light */
+  --sage-100:#EDF7E7;   /* palest green: section backgrounds */
+  --cream:#FFFFFE;      /* page background */
   --paper:#FFFFFF;
   --ink:#2B2130;        /* body text: purple-black, never pure black */
   --ink-muted:#6B5F70;
-  --gold:#D9A93A; --gold-dark:#B4871F;   /* DONATE only */
+  --gold:#E9967A; --gold-dark:#C87358;   /* donate accent role, now brand salmon */
   --line:#E2DDE6;
   /* roles */
   --bg:var(--cream); --surface:var(--paper); --text:var(--ink); --muted:var(--ink-muted);
@@ -25,5 +24,5 @@
   --font-script:"Kaushan Script",cursive;
   --font-display:"Fraunces",Georgia,serif;
   --font-body:"Lato",Arial,sans-serif;
-  --radius:16px; --radius-sm:10px; --shadow:0 6px 24px rgba(62,26,82,.10);
+  --radius:16px; --radius-sm:10px; --shadow:0 6px 24px rgba(82,4,70,.10);
 }
