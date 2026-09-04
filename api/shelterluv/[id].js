@@ -1,24 +1,22 @@
-const pick = (obj, names) => {
-  for (const name of names) {
-    const value = obj?.[name];
-    if (value !== undefined && value !== null && value !== '') return value;
-  }
-  return '';
-};
+const pick = (obj, names) => names.map(name => obj?.[name]).find(value => value !== undefined && value !== null && value !== '') || '';
+const authHeaders = key => ({ Authorization: `Bearer ${key}`, 'X-Api-Key': key });
+const dateFromUnix = seconds => seconds ? new Date(Number(seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
+const fee = group => Array.isArray(group) && group[0]?.Price !== undefined ? `$${Number(group[0].Price).toFixed(2).replace(/\.00$/, '')}` : '';
+const profileUrl = a => a?.ID ? `https://new.shelterluv.com/matchme/adopt/GCCI/Cat/${encodeURIComponent(a.ID)}` : '';
 
 const mapAnimal = a => ({
-  id: pick(a, ['ID', 'id']),
-  animalId: pick(a, ['InternalId', 'InternalID', 'AnimalId', 'AnimalID', 'ID', 'id']),
+  id: pick(a, ['Internal-ID', 'ID']),
+  animalId: pick(a, ['ID']),
   name: pick(a, ['Name', 'name']),
   photo: pick(a, ['CoverPhoto', 'cover_photo', 'photo']),
   age: pick(a, ['Age', 'age']),
   sex: pick(a, ['Sex', 'sex']),
   breed: pick(a, ['Breed', 'breed']),
-  weight: pick(a, ['Weight', 'weight', 'CurrentWeight']),
-  adoptionFee: pick(a, ['AdoptionFee', 'adoption_fee', 'Fee']),
-  intakeDate: pick(a, ['IntakeDate', 'intake_date', 'CreatedDate']),
+  weight: pick(a, ['CurrentWeightPounds']) ? `${pick(a, ['CurrentWeightPounds'])} lb` : '',
+  adoptionFee: fee(a.AdoptionFeeGroup),
+  intakeDate: dateFromUnix(pick(a, ['LastIntakeUnixTime'])),
   description: pick(a, ['Description', 'description']),
-  profileUrl: pick(a, ['ProfileUrl', 'ProfileURL', 'profile_url']),
+  profileUrl: profileUrl(a),
 });
 
 export default async function handler(req, res) {
@@ -27,14 +25,10 @@ export default async function handler(req, res) {
   const id = String(req.query.id || '').replace(/[^\w.-]/g, '');
   if (!id) return res.status(400).json({ error: 'Missing animal id' });
   try {
-    const r = await fetch('https://www.shelterluv.com/api/v1/animals?status_type=publishable', { headers: { 'X-Api-Key': process.env.SHELTERLUV_API_KEY } });
+    const r = await fetch(`https://new.shelterluv.com/api/v1/animals/${encodeURIComponent(id)}`, { headers: authHeaders(process.env.SHELTERLUV_API_KEY) });
     if (!r.ok) throw 0;
-    const raw = await r.json();
-    const animals = raw.animals || raw;
-    const animal = animals.find(a => String(pick(a, ['ID', 'id'])) === id);
-    if (!animal) return res.status(404).json({ error: 'Animal not found' });
     res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=3600');
-    return res.status(200).json(mapAnimal(animal));
+    return res.status(200).json(mapAnimal(await r.json()));
   } catch {
     return res.status(502).json({ error: 'Unable to load animal' });
   }

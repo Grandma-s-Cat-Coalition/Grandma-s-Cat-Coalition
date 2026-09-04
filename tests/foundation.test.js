@@ -232,8 +232,15 @@ test('all forms share the JS submit path with honeypot and status', async () => 
 });
 
 test('ShelterLuv API has cache; client falls back to embed widget, then notice', async () => {
-  assert.match(await readFile('api/shelterluv.js', 'utf8'), /s-maxage=600/);
-  assert.match(await readFile('api/shelterluv/[id].js', 'utf8'), /s-maxage=600/);
+  const listApi = await readFile('api/shelterluv.js', 'utf8');
+  const detailApi = await readFile('api/shelterluv/[id].js', 'utf8');
+  assert.match(listApi, /s-maxage=600/);
+  assert.match(listApi, /Internal-ID/);
+  assert.match(detailApi, /s-maxage=600/);
+  assert.match(detailApi, /api\/v1\/animals\/\$\{encodeURIComponent\(id\)\}/);
+  assert.match(detailApi, /LastIntakeUnixTime/);
+  assert.match(detailApi, /CurrentWeightPounds/);
+  assert.match(detailApi, /AdoptionFeeGroup/);
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /shelterluv_embed\.js/, 'adopt page mounts the ShelterLuv embed when the API is unavailable');
   assert.match(js, /gid: 100003517/, 'embed uses the GCC shelter id');
