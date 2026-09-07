@@ -1,22 +1,22 @@
 /* Design tokens. Components use these variables only — never raw hex. */
 :root{
-  /* Brand palette supplied from the live GoDaddy site. */
-  --plum-900:#520446;   /* deepest purple: hero/footer bg, heading text */
-  --plum-700:#6F145F;   /* primary: buttons, links, script accents, icons */
-  --plum-500:#955087;   /* hover tint, watercolor washes */
-  --plum-200:#DDC5D8;   /* light plum: text on dark, borders */
-  --plum-100:#F4EAF2;   /* pale plum: soft buttons, highlights */
-  --sage-900:#215204;   /* true green: green text on light, "CAT COALITION" */
-  --sage-700:#2F7210;   /* secondary: ribbons, tags, secondary buttons */
-  --sage-500:#66994A;   /* mid green: dividers, silhouettes, icons — never text */
-  --sage-200:#CBE3BE;   /* pale green: borders on light */
-  --sage-100:#EDF7E7;   /* palest green: section backgrounds */
-  --cream:#FFFFFE;      /* page background */
-  --paper:#FFFFFF;
-  --ink:#2B2130;        /* body text: purple-black, never pure black */
-  --ink-muted:#6B5F70;
-  --gold:#E9967A; --gold-dark:#C87358;   /* donate accent role, now brand salmon */
-  --line:#E2DDE6;
+  /* Grandma's Cat Coalition established brand palette. */
+  --plum-900:#520446;   /* Royal Plum: hero/footer and headings */
+  --plum-700:#6B3F7B;   /* Grandma's Purple: primary actions and links */
+  --plum-500:#6B3F7B;
+  --plum-200:#F5F0E3;
+  --plum-100:#FFFFFE;
+  --sage-900:#28543A;   /* Deep Emerald: readable green text */
+  --sage-700:#78885D;   /* Heritage Sage: secondary actions and accents */
+  --sage-500:#78885D;
+  --sage-200:#F5F0E3;
+  --sage-100:#F5F0E3;
+  --cream:#F5F0E3;      /* Grandma's Cream: page background */
+  --paper:#FFFFFE;      /* Soft White: surfaces */
+  --ink:#333333;        /* Warm Charcoal: body text */
+  --ink-muted:#333333;
+  --gold:#A98532; --gold-dark:#A98532;   /* Antique Gold: donate accent */
+  --line:#78885D;
   /* roles */
   --bg:var(--cream); --surface:var(--paper); --text:var(--ink); --muted:var(--ink-muted);
   --primary:var(--plum-700); --primary-hover:var(--plum-900);

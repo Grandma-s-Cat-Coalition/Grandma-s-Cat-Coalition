@@ -61,7 +61,7 @@ test('news index cards link to detail pages', () => {
 
 test('design tokens exist and components use variables only', async () => {
   const tokens = await readFile('src/tokens.css', 'utf8');
-  for (const t of ['--plum-900:#520446', '--sage-900:#215204', '--cream:#FFFFFE', '--gold:#E9967A', 'Kaushan Script', 'Fraunces', 'Lato']) assert.ok(tokens.includes(t), `tokens.css has ${t}`);
+  for (const t of ['--plum-900:#520446', '--plum-700:#6B3F7B', '--sage-700:#78885D', '--sage-900:#28543A', '--cream:#F5F0E3', '--paper:#FFFFFE', '--ink:#333333', '--gold:#A98532', 'Kaushan Script', 'Fraunces', 'Lato']) assert.ok(tokens.includes(t), `tokens.css has ${t}`);
   const css = await readFile('src/styles.css', 'utf8');
   assert.match(css, /@import '\.\/tokens\.css'/);
   assert.doesNotMatch(css.replace(/@import url\([^)]*\)/, ''), /#[0-9a-fA-F]{3,8}\b/, 'styles.css has no raw hex outside tokens');
