@@ -1,7 +1,7 @@
 ---
 title: Why TNR matters in our community
 date: 2026-08-28
-cover: /images/brand/grandma-and-cat.jpg
+cover: /images/brand/community-cat.jpg
 cover_alt: Orange cat sitting safely beside a caregiver
 excerpt: Spay and neuter services are one of the most compassionate ways to help community cats.
 tags: [TNR, education]

@@ -101,7 +101,7 @@ test('home omits impact counters until real numbers are available', () => {
 test('hero supports a self-hosted video only after a local asset is configured', () => {
   const video = renderHome({ ...content, settings: { ...settings, heroVideo: '/videos/hero.mp4' } });
   assert.match(video, /<video class="hero-photo" autoplay loop muted playsinline/);
-  assert.match(video, /poster="\/images\/brand\/grandma-and-cat\.jpg"/);
+  assert.match(video, /poster="\/images\/brand\/rescue-cat\.jpg"/);
   assert.match(video, /<source src="\/videos\/hero\.mp4" type="video\/mp4">/);
   const remote = renderHome({ ...content, settings: { ...settings, heroVideo: 'https://blobby.wsimg.com/getty/videos/2207029593' } });
   assert.doesNotMatch(remote, /<video/);
