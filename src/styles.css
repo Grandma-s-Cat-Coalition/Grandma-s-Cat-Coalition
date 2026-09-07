@@ -32,7 +32,7 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 .button:hover{background:var(--primary-hover)}
 .button.secondary{background:var(--secondary)}
 .button.secondary:hover{background:var(--secondary-hover)}
-.button.soft{background:var(--plum-100);color:var(--plum-900);border-color:var(--plum-200)}
+.button.soft{background:var(--plum-100);color:var(--ink);border-color:var(--plum-200)}
 .button.soft:hover{background:var(--plum-200);border-color:var(--plum-500)}
 .button.donate{background:var(--gold);color:var(--plum-900)}
 .button.donate:hover{background:var(--gold-dark)}
@@ -46,13 +46,14 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 .hero a.button.donate{color:var(--plum-900)}
 .hero .eyebrow{color:var(--sage-200)}
 .hero-split{display:grid;grid-template-columns:1.1fr .9fr;gap:2.5rem;align-items:center}
-.hero-photo{border-radius:var(--radius);box-shadow:var(--shadow);aspect-ratio:4/3;object-fit:cover;width:100%}
+.hero-photo{border:8px solid var(--paper);border-radius:var(--radius);box-shadow:0 14px 30px rgba(51,51,51,.28);aspect-ratio:4/3;object-fit:cover;width:100%}
 .hero-media{display:grid;gap:.65rem}
-.actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem}
+.actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem}.hero .actions{column-gap:0}
 
 /* Sections alternate Cream → Sage 100 → white cards */
 .section{padding:4.5rem 0}
 .section.sage{background:var(--sage-100)}
+.story{background:var(--paper)}.story-copy{max-width:800px}.story-closing{font-weight:900;color:var(--plum-900)}.section-intro{font-size:1.1rem}.help-grid .card{position:relative;transition:transform .15s,box-shadow .15s;border:2px solid var(--sage-700)}.help-grid .card:hover{transform:translateY(-5px);box-shadow:0 12px 28px rgba(51,51,51,.2)}.card-icon{font-size:2rem}.card-link{display:block;margin-top:1rem;color:var(--plum-900);font-weight:900}
 .eyebrow{text-transform:uppercase;letter-spacing:.14em;color:var(--sage-900);font-weight:900;font-size:.8rem}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
 .grid.four{grid-template-columns:repeat(4,1fr)}
@@ -96,7 +97,7 @@ details.past-events summary{cursor:pointer;font-weight:900;color:var(--plum-900)
 .zeffy-embed{width:100%;min-height:640px;border:0;border-radius:var(--radius);box-shadow:var(--shadow);background:var(--paper)}
 
 /* Footer — Plum 900 */
-.site-footer{background:var(--plum-900);color:var(--plum-200);padding:3.5rem 0 6rem}
+.site-footer{background:var(--plum-900);color:var(--plum-200);padding:4.5rem 0 0}.footer-brand h2{font-size:clamp(1.7rem,3vw,2.4rem);margin-top:0}.tagline{font-size:1.1rem;max-width:340px}.address{margin-top:1.5rem}.contact-links{display:grid;gap:.45rem}.contact-links a{text-decoration:none}.footer-menu{display:flex;flex-direction:column;gap:.65rem}.site-footer h2{color:var(--paper);font-size:1.2rem;font-family:var(--font-body);font-weight:900}.footer-menu a{text-decoration:none;font-weight:700}.footer-menu a span{margin-left:.35rem}.social-links{display:flex;align-items:center;gap:.6rem;margin-top:1.5rem}.social-links span{margin-right:.4rem}.social-links a{display:grid;place-items:center;width:2rem;height:2rem;border:1px solid var(--plum-200);border-radius:50%;text-decoration:none;font-weight:900}.footer-newsletter .form{max-width:420px}.footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:3rem;padding:1.25rem 0;border-top:1px solid var(--plum-200)}.footer-bottom p{margin:0}.footer-bottom nav{display:flex;gap:1.2rem}.footer-bottom a{text-decoration:none}
 .site-footer a{color:var(--paper)}
 .site-footer h2{color:var(--paper);font-size:1.15rem;font-family:var(--font-body);font-weight:900}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
@@ -115,5 +116,5 @@ details.past-events summary{cursor:pointer;font-weight:900;color:var(--plum-900)
   .mobile-bar{position:fixed;display:grid;grid-template-columns:repeat(3,1fr);bottom:0;left:0;right:0;z-index:30;background:var(--surface);border-top:1px solid var(--line)}
   .mobile-bar a{text-align:center;padding:.8rem .2rem;text-decoration:none;font-weight:900;color:var(--plum-900)}
   .mobile-bar a.donate-link{background:var(--gold);color:var(--plum-900)}
-  .site-footer{padding-bottom:7rem}
+  .site-footer{padding-bottom:7rem}.footer-bottom{display:block;text-align:center}.footer-bottom nav{justify-content:center;margin-top:.75rem}
 }
