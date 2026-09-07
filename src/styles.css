@@ -28,14 +28,15 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 .menu{display:none;background:transparent;border:0;font-size:1.5rem;color:var(--plum-900);cursor:pointer}
 
 /* Buttons — pill shape, Lato 900, no hollow outlines */
-.button{display:inline-flex;justify-content:center;align-items:center;background:var(--primary);color:var(--paper);border:2px solid transparent;border-radius:999px;padding:.8rem 1.6rem;text-decoration:none;font-family:var(--font-body);font-weight:900;letter-spacing:.02em;cursor:pointer;transition:.15s}
-.button:hover{background:var(--primary-hover)}
-.button.secondary{background:var(--secondary)}
-.button.secondary:hover{background:var(--secondary-hover)}
-.button.soft{background:var(--plum-100);color:var(--ink);border-color:var(--plum-200)}
-.button.soft:hover{background:var(--plum-200);border-color:var(--plum-500)}
-.button.donate{background:var(--gold);color:var(--plum-900)}
-.button.donate:hover{background:var(--gold-dark)}
+.button{display:inline-flex;justify-content:center;align-items:center;background:var(--primary);color:var(--paper);border:2px solid transparent;border-radius:999px;padding:.8rem 1.6rem;text-decoration:none;font-family:var(--font-body);font-weight:900;letter-spacing:.02em;cursor:pointer;box-shadow:0 5px 0 color-mix(in srgb,var(--plum-900) 70%,transparent),0 9px 18px rgba(51,51,51,.18);transition:transform .15s,box-shadow .15s,background .15s}
+.button:hover{background:var(--primary-hover);transform:translateY(-3px);box-shadow:0 8px 0 color-mix(in srgb,var(--plum-900) 70%,transparent),0 14px 24px rgba(51,51,51,.22)}
+.button:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--plum-900) 70%,transparent),0 4px 10px rgba(51,51,51,.16)}
+.button.secondary{background:var(--secondary);box-shadow:0 5px 0 color-mix(in srgb,var(--sage-900) 70%,transparent),0 9px 18px rgba(51,51,51,.18)}
+.button.secondary:hover{background:var(--secondary-hover);box-shadow:0 8px 0 color-mix(in srgb,var(--sage-900) 70%,transparent),0 14px 24px rgba(51,51,51,.22)}
+.button.soft{background:var(--plum-100);color:var(--ink);border-color:var(--plum-200);box-shadow:0 5px 0 color-mix(in srgb,var(--ink) 24%,transparent),0 9px 18px rgba(51,51,51,.16)}
+.button.soft:hover{background:var(--plum-200);border-color:var(--plum-500);box-shadow:0 8px 0 color-mix(in srgb,var(--ink) 24%,transparent),0 14px 24px rgba(51,51,51,.2)}
+.button.donate{background:var(--gold);color:var(--plum-900);box-shadow:0 5px 0 color-mix(in srgb,var(--gold) 62%,var(--plum-900)),0 9px 18px rgba(51,51,51,.18)}
+.button.donate:hover{background:var(--gold-dark);box-shadow:0 8px 0 color-mix(in srgb,var(--gold) 62%,var(--plum-900)),0 14px 24px rgba(51,51,51,.22)}
 
 /* Hero — Plum 900 only for hero and footer */
 .hero{padding:clamp(3.5rem,8vw,6.5rem) 0;background:var(--plum-900);color:var(--plum-200)}
