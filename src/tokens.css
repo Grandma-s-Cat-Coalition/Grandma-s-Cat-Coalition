@@ -27,8 +27,10 @@
   --bg:var(--cream); --surface:var(--paper); --text:var(--ink); --muted:var(--ink-muted);
   --primary:var(--plum-700); --primary-hover:var(--plum-900);
   --secondary:var(--sage-700); --secondary-hover:var(--sage-900);
-  --font-script:"Kaushan Script",cursive;
-  --font-display:"Fraunces",Georgia,serif;
-  --font-body:"Lato",Arial,sans-serif;
+  --font-script-primary:"Story Script","Brush Script MT",cursive;
+  --font-serif:"Cinzel",Georgia,serif;
+  --font-sans:"Inter",Arial,sans-serif;
+  --font-script-accent:"Corinthia","Brush Script MT",cursive;
+  --font-script:var(--font-script-primary); --font-display:var(--font-serif); --font-body:var(--font-sans);
   --radius:16px; --radius-sm:10px; --shadow:0 6px 24px rgba(82,4,70,.10);
 }

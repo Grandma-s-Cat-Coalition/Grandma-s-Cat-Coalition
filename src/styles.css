@@ -22,7 +22,7 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 .nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .brand{text-decoration:none;font-size:1.05rem;line-height:1.05;display:flex;flex-direction:column}
 .brand .script{font-size:1.5rem}
-.brand .coalition{font-family:var(--font-display);font-weight:700;letter-spacing:.14em;color:var(--sage-900);font-size:.8rem}
+.brand .coalition{font-family:var(--font-serif);font-weight:700;letter-spacing:.14em;color:var(--sage-900);font-size:.8rem}
 .nav-links{display:flex;align-items:center;gap:1.2rem}
 .nav-links a{text-decoration:none;font-weight:700;color:var(--plum-900)}
 .menu{display:none;background:transparent;border:0;font-size:1.5rem;color:var(--plum-900);cursor:pointer}
@@ -59,7 +59,7 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 /* Sections alternate Cream → Sage 100 → white cards */
 .section{padding:4.5rem 0}
 .section.sage{background:var(--sage-100)}
-.story{background:var(--paper)}.story-copy{max-width:800px}.story-closing{font-weight:900;color:var(--plum-900)}.section-intro{font-size:1.1rem}.help-grid .card{position:relative;transition:transform .15s,box-shadow .15s;border:2px solid var(--sage-700)}.help-grid .card:hover{transform:translateY(-5px);box-shadow:0 12px 28px rgba(51,51,51,.2)}.card-icon{font-size:2rem}.card-link{display:block;margin-top:1rem;color:var(--plum-900);font-weight:900}
+.story{background:var(--paper)}.story-copy{max-width:800px}.story-closing{font-weight:900;color:var(--plum-900)}.section-intro{font-size:1.1rem}.help-grid .card{position:relative;transition:transform .15s,box-shadow .15s;border:2px solid var(--sage-700)}.help-grid .card:hover{transform:translateY(-5px);box-shadow:0 12px 28px rgba(51,51,51,.2)}.card-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--plum-900);background:var(--cream)}.card-icon svg{width:22px;height:22px}.card-link{display:block;margin-top:1rem;color:var(--plum-900);font-weight:900}
 .eyebrow{text-transform:uppercase;letter-spacing:.14em;color:var(--sage-900);font-weight:900;font-size:.8rem}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
 .grid.four{grid-template-columns:repeat(4,1fr)}
