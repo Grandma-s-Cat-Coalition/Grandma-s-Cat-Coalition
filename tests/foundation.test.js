@@ -75,7 +75,7 @@ test('gold treatment is reserved for Donate links, and home hero has a gold Dona
   }
   const home = await readFile('index.html', 'utf8');
   const heroSection = home.match(/<section class="hero">[\s\S]*?<\/section>/)[0];
-  assert.match(heroSection, /class="button button-donate"[^>]*href="\/donate\.html"/, 'home hero has a gold Donate CTA');
+  assert.match(heroSection, /class="button[^>]*button-donate"[^>]*href="\/donate\.html"/, 'home hero has a gold Donate CTA');
 });
 
 test('footer carries settings-driven disclosure and mobile bar has quick actions', async () => {
