@@ -16,6 +16,12 @@
   --ink:#333333;        /* Warm Charcoal: body text */
   --ink-muted:#333333;
   --gold:#A98532; --gold-dark:#A98532;   /* Antique Gold: donate accent */
+  --button-gold-top:#E4C45B; --button-gold-mid:#D4AF37; --button-gold-bottom:#C69A24; --button-gold-border:#B98B1E;
+  --button-sage-top:#87986A; --button-sage-bottom:#68784F; --button-sage-border:#5D7048;
+  --button-emerald-top:#396749; --button-emerald-bottom:#1E442E; --button-emerald-border:#173A27;
+  --button-purple-top:#80508F; --button-purple-bottom:#592F68;
+  --button-cream-bottom:#EAE2D1; --button-cream-border:#D4AF37;
+  --button-gold-icon-top:#9A7318; --button-gold-icon-bottom:#6F500D; --button-adopt-icon-top:#416548; --button-volunteer-icon-top:#6B155D; --button-volunteer-icon-bottom:#420038;
   --line:#78885D;
   /* roles */
   --bg:var(--cream); --surface:var(--paper); --text:var(--ink); --muted:var(--ink-muted);

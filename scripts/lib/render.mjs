@@ -25,6 +25,8 @@ const ngoLd = s => JSON.stringify({ '@context': 'https://schema.org', '@type': '
 const crumb = (...trail) => ({ '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE }, ...trail.map((t, i) => ({ '@type': 'ListItem', position: i + 2, name: t.name, ...(t.item ? { item: t.item } : {}) }))] });
 const crumbLd = name => JSON.stringify({ '@context': 'https://schema.org', ...crumb({ name }) });
 
+const icons = { heart: '<path d="M20.8 8.8c0 5.4-8.8 10.6-8.8 10.6S3.2 14.2 3.2 8.8a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7Z"/>', paw: '<path d="M8 9.2c-1.8 0-3-1.7-2.6-3.4.3-1.4 1.4-2.4 2.6-2.4s2.3 1 2.6 2.4C11 7.5 9.8 9.2 8 9.2Zm8 0c-1.8 0-3-1.7-2.6-3.4.3-1.4 1.4-2.4 2.6-2.4s2.3 1 2.6 2.4C19 7.5 17.8 9.2 16 9.2ZM12 20c-2.8 0-5-1.5-5-3.7 0-2.4 2.8-4.3 5-4.3s5 1.9 5 4.3c0 2.2-2.2 3.7-5 3.7Z"/>', house: '<path d="m3 10 9-7 9 7v9H3v-9Zm6 9v-5h6v5"/>', book: '<path d="M3 5.5c3-1 6-.5 9 1.5v12c-3-2-6-2.5-9-1.5v-12Zm18 0c-3-1-6-.5-9 1.5v12c3-2 6-2.5 9-1.5v-12Z"/>', envelope: '<rect x="3" y="5" width="18" height="14" rx="1"/><path d="m4 7 8 6 8-6"/>', people: '<circle cx="12" cy="8" r="3"/><path d="M6 19c0-3 2.7-5 6-5s6 2 6 5M5 11a2.5 2.5 0 1 1 0-5M19 11a2.5 2.5 0 1 0 0-5M2.5 19c.2-2.1 1.4-3.5 3.5-4M21.5 19c-.2-2.1-1.4-3.5-3.5-4"/>' };
+const actionButton = (kind, label, href, icon = kind) => `<a class="button button-${kind}" href="${href}"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">${icons[icon]}</svg></span><span>${label}</span><svg class="button-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>`;
 const newsletterForm = id => `<form class="newsletter form" action="/api/newsletter" method="post" data-api><label for="${id}">Email address</label><input id="${id}" name="email" type="email" required maxlength="200" placeholder="you@example.com"><label class="hp">Leave blank<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">Join the newsletter</button><p role="status" aria-live="polite"></p></form>`;
 
 function header() {
@@ -58,7 +60,7 @@ const heroMedia = s => isReal(SITE + s.heroVideo) && String(s.heroVideo).startsW
 export function renderHome(c) {
   const s = c.settings;
   const latest = c.news.slice(0, 3).map(newsCard).join('');
-  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions"><a class="button donate" href="/donate.html">Donate</a><a class="button secondary" href="/adopt.html">Meet adoptable cats</a><a class="button soft" href="/foster.html">Foster a cat</a></div></div><div class="hero-media">${heroMedia(s)}</div></div></section>` +
+  const main = `<section class="hero"><div class="wrap hero-split"><div><p class="eyebrow">Cat rescue · Lime Springs, Iowa</p><h1>${esc(s.heroTitle)}</h1><p>${esc(s.heroText)}</p><div class="actions">${actionButton('donate','DONATE NOW','/donate.html','heart')}${actionButton('adopt','ADOPT A CAT','/adopt.html','paw')}${actionButton('foster','FOSTER A CAT','/foster.html','house')}</div></div><div class="hero-media">${heroMedia(s)}</div></div></section>` +
     `<section class="section"><div class="wrap"><p class="eyebrow">Looking for home</p><h2>Meet the cats</h2><div class="grid" data-cats data-limit="4"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div></section>` +
     `<section class="section story"><div class="wrap story-copy"><p class="eyebrow">The story behind GCC</p><h2>Grandma’s love lives on, one cat at a time.</h2><p>Grandma’s Cat Coalition began with a love for cats and was named in memory of Eleanor Horst of Red Wing, Minnesota—a true cat lover.</p><p>That love grew into a mission here in Lime Springs, Iowa, where too many cats and kittens were being born outside, abandoned, injured, or left without an advocate. We knew we couldn’t save every cat, but we couldn’t look the other way.</p><p>Today, GCC is a volunteer-powered 501(c)(3) nonprofit providing rescue, fostering, adoption, TNR, education, and practical support for local cats and the people who care for them.</p><p class="story-closing">We may be a small-town rescue, but we’re determined to make a big difference—one cat at a time. 🐾</p></div></section>` +
     `<section class="section sage"><div class="wrap"><h2>How you can help</h2><p class="section-intro">There’s a meaningful place for you in this work.</p><div class="grid four help-grid"><a class="card" href="/donate.html"><span class="card-icon">💜</span><h3>Donate</h3><p>Fund food, veterinary care, and spay/neuter.</p><span class="card-link">Help cats heal →</span></a><a class="card" href="/foster.html"><span class="card-icon">🏡</span><h3>Foster</h3><p>Open your home and save a life.</p><span class="card-link">Open your home →</span></a><a class="card" href="/volunteer.html"><span class="card-icon">🤝</span><h3>Volunteer</h3><p>Share your time and talents.</p><span class="card-link">Join the team →</span></a><a class="card" href="/adopt.html"><span class="card-icon">🐱</span><h3>Adopt</h3><p>Meet your new best friend.</p><span class="card-link">Find your match →</span></a></div></div></section>` +
@@ -69,7 +71,7 @@ export function renderHome(c) {
 
 export function renderAdopt(c) {
   const p = c.pages.adopt || {};
-  const main = hero('Find your new friend', esc(p.title || 'Adopt a cat'), esc(p.intro || ''), `<a class="button" href="${shelter.adopt}">Apply to adopt</a>`) +
+  const main = hero('Find your new friend', esc(p.title || 'Adopt a cat'), esc(p.intro || ''), actionButton('adopt','ADOPT A CAT',shelter.adopt,'paw')) +
     `<section class="section"><div class="wrap"><h2>Available cats</h2><div class="grid" data-cats><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div></section>` +
     `<section class="section sage"><div class="wrap"><h2>How adoption works</h2><p>Browse available cats, complete the ShelterLuv application, and our volunteers will help you find a good match.</p>${md(p.fees || '')}</div></section>`;
   return layout({ slug: 'adopt', title: `Adopt a Cat | ${c.settings.orgName}`, description: 'Meet adoptable cats from Grandma\'s Cat Coalition and apply through ShelterLuv.', ld: crumbLd('Adopt'), main, settings: c.settings });
@@ -78,14 +80,14 @@ export function renderAdopt(c) {
 export function renderFoster(c) {
   const p = c.pages.foster || {};
   const faq = (c.fosterFaq || []).map(f => `<details><summary>${esc(f.question)}</summary><p>${esc(f.answer)}</p></details>`).join('');
-  const main = hero('Open your home', esc(p.title || 'Foster a cat'), esc(p.intro || ''), `<a class="button" href="${shelter.foster}">Apply to foster</a>`) +
+  const main = hero('Open your home', esc(p.title || 'Foster a cat'), esc(p.intro || ''), actionButton('foster','FOSTER A CAT',shelter.foster,'house')) +
     `<section class="section"><div class="wrap"><h2>You provide love. We help with the rest.</h2>${md(p.body || '')}<h2>Common questions</h2>${faq}</div></section>`;
   return layout({ slug: 'foster', title: `Foster a Cat | ${c.settings.orgName}`, description: 'Foster a cat with Grandma\'s Cat Coalition and save a life from your own home.', ld: crumbLd('Foster'), main, settings: c.settings });
 }
 
 export function renderVolunteer(c) {
   const p = c.pages.volunteer || {};
-  const main = hero('Join us', esc(p.title || 'Volunteer'), esc(p.intro || ''), `<a class="button" href="${shelter.volunteer}">Become a volunteer</a>`) +
+  const main = hero('Join us', esc(p.title || 'Volunteer'), esc(p.intro || ''), actionButton('volunteer','VOLUNTEER',shelter.volunteer,'heart')) +
     `<section class="section"><div class="wrap"><h2>There is a place for you</h2>${md(p.body || '')}</div></section>`;
   return layout({ slug: 'volunteer', title: `Volunteer | ${c.settings.orgName}`, description: 'Volunteer with Grandma\'s Cat Coalition in Northeast Iowa.', ld: crumbLd('Volunteer'), main, settings: c.settings });
 }
