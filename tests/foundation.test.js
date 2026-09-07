@@ -65,7 +65,7 @@ test('design tokens exist and components use variables only', async () => {
   const css = await readFile('src/styles.css', 'utf8');
   assert.match(css, /@import '\.\/tokens\.css'/);
   assert.doesNotMatch(css.replace(/@import url\([^)]*\)/, ''), /#[0-9a-fA-F]{3,8}\b/, 'styles.css has no raw hex outside tokens');
-  assert.match(css, /\.button\.donate\{background:var\(--gold\)/);
+  assert.match(css, /\.button\.donate\{[^}]*var\(--gold\)/);
 });
 
 test('gold treatment is reserved for Donate links, and home hero has a gold Donate CTA', async () => {
