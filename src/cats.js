@@ -24,7 +24,7 @@ export function formatAge(age) {
 }
 
 export function buildCatBio(cat) {
-  const name = String(cat.name || 'This cat');
+  const name = String(cat.name || 'this cat');
   const age = formatAge(cat.age);
   const type = [cat.sex?.toLowerCase(), cat.breed].filter(Boolean).join(' ');
   const facts = [];
@@ -33,9 +33,9 @@ export function buildCatBio(cat) {
   if (attributes.includes('Good with Dogs')) facts.push('good with dogs');
   if (attributes.includes('Good with Kids') || attributes.includes('Good with Children')) facts.push('good with kids');
   if (attributes.includes('Litter Box Trained')) facts.push('litter-box trained');
-  const factSentence = facts.length ? ` ${facts.slice(0, -1).join(', ')}${facts.length > 1 ? ' and ' : ''}${facts.at(-1)}.` : '';
-  const identity = age ? `${age} old${type ? ` and is a ${type}` : ''}` : `an ${type || 'adoptable cat'}`;
-  return `${name} is ${identity}.${factSentence}`;
+  const factSentence = facts.length ? ` I am ${facts.slice(0, -1).join(', ')}${facts.length > 1 ? ' and ' : ''}${facts.at(-1)}.` : '';
+  const identity = age ? `I am ${age} old${type ? ` and a ${type}` : ''}.` : type ? `I am a ${type}.` : '';
+  return `Hi! My name is ${name}.${identity}${factSentence} I am looking for a loving forever home.`;
 }
 
 export function renderCatCards(cats, adoptUrl) {

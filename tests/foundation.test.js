@@ -217,8 +217,10 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
 test('cat detail generates a factual bio when ShelterLuv has no prose description', () => {
   const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats', 'Litter Box Trained'] }, 'https://example.com/adopt');
   assert.ok(!html.includes('This cat is available through'));
-  assert.ok(html.includes('Mia is 2 years old and is a female Domestic Short Hair.'));
-  assert.ok(html.includes('good with cats and litter-box trained'));
+  assert.ok(html.includes('Hi! My name is Mia.'));
+  assert.ok(html.includes('I am 2 years old and a female Domestic Short Hair.'));
+  assert.ok(html.includes('I am good with cats and litter-box trained.'));
+  assert.ok(html.includes('loving forever home'));
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
