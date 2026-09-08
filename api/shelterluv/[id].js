@@ -18,9 +18,19 @@ const mapAnimal = a => ({
   intakeDate: dateFromUnix(pick(a, ['LastIntakeUnixTime'])),
   location: pick(a, ['Location', 'location']),
   attributes: attributes(a.Attributes || a.attributes),
-  description: pick(a, ['Description', 'description']),
+  description: pick(a, ['Description', 'description', 'kennel_description']),
   profileUrl: profileUrl(a),
 });
+
+const htmlDecode = value => value.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&');
+const publicAnimal = async id => {
+  const r = await fetch(`https://new.shelterluv.com/embed/animal/${encodeURIComponent(id)}`);
+  if (!r.ok) return {};
+  const html = await r.text();
+  const match = html.match(/:animal="([\s\S]*?)"/);
+  if (!match) return {};
+  try { return JSON.parse(htmlDecode(match[1])); } catch { return {}; }
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -31,7 +41,26 @@ export default async function handler(req, res) {
     const r = await fetch(`https://new.shelterluv.com/api/v1/animals/${encodeURIComponent(id)}`, { headers: authHeaders(process.env.SHELTERLUV_API_KEY) });
     if (!r.ok) throw 0;
     res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=3600');
-    return res.status(200).json(mapAnimal(await r.json()));
+    const raw = await r.json();
+    const mapped = mapAnimal(raw);
+    const publicRecord = await publicAnimal(mapped.animalId || raw.ID);
+    const supplemental = mapAnimal({
+      ID: publicRecord.uniqueId,
+      Name: publicRecord.name,
+      Location: publicRecord.location,
+      CurrentWeightPounds: publicRecord.weight_units === 'oz' ? Number(publicRecord.weight) / 16 : publicRecord.weight,
+      Attributes: publicRecord.attributes,
+      Description: publicRecord.description,
+      kennel_description: publicRecord.kennel_description,
+      CoverPhoto: publicRecord.photos?.find(photo => photo.isCover)?.url,
+    });
+    return res.status(200).json({ ...mapped,
+      location: mapped.location || supplemental.location,
+      attributes: mapped.attributes.length ? mapped.attributes : supplemental.attributes,
+      description: mapped.description || supplemental.description,
+      weight: mapped.weight || supplemental.weight,
+      photo: mapped.photo || supplemental.photo,
+    });
   } catch {
     return res.status(502).json({ error: 'Unable to load animal' });
   }

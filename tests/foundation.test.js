@@ -251,6 +251,8 @@ test('ShelterLuv API has cache; client falls back to embed widget, then notice',
   assert.match(detailApi, /LastIntakeUnixTime/);
   assert.match(detailApi, /CurrentWeightPounds/);
   assert.match(detailApi, /AdoptionFeeGroup/);
+  assert.match(detailApi, /embed\/animal/);
+  assert.match(detailApi, /Good to know|attributes/);
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /shelterluv_embed\.js/, 'adopt page mounts the ShelterLuv embed when the API is unavailable');
   assert.match(js, /gid: 100003517/, 'embed uses the GCC shelter id');
