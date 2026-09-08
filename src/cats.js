@@ -23,12 +23,27 @@ export function formatAge(age) {
   return value;
 }
 
+export function buildCatBio(cat) {
+  const name = String(cat.name || 'This cat');
+  const age = formatAge(cat.age);
+  const type = [cat.sex?.toLowerCase(), cat.breed].filter(Boolean).join(' ');
+  const facts = [];
+  const attributes = Array.isArray(cat.attributes) ? cat.attributes : [];
+  if (attributes.includes('Good with Cats')) facts.push('good with cats');
+  if (attributes.includes('Good with Dogs')) facts.push('good with dogs');
+  if (attributes.includes('Good with Kids') || attributes.includes('Good with Children')) facts.push('good with kids');
+  if (attributes.includes('Litter Box Trained')) facts.push('litter-box trained');
+  const factSentence = facts.length ? ` ${facts.slice(0, -1).join(', ')}${facts.length > 1 ? ' and ' : ''}${facts.at(-1)}.` : '';
+  const identity = age ? `${age} old${type ? ` and is a ${type}` : ''}` : `an ${type || 'adoptable cat'}`;
+  return `${name} is ${identity}.${factSentence}`;
+}
+
 export function renderCatCards(cats, adoptUrl) {
   return cats.map(c => {
     const name = esc(c.name);
     const meta = [formatAge(c.age), c.sex, c.breed].filter(Boolean).map(esc).join(' · ');
     const href = c.id ? `/meet-cat.html?id=${safeId(c.id)}` : safeUrl(c.profileUrl, esc(adoptUrl));
-    return `<article class="card"><img src="${safeUrl(c.photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, an adoptable cat" width="600" height="450"><h3>${name}</h3><p>${meta}</p><p>${esc(c.description)}</p><a class="button" href="${href}">Meet ${name}</a></article>`;
+    return `<article class="card"><img src="${safeUrl(c.photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, an adoptable cat" width="600" height="450"><h3>${name}</h3><p>${meta}</p><p>${esc(c.description || buildCatBio(c))}</p><a class="button" href="${href}">Meet ${name}</a></article>`;
   }).join('');
 }
 
@@ -42,7 +57,7 @@ export function renderCatDetail(cat, adoptUrl) {
     ['Adoption Fee', cat.adoptionFee],
     ['Intake Date', cat.intakeDate],
   ].filter(([, value]) => value).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
-  const description = cat.description ? `<p>${esc(cat.description)}</p>` : '';
+  const description = `<p>${esc(cat.description || buildCatBio(cat))}</p>`;
   const allFacts = facts;
   const attributes = Array.isArray(cat.attributes) ? cat.attributes.filter(Boolean).map(attribute => `<li>${esc(attribute)}</li>`).join('') : '';
   const attributeSection = attributes ? `<section class="cat-attributes"><h3>Good to know</h3><ul>${attributes}</ul></section>` : '';

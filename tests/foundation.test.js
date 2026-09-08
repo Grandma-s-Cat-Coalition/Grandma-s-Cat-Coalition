@@ -214,10 +214,11 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
   assert.ok(html.includes('https://shelterluv.com/mia'), 'valid ShelterLuv application URL kept');
 });
 
-test('cat detail omits missing descriptions instead of showing boilerplate', () => {
-  const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair' }, 'https://example.com/adopt');
+test('cat detail generates a factual bio when ShelterLuv has no prose description', () => {
+  const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats', 'Litter Box Trained'] }, 'https://example.com/adopt');
   assert.ok(!html.includes('This cat is available through'));
-  assert.ok(html.includes('2 years'));
+  assert.ok(html.includes('Mia is 2 years old and is a female Domestic Short Hair.'));
+  assert.ok(html.includes('good with cats and litter-box trained'));
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
