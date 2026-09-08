@@ -43,7 +43,8 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=3600');
     const raw = await r.json();
     const mapped = mapAnimal(raw);
-    const publicRecord = await publicAnimal(mapped.animalId || raw.ID);
+    const publicId = String(mapped.animalId || raw.ID || '').includes('-') ? (mapped.animalId || raw.ID) : `GCCI-A-${mapped.animalId || raw.ID}`;
+    const publicRecord = await publicAnimal(publicId);
     const supplemental = mapAnimal({
       ID: publicRecord.uniqueId,
       Name: publicRecord.name,
