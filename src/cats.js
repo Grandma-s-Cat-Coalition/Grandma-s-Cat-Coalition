@@ -28,17 +28,17 @@ export function buildCatBio(cat) {
   const age = formatAge(cat.age);
   const type = [cat.sex?.toLowerCase(), cat.breed].filter(Boolean).join(' ');
   const seed = [...name].reduce((total, character) => total + character.charCodeAt(0), 0);
-  const openings = ['Hi! My name is', 'Hello! I’m', 'Hi there — I’m'];
-  const closings = ['I am looking for a loving forever home.', 'I would love to meet the person who will make me part of the family.', 'Could you be the forever family I have been waiting for?'];
-  const facts = [];
   const attributes = Array.isArray(cat.attributes) ? cat.attributes : [];
-  if (attributes.includes('Good with Cats')) facts.push('good with cats');
-  if (attributes.includes('Good with Dogs')) facts.push('good with dogs');
-  if (attributes.includes('Good with Kids') || attributes.includes('Good with Children')) facts.push('good with kids');
-  if (attributes.includes('Litter Box Trained')) facts.push('litter-box trained');
-  const factSentence = facts.length ? ` ${['I am', 'People here know me as', 'My friends say I am'][seed % 3]} ${facts.slice(0, -1).join(', ')}${facts.length > 1 ? ' and ' : ''}${facts.at(-1)}.` : '';
-  const identity = age ? `${['I am', 'I’m', 'I am currently'][seed % 3]} ${age} old${type ? ` and ${seed % 2 ? 'a' : 'an'} ${type}` : ''}.` : type ? `I’m ${seed % 2 ? 'a' : 'an'} ${type}.` : '';
-  return `${openings[seed % openings.length]} ${name}.${identity}${factSentence} ${closings[(seed + facts.length) % closings.length]}`;
+  const has = value => attributes.some(attribute => attribute.toLowerCase() === value.toLowerCase());
+  const traits = ['Affectionate', 'Cuddly', 'Lap Cat', 'Purr Machine', 'Playful', 'Talkative', 'Sweet', 'Gentle', 'Calm', 'Shy', 'Curious'].filter(has);
+  const compatibility = [has('Good with Cats') && 'other cats', has('Good with Dogs') && 'dogs', (has('Good with Kids') || has('Good with Children')) && 'children'].filter(Boolean);
+  const opening = ['Hi! I’m', 'Hello, I’m', 'Hi there! My name is'][seed % 3];
+  const identity = age && type ? `${age} old and a ${type}` : age ? `${age} old` : type || 'an adoptable cat';
+  const traitSentence = traits.length ? ` People here describe me as ${traits.slice(0, -1).join(', ')}${traits.length > 1 ? ' and ' : ''}${traits.at(-1).toLowerCase()}.` : '';
+  const homeSentence = compatibility.length ? ` I do well with ${compatibility.slice(0, -1).join(', ')}${compatibility.length > 1 ? ' and ' : ''}${compatibility.at(-1)}.` : '';
+  const careSentence = has('Litter Box Trained') ? ` I’m also litter-box trained, so I’m ready to settle into home life.` : '';
+  const closing = ['I’m hoping to meet someone special who will love me for life.', 'If you’re looking for a new family member, I’d love to meet you.', 'I’m ready for a home where I can be loved, spoiled, and part of the family.'][seed % 3];
+  return `${opening} ${name}, ${identity}.${traitSentence}${homeSentence}${careSentence} ${closing}`;
 }
 
 export function renderCatCards(cats, adoptUrl) {
@@ -52,6 +52,8 @@ export function renderCatCards(cats, adoptUrl) {
 
 export function renderCatDetail(cat, adoptUrl) {
   const name = esc(cat.name || 'Adoptable cat');
+  const photos = Array.isArray(cat.photos) && cat.photos.length ? cat.photos : [cat.photo];
+  const gallery = photos.filter(Boolean).map((photo, index) => `<img src="${safeUrl(photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, photo ${index + 1}" width="900" height="675" loading="${index ? 'lazy' : 'eager'}">`).join('');
   const facts = [
     ['Breed', cat.breed],
     ['Sex', cat.sex],
@@ -64,5 +66,5 @@ export function renderCatDetail(cat, adoptUrl) {
   const allFacts = facts;
   const attributes = Array.isArray(cat.attributes) ? cat.attributes.filter(Boolean).map(attribute => `<li>${esc(attribute)}</li>`).join('') : '';
   const attributeSection = attributes ? `<section class="cat-attributes"><h3>Good to know</h3><ul>${attributes}</ul></section>` : '';
-  return `<article class="cat-detail"><div><img src="${safeUrl(cat.photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, an adoptable cat" width="900" height="675"></div><div><p class="eyebrow">${esc([formatAge(cat.age), cat.sex, cat.breed].filter(Boolean).join(' · '))}</p><h2>${name}</h2>${description}${attributeSection}${allFacts ? `<dl class="facts">${allFacts}</dl>` : ''}<p class="actions"><a class="button" href="${safeUrl(cat.profileUrl, esc(adoptUrl))}">Apply through ShelterLuv</a><a class="button soft" href="/adopt.html">All adoptable cats</a></p></div></article>`;
+  return `<article class="cat-detail"><div class="cat-gallery">${gallery}</div><div><p class="eyebrow">${esc([formatAge(cat.age), cat.sex, cat.breed].filter(Boolean).join(' · '))}</p><h2>${name}</h2>${description}${attributeSection}${allFacts ? `<dl class="facts">${allFacts}</dl>` : ''}<p class="actions"><a class="button" href="${safeUrl(cat.profileUrl, esc(adoptUrl))}">Apply through ShelterLuv</a><a class="button soft" href="/adopt.html">All adoptable cats</a></p></div></article>`;
 }

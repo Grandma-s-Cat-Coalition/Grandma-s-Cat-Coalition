@@ -76,6 +76,7 @@ export default async function handler(req, res) {
       description: mapped.description || supplemental.description,
       weight: mapped.weight || supplemental.weight,
       photo: mapped.photo || supplemental.photo,
+      photos: publicRecord.photos?.map(photo => photo.url).filter(Boolean) || [],
     });
   } catch {
     return res.status(502).json({ error: 'Unable to load animal' });

@@ -203,6 +203,7 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
     description: '<img onerror=x>',
     photo: 'javascript:alert(1)',
     profileUrl: 'https://shelterluv.com/mia',
+    photos: ['https://shelterluv.com/mia-1.jpg', 'https://shelterluv.com/mia-2.jpg'],
   }, 'https://example.com/adopt');
   for (const text of ['Breed', 'Domestic Short Hair', 'Sex', 'Female', 'Weight', '3 lb', 'Age', '3 months, 1 week', 'Adoption Fee', '$100', 'Intake Date', '2026-09-01', 'Good to know', 'Good with Cats', 'Litter Box Trained', 'Affectionate']) assert.ok(html.includes(text));
   assert.ok(!html.includes('Location'));
@@ -212,15 +213,16 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
   assert.ok(!html.includes('<img onerror'));
   assert.ok(!html.includes('javascript:'));
   assert.ok(html.includes('https://shelterluv.com/mia'), 'valid ShelterLuv application URL kept');
+  assert.ok(html.includes('mia-2.jpg'), 'all supplied photos render');
 });
 
 test('cat detail generates a factual bio when ShelterLuv has no prose description', () => {
   const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats', 'Litter Box Trained'] }, 'https://example.com/adopt');
   assert.ok(!html.includes('This cat is available through'));
-  assert.ok(html.includes('Hi! My name is Mia.'));
-  assert.ok(html.includes('I am 2 years old and a female Domestic Short Hair.'));
-  assert.ok(html.includes('I am good with cats and litter-box trained.'));
-  assert.match(html, /forever family|loving forever home/);
+  assert.match(html, /(?:Hi! I’m|Hello, I’m|Hi there! My name is) Mia/);
+  assert.ok(html.includes('2 years old') && html.includes('female Domestic Short Hair'));
+  assert.ok(html.includes('other cats') && html.includes('litter-box trained'));
+  assert.match(html, /forever family|new family member|part of the family|love me for life/);
 });
 
 test('generated bios vary by cat while staying factual', () => {
