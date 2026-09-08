@@ -137,7 +137,7 @@ export function renderAbout(c) {
 }
 
 export function renderCatDetail(c) {
-  const main = `<section class="hero"><div class="wrap"><p class="eyebrow">Adoptable cat</p><h1>Meet this cat</h1><p>Current details are pulled from ShelterLuv when you open the page.</p></div></section>` +
+  const main = `<section class="hero"><div class="wrap"><p class="eyebrow">Adoptable cat</p><h1>Meet this cat</h1></div></section>` +
     `<section class="section"><div class="wrap" data-cat-detail><div class="skeleton"></div></div></section>`;
   return layout({ slug: 'meet-cat', title: `Meet an Adoptable Cat | ${c.settings.orgName}`, description: 'Learn more about an adoptable cat from Grandma\'s Cat Coalition.', ld: crumbLd('Meet an Adoptable Cat'), main, settings: c.settings });
 }

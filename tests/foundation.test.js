@@ -186,7 +186,7 @@ test('ShelterLuv success renders escaped cards', () => {
   assert.ok(html.includes('/meet-cat.html?id='), 'card links to local detail page when the API has an id');
 });
 
-test('cat detail page and renderer expose structured ShelterLuv facts safely', () => {
+test('cat detail page and renderer expose the requested ShelterLuv facts safely', () => {
   const page = renderCatDetailPage(content);
   assert.match(page, /data-cat-detail/);
   const html = renderCatDetail({
@@ -203,11 +203,19 @@ test('cat detail page and renderer expose structured ShelterLuv facts safely', (
     photo: 'javascript:alert(1)',
     profileUrl: 'https://shelterluv.com/mia',
   }, 'https://example.com/adopt');
-  for (const text of ['Animal ID', 'GCCI-A-1', 'Breed', 'Domestic Short Hair', 'Sex', 'Female', 'Weight', '3 lb', 'Age', '0Y/3M/1W', 'Adoption Fee', '$100', 'Intake Date', '2026-09-01']) assert.ok(html.includes(text));
+  for (const text of ['Breed', 'Domestic Short Hair', 'Sex', 'Female', 'Weight', '3 lb', 'Age', '3 months, 1 week', 'Adoption Fee', '$100', 'Intake Date', '2026-09-01']) assert.ok(html.includes(text));
+  assert.ok(!html.includes('Animal ID'));
+  assert.ok(!html.includes('GCCI-A-1'));
   assert.ok(!html.includes('<script>'));
   assert.ok(!html.includes('<img onerror'));
   assert.ok(!html.includes('javascript:'));
   assert.ok(html.includes('https://shelterluv.com/mia'), 'valid ShelterLuv application URL kept');
+});
+
+test('cat detail omits missing descriptions instead of showing boilerplate', () => {
+  const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair' }, 'https://example.com/adopt');
+  assert.ok(!html.includes('This cat is available through'));
+  assert.ok(html.includes('2 years'));
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
