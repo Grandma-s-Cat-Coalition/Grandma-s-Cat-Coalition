@@ -1,6 +1,19 @@
 const pick = (obj, names) => names.map(name => obj?.[name]).find(value => value !== undefined && value !== null && value !== '') || '';
 const authHeaders = key => ({ Authorization: `Bearer ${key}`, 'X-Api-Key': key });
 const dateFromUnix = seconds => seconds ? new Date(Number(seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
+const ageFromBirthday = seconds => {
+  if (!seconds) return '';
+  const birth = new Date(Number(seconds) * 1000);
+  const now = new Date();
+  let months = (now.getUTCFullYear() - birth.getUTCFullYear()) * 12 + now.getUTCMonth() - birth.getUTCMonth();
+  if (now.getUTCDate() < birth.getUTCDate()) months -= 1;
+  if (months < 0) return '';
+  const anchor = new Date(Date.UTC(birth.getUTCFullYear(), birth.getUTCMonth() + months, birth.getUTCDate()));
+  const weeks = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - anchor.getTime()) / 604800000);
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+  return [years ? `${years}Y` : '', remainingMonths ? `${remainingMonths}M` : '', weeks ? `${weeks}W` : ''].filter(Boolean).join('/');
+};
 const fee = group => Array.isArray(group) && group[0]?.Price !== undefined ? `$${Number(group[0].Price).toFixed(2).replace(/\.00$/, '')}` : '';
 const profileUrl = a => a?.ID ? `https://new.shelterluv.com/matchme/adopt/GCCI/Cat/${encodeURIComponent(a.ID)}` : '';
 const attributes = value => (Array.isArray(value) ? value : []).map(item => typeof item === 'string' ? item : item?.Name || item?.name || item?.label || '').filter(Boolean);
@@ -48,6 +61,7 @@ export default async function handler(req, res) {
     const supplemental = mapAnimal({
       ID: publicRecord.uniqueId,
       Name: publicRecord.name,
+      Age: ageFromBirthday(publicRecord.birthday),
       Location: publicRecord.location,
       CurrentWeightPounds: publicRecord.weight_units === 'oz' ? Number(publicRecord.weight) / 16 : publicRecord.weight,
       Attributes: publicRecord.attributes,
@@ -56,6 +70,7 @@ export default async function handler(req, res) {
       CoverPhoto: publicRecord.photos?.find(photo => photo.isCover)?.url,
     });
     return res.status(200).json({ ...mapped,
+      age: ageFromBirthday(publicRecord.birthday) || mapped.age,
       location: mapped.location || supplemental.location,
       attributes: mapped.attributes.length ? mapped.attributes : supplemental.attributes,
       description: mapped.description || supplemental.description,
