@@ -27,15 +27,18 @@ export function buildCatBio(cat) {
   const name = String(cat.name || 'this cat');
   const age = formatAge(cat.age);
   const type = [cat.sex?.toLowerCase(), cat.breed].filter(Boolean).join(' ');
+  const seed = [...name].reduce((total, character) => total + character.charCodeAt(0), 0);
+  const openings = ['Hi! My name is', 'Hello! I’m', 'Hi there — I’m'];
+  const closings = ['I am looking for a loving forever home.', 'I would love to meet the person who will make me part of the family.', 'Could you be the forever family I have been waiting for?'];
   const facts = [];
   const attributes = Array.isArray(cat.attributes) ? cat.attributes : [];
   if (attributes.includes('Good with Cats')) facts.push('good with cats');
   if (attributes.includes('Good with Dogs')) facts.push('good with dogs');
   if (attributes.includes('Good with Kids') || attributes.includes('Good with Children')) facts.push('good with kids');
   if (attributes.includes('Litter Box Trained')) facts.push('litter-box trained');
-  const factSentence = facts.length ? ` I am ${facts.slice(0, -1).join(', ')}${facts.length > 1 ? ' and ' : ''}${facts.at(-1)}.` : '';
-  const identity = age ? `I am ${age} old${type ? ` and a ${type}` : ''}.` : type ? `I am a ${type}.` : '';
-  return `Hi! My name is ${name}.${identity}${factSentence} I am looking for a loving forever home.`;
+  const factSentence = facts.length ? ` ${['I am', 'People here know me as', 'My friends say I am'][seed % 3]} ${facts.slice(0, -1).join(', ')}${facts.length > 1 ? ' and ' : ''}${facts.at(-1)}.` : '';
+  const identity = age ? `${['I am', 'I’m', 'I am currently'][seed % 3]} ${age} old${type ? ` and ${seed % 2 ? 'a' : 'an'} ${type}` : ''}.` : type ? `I’m ${seed % 2 ? 'a' : 'an'} ${type}.` : '';
+  return `${openings[seed % openings.length]} ${name}.${identity}${factSentence} ${closings[(seed + facts.length) % closings.length]}`;
 }
 
 export function renderCatCards(cats, adoptUrl) {

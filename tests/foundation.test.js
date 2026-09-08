@@ -220,7 +220,13 @@ test('cat detail generates a factual bio when ShelterLuv has no prose descriptio
   assert.ok(html.includes('Hi! My name is Mia.'));
   assert.ok(html.includes('I am 2 years old and a female Domestic Short Hair.'));
   assert.ok(html.includes('I am good with cats and litter-box trained.'));
-  assert.ok(html.includes('loving forever home'));
+  assert.match(html, /forever family|loving forever home/);
+});
+
+test('generated bios vary by cat while staying factual', () => {
+  const mia = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats'] }, 'https://example.com/adopt');
+  const zoe = renderCatDetail({ name: 'Zoe', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats'] }, 'https://example.com/adopt');
+  assert.notEqual(mia, zoe);
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
