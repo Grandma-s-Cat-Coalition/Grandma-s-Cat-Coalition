@@ -222,7 +222,7 @@ test('cat detail generates a factual bio when ShelterLuv has no prose descriptio
   assert.match(html, /(?:Hi! I’m|Hello, I’m|Hi there! My name is) Mia/);
   assert.ok(html.includes('2 years old') && html.includes('female Domestic Short Hair'));
   assert.ok(html.includes('other cats') && html.includes('litter-box trained'));
-  assert.match(html, /forever family|new family member|part of the family|love me for life/);
+  assert.match(html, /furever family|new family member|part of the family|love me for life/);
   assert.ok(html.includes('I have been here for a month now'));
 });
 
