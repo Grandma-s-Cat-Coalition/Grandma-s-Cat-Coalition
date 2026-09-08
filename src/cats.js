@@ -43,10 +43,7 @@ export function renderCatDetail(cat, adoptUrl) {
     ['Intake Date', cat.intakeDate],
   ].filter(([, value]) => value).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
   const description = cat.description ? `<p>${esc(cat.description)}</p>` : '';
-  const extraFacts = [
-    ['Location', cat.location],
-  ].filter(([, value]) => value).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
-  const allFacts = facts + extraFacts;
+  const allFacts = facts;
   const attributes = Array.isArray(cat.attributes) ? cat.attributes.filter(Boolean).map(attribute => `<li>${esc(attribute)}</li>`).join('') : '';
   const attributeSection = attributes ? `<section class="cat-attributes"><h3>Good to know</h3><ul>${attributes}</ul></section>` : '';
   return `<article class="cat-detail"><div><img src="${safeUrl(cat.photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, an adoptable cat" width="900" height="675"></div><div><p class="eyebrow">${esc([formatAge(cat.age), cat.sex, cat.breed].filter(Boolean).join(' · '))}</p><h2>${name}</h2>${description}${attributeSection}${allFacts ? `<dl class="facts">${allFacts}</dl>` : ''}<p class="actions"><a class="button" href="${safeUrl(cat.profileUrl, esc(adoptUrl))}">Apply through ShelterLuv</a><a class="button soft" href="/adopt.html">All adoptable cats</a></p></div></article>`;
