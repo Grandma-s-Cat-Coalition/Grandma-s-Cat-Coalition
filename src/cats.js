@@ -37,10 +37,12 @@ export function buildCatBio(cat) {
   const traitSentence = traits.length ? ` People here describe me as ${traits.slice(0, -1).join(', ')}${traits.length > 1 ? ' and ' : ''}${traits.at(-1).toLowerCase()}.` : '';
   const homeSentence = compatibility.length ? ` I do well with ${compatibility.slice(0, -1).join(', ')}${compatibility.length > 1 ? ' and ' : ''}${compatibility.at(-1)}.` : '';
   const careSentence = has('Litter Box Trained') ? ` I’m also litter-box trained, so I’m ready to settle into home life.` : '';
+  const sourceDescription = String(cat.description || '').trim().replace(/[.!?]+$/, '');
+  const descriptionSentence = sourceDescription ? ` My foster notes say I’m ${sourceDescription.charAt(0).toLowerCase()}${sourceDescription.slice(1).replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am')}.` : '';
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? ' I have been here so long I have cabin fever — this place is great, but I want a home, not temporary shelter.' : waitingDays >= 90 ? ' I have been here for many months. This place is great and all, but I’m ready to find my person — are you it?' : waitingDays >= 28 ? ' I have been here for a month now. I like it here, but I would love to find my furever home.' : waitingDays >= 7 ? ' I have been here for a few weeks, and I’m hoping my person finds me soon.' : waitingDays > 0 ? ' I have only been here a little while, but I’m already hoping to meet my furever family.' : '';
   const closing = ['I’m hoping to meet someone special who will love me for life.', 'If you’re looking for a new family member, I’d love to meet you.', 'I’m ready for a home where I can be loved, spoiled, and part of the family.'][seed % 3];
-  return `${opening} ${name}, ${identity}.${traitSentence}${homeSentence}${careSentence}${waitingSentence} ${closing}`;
+  return `${opening} ${name}, ${identity}.${descriptionSentence}${traitSentence}${homeSentence}${careSentence}${waitingSentence} ${closing}`;
 }
 
 export function renderCatCards(cats, adoptUrl) {
@@ -48,7 +50,7 @@ export function renderCatCards(cats, adoptUrl) {
     const name = esc(c.name);
     const meta = [formatAge(c.age), c.sex, c.breed].filter(Boolean).map(esc).join(' · ');
     const href = c.id ? `/meet-cat.html?id=${safeId(c.id)}` : safeUrl(c.profileUrl, esc(adoptUrl));
-    return `<article class="card"><img src="${safeUrl(c.photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, an adoptable cat" width="600" height="450"><h3>${name}</h3><p>${meta}</p><p>${esc(c.description || buildCatBio(c))}</p><a class="button" href="${href}">Meet ${name}</a></article>`;
+    return `<article class="card"><img src="${safeUrl(c.photo, '/images/brand/grandma-and-cat.jpg')}" alt="${name}, an adoptable cat" width="600" height="450"><h3>${name}</h3><p>${meta}</p><p>${esc(buildCatBio(c))}</p><a class="button" href="${href}">Meet ${name}</a></article>`;
   }).join('');
 }
 
@@ -64,7 +66,7 @@ export function renderCatDetail(cat, adoptUrl) {
     ['Adoption Fee', cat.adoptionFee],
     ['Intake Date', cat.intakeDate],
   ].filter(([, value]) => value).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
-  const description = `<p>${esc(cat.description || buildCatBio(cat))}</p>`;
+  const description = `<p>${esc(buildCatBio(cat))}</p>`;
   const allFacts = facts;
   const attributes = Array.isArray(cat.attributes) ? cat.attributes.filter(Boolean).map(attribute => `<li>${esc(attribute)}</li>`).join('') : '';
   const attributeSection = attributes ? `<section class="cat-attributes"><h3>Good to know</h3><ul>${attributes}</ul></section>` : '';
