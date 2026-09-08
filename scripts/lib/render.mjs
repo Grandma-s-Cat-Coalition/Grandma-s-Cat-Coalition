@@ -42,7 +42,7 @@ const iconSvg = name => `<svg width="22" height="22" viewBox="0 0 24 24" fill="n
 const newsletterForm = id => `<form class="newsletter form" action="/api/newsletter" method="post" data-api><label for="${id}">Email address</label><input id="${id}" name="email" type="email" required maxlength="200" placeholder="you@example.com"><label class="hp">Leave blank<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">Join the newsletter</button><p role="status" aria-live="polite"></p></form>`;
 
 function header() {
-  return `<header class="site-header" data-header><div class="wrap nav"><a class="brand" href="/"><span class="script">Grandma's</span><span class="coalition">CAT COALITION</span></a><button class="menu" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">☰</button><nav id="nav-links" class="nav-links" aria-label="Main"><a href="/adopt.html">Adopt</a><a href="/foster.html">Foster</a><a href="/volunteer.html">Volunteer</a><a href="/tnr.html">TNR</a><a href="/about.html">About</a><a href="/news.html">News</a>${actionButton('donate','DONATE NOW','/donate.html','donate')}</nav></div></header>`;
+  return `<header class="site-header" data-header><div class="wrap nav"><a class="brand" href="/"><span class="script">Grandma's</span><span class="coalition">CAT COALITION</span></a><button class="menu" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">☰</button><nav id="nav-links" class="nav-links" aria-label="Main"><a href="/adopt.html">Adopt</a><a href="/foster.html">Foster</a><a href="/volunteer.html">Volunteer</a><a href="/tnr.html">TNR</a><a href="/about.html">About</a><a href="/team.html">About the team</a><a href="/news.html">News</a>${actionButton('donate','DONATE NOW','/donate.html','donate')}</nav></div></header>`;
 }
 
 function footer(s) {
@@ -201,6 +201,7 @@ export const renderers = {
   index: renderHome, adopt: renderAdopt, foster: renderFoster, volunteer: renderVolunteer,
   donate: renderDonate, tnr: renderTnr, about: renderAbout, 'found-a-cat': renderFoundACat,
   news: renderNews, events: renderEvents, 'happy-tails': renderHappyTails, contact: renderContact, 'meet-cat': renderCatDetail,
+  team: staticPage('team', 'About the team', 'About the team', 'Meet the people and volunteers helping Grandma’s Cat Coalition care for cats and strengthen our community.'),
   privacy: staticPage('privacy', 'Privacy policy', 'Your privacy matters', 'We collect only the information you choose to send through our forms and use it to respond to you. We do not sell personal information.'),
   terms: staticPage('terms', 'Website terms', 'Terms of use', 'This website provides general rescue information. Animal availability and services may change.'),
   404: staticPage('404', 'Page not found', 'That page wandered off', 'Try the home page or contact us if you need help.'),
