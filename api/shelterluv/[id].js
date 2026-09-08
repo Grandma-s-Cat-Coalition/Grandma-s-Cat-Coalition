@@ -51,9 +51,9 @@ export default async function handler(req, res) {
   const id = String(req.query.id || '').replace(/[^\w.-]/g, '');
   if (!id) return res.status(400).json({ error: 'Missing animal id' });
   try {
-    const r = await fetch(`https://new.shelterluv.com/api/v1/animals/${encodeURIComponent(id)}`, { headers: authHeaders(process.env.SHELTERLUV_API_KEY) });
+    const r = await fetch(`https://new.shelterluv.com/api/v1/animals/${encodeURIComponent(id)}`, { headers: authHeaders(process.env.SHELTERLUV_API_KEY), cache: 'no-store' });
     if (!r.ok) throw 0;
-    res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=3600');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     const raw = await r.json();
     const mapped = mapAnimal(raw);
     const publicId = String(mapped.animalId || raw.ID || '').includes('-') ? (mapped.animalId || raw.ID) : `GCCI-A-${mapped.animalId || raw.ID}`;

@@ -244,9 +244,9 @@ test('all forms share the JS submit path with honeypot and status', async () => 
 test('ShelterLuv API has cache; client falls back to embed widget, then notice', async () => {
   const listApi = await readFile('api/shelterluv.js', 'utf8');
   const detailApi = await readFile('api/shelterluv/[id].js', 'utf8');
-  assert.match(listApi, /s-maxage=600/);
+  assert.match(listApi, /no-store, no-cache/);
   assert.match(listApi, /Internal-ID/);
-  assert.match(detailApi, /s-maxage=600/);
+  assert.match(detailApi, /no-store, no-cache/);
   assert.match(detailApi, /api\/v1\/animals\/\$\{encodeURIComponent\(id\)\}/);
   assert.match(detailApi, /LastIntakeUnixTime/);
   assert.match(detailApi, /CurrentWeightPounds/);

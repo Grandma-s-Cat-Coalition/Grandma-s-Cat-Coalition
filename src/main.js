@@ -55,7 +55,7 @@ export function mountEmbed(target) {
 
 export async function loadCats(target, limit) {
   try {
-    const r = await fetch('/api/shelterluv');
+    const r = await fetch('/api/shelterluv', { cache: 'no-store' });
     if (!r.ok) throw 0;
     const cats = (await r.json()).slice(0, limit || 999);
     if (!cats.length) throw 0;
@@ -76,7 +76,7 @@ if (catDetail) {
     catDetail.innerHTML = '<div class="notice"><h2>Cat not found</h2><p><a href="/adopt.html">See all adoptable cats</a>.</p></div>';
   } else {
     try {
-      const r = await fetch(`/api/shelterluv/${encodeURIComponent(id)}`);
+      const r = await fetch(`/api/shelterluv/${encodeURIComponent(id)}`, { cache: 'no-store' });
       if (!r.ok) throw 0;
       catDetail.innerHTML = renderCatDetail(await r.json(), adoptUrl);
     } catch {
