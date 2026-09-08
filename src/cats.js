@@ -37,8 +37,10 @@ export function buildCatBio(cat) {
   const traitSentence = traits.length ? ` People here describe me as ${traits.slice(0, -1).join(', ')}${traits.length > 1 ? ' and ' : ''}${traits.at(-1).toLowerCase()}.` : '';
   const homeSentence = compatibility.length ? ` I do well with ${compatibility.slice(0, -1).join(', ')}${compatibility.length > 1 ? ' and ' : ''}${compatibility.at(-1)}.` : '';
   const careSentence = has('Litter Box Trained') ? ` I’m also litter-box trained, so I’m ready to settle into home life.` : '';
+  const waitingDays = Number(cat.daysAtShelter) || 0;
+  const waitingSentence = waitingDays >= 180 ? ' I have been here so long I have cabin fever — this place is great, but I want a home, not temporary shelter.' : waitingDays >= 90 ? ' I have been here for many months. This place is great and all, but I’m ready to find my person — are you it?' : waitingDays >= 28 ? ' I have been here for a month now. I like it here, but I would love to find my forever home.' : waitingDays >= 7 ? ' I have been here for a few weeks, and I’m hoping my person finds me soon.' : waitingDays > 0 ? ' I have only been here a little while, but I’m already hoping to meet my forever family.' : '';
   const closing = ['I’m hoping to meet someone special who will love me for life.', 'If you’re looking for a new family member, I’d love to meet you.', 'I’m ready for a home where I can be loved, spoiled, and part of the family.'][seed % 3];
-  return `${opening} ${name}, ${identity}.${traitSentence}${homeSentence}${careSentence} ${closing}`;
+  return `${opening} ${name}, ${identity}.${traitSentence}${homeSentence}${careSentence}${waitingSentence} ${closing}`;
 }
 
 export function renderCatCards(cats, adoptUrl) {

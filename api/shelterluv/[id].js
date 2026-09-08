@@ -1,6 +1,7 @@
 const pick = (obj, names) => names.map(name => obj?.[name]).find(value => value !== undefined && value !== null && value !== '') || '';
 const authHeaders = key => ({ Authorization: `Bearer ${key}`, 'X-Api-Key': key });
 const dateFromUnix = seconds => seconds ? new Date(Number(seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
+const daysSince = seconds => seconds ? Math.max(0, Math.floor((Date.now() - Number(seconds) * 1000) / 86400000)) : 0;
 const ageFromBirthday = seconds => {
   if (!seconds) return '';
   const birth = new Date(Number(seconds) * 1000);
@@ -29,6 +30,7 @@ const mapAnimal = a => ({
   weight: pick(a, ['CurrentWeightPounds']) ? `${pick(a, ['CurrentWeightPounds'])} lb` : '',
   adoptionFee: fee(a.AdoptionFeeGroup),
   intakeDate: dateFromUnix(pick(a, ['LastIntakeUnixTime'])),
+  daysAtShelter: daysSince(pick(a, ['LastIntakeUnixTime'])),
   location: pick(a, ['Location', 'location']),
   attributes: attributes(a.Attributes || a.attributes),
   description: pick(a, ['Description', 'description', 'kennel_description']),
@@ -76,6 +78,7 @@ export default async function handler(req, res) {
       description: mapped.description || supplemental.description,
       weight: mapped.weight || supplemental.weight,
       photo: mapped.photo || supplemental.photo,
+      daysAtShelter: mapped.daysAtShelter || daysSince(publicRecord.intake_date),
       photos: publicRecord.photos?.map(photo => photo.url).filter(Boolean) || [],
     });
   } catch {
