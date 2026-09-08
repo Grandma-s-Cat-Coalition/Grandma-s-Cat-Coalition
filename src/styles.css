@@ -129,3 +129,12 @@ details.past-events summary{cursor:pointer;font-weight:900;color:var(--plum-900)
 .footer-brand h2{font-family:var(--font-script-primary);font-size:clamp(2.5rem,5vw,4rem);font-weight:400;line-height:.95}
 .footer-menu{gap:.9rem;margin-top:-.2rem}.footer-menu h2{font-family:var(--font-serif);margin:0 0 .25rem}.footer-menu a{grid-column:1/-1;min-height:68px;width:100%;justify-content:flex-start;padding:.75rem 1rem;border-color:color-mix(in srgb,var(--plum-200) 62%,transparent);font-size:1.05rem}.footer-icon{width:40px;height:40px;flex:0 0 40px}.contact-links small{display:block;font-size:.85rem;font-weight:400;color:var(--plum-200);margin-top:.2rem}.footer-bottom{justify-content:center;text-align:center;flex-direction:column;gap:.7rem}.footer-bottom nav{justify-content:center}
 @media(min-width:761px){.footer-menu{margin-top:-.6rem}.footer-grid{align-items:start}}
+/* Footer comment refinements */
+.footer-menu h2,.footer-newsletter h2{font-family:var(--font-serif);font-size:1.35rem;text-align:center}
+.footer-menu h2{font-size:1.5rem}
+.footer-menu a{min-height:58px;padding:.55rem .8rem;font-size:.98rem}
+.tagline{max-width:none;white-space:nowrap;font-size:1rem}
+.address span{white-space:nowrap}
+.contact-links small{display:none}
+.contact-links a{min-height:2.2rem}
+@media(max-width:760px){.tagline,.address span{white-space:normal}.footer-menu h2,.footer-newsletter h2{text-align:left}}
