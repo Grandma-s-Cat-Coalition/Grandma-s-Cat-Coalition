@@ -94,6 +94,10 @@ blockquote{border-left:4px solid var(--plum-200);margin:1rem 0 0;padding:.4rem 0
 .facts div{padding:.85rem;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface)}
 .facts dt{font-weight:900;color:var(--sage-900)}
 .facts dd{margin:0;color:var(--text)}
+.cat-attributes{margin:1.25rem 0}
+.cat-attributes h3{margin:0 0 .65rem;color:var(--sage-900)}
+.cat-attributes ul{display:flex;flex-wrap:wrap;gap:.5rem;margin:0;padding:0;list-style:none}
+.cat-attributes li{padding:.45rem .7rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--sage-900);font-weight:700}
 
 /* Events */
 .event{margin-bottom:1rem}

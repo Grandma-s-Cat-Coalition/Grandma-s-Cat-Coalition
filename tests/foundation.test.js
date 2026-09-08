@@ -199,11 +199,13 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
     weight: '3 lb',
     adoptionFee: '$100',
     intakeDate: '2026-09-01',
+    location: 'Foster home',
+    attributes: ['Good with Cats', 'Litter Box Trained', 'Affectionate'],
     description: '<img onerror=x>',
     photo: 'javascript:alert(1)',
     profileUrl: 'https://shelterluv.com/mia',
   }, 'https://example.com/adopt');
-  for (const text of ['Breed', 'Domestic Short Hair', 'Sex', 'Female', 'Weight', '3 lb', 'Age', '3 months, 1 week', 'Adoption Fee', '$100', 'Intake Date', '2026-09-01']) assert.ok(html.includes(text));
+  for (const text of ['Breed', 'Domestic Short Hair', 'Sex', 'Female', 'Weight', '3 lb', 'Age', '3 months, 1 week', 'Adoption Fee', '$100', 'Intake Date', '2026-09-01', 'Location', 'Foster home', 'Good to know', 'Good with Cats', 'Litter Box Trained', 'Affectionate']) assert.ok(html.includes(text));
   assert.ok(!html.includes('Animal ID'));
   assert.ok(!html.includes('GCCI-A-1'));
   assert.ok(!html.includes('<script>'));

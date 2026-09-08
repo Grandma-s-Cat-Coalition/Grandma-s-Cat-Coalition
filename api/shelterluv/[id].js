@@ -3,6 +3,7 @@ const authHeaders = key => ({ Authorization: `Bearer ${key}`, 'X-Api-Key': key }
 const dateFromUnix = seconds => seconds ? new Date(Number(seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
 const fee = group => Array.isArray(group) && group[0]?.Price !== undefined ? `$${Number(group[0].Price).toFixed(2).replace(/\.00$/, '')}` : '';
 const profileUrl = a => a?.ID ? `https://new.shelterluv.com/matchme/adopt/GCCI/Cat/${encodeURIComponent(a.ID)}` : '';
+const attributes = value => (Array.isArray(value) ? value : []).map(item => typeof item === 'string' ? item : item?.Name || item?.name || item?.label || '').filter(Boolean);
 
 const mapAnimal = a => ({
   id: pick(a, ['Internal-ID', 'ID']),
@@ -15,6 +16,8 @@ const mapAnimal = a => ({
   weight: pick(a, ['CurrentWeightPounds']) ? `${pick(a, ['CurrentWeightPounds'])} lb` : '',
   adoptionFee: fee(a.AdoptionFeeGroup),
   intakeDate: dateFromUnix(pick(a, ['LastIntakeUnixTime'])),
+  location: pick(a, ['Location', 'location']),
+  attributes: attributes(a.Attributes || a.attributes),
   description: pick(a, ['Description', 'description']),
   profileUrl: profileUrl(a),
 });
