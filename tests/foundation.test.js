@@ -239,6 +239,12 @@ test('ShelterLuv descriptions are incorporated into generated first-person bios'
   assert.ok(!html.includes('<p>Very affectionate'));
 });
 
+test('already first-person ShelterLuv notes are not wrapped in awkward extra text', () => {
+  const html = renderCatDetail({ name: 'Millie', description: "Hi, I'm Millie, a playful girl who loves people." }, 'https://example.com/adopt');
+  assert.ok(html.includes('Hi, I&#39;m Millie, a playful girl who loves people'));
+  assert.ok(!html.includes('I’m Hi'));
+});
+
 test('mobile menu toggles aria-expanded and updates its label', async () => {
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /classList\.toggle\('open'\)/);
