@@ -234,13 +234,18 @@ test('generated bios vary by cat while staying factual', () => {
 
 test('ShelterLuv descriptions are incorporated into generated first-person bios', () => {
   const html = renderCatDetail({ name: 'Millie', age: '3M/2W', sex: 'Female', breed: 'Domestic Medium Hair', description: 'Very affectionate, loves sleeping with a human, and very playful.' }, 'https://example.com/adopt');
-  assert.ok(html.includes('Very affectionate, loves sleeping with a human, and very playful.'));
+  assert.ok(html.includes('Hi! I’m Millie. I’m very affectionate, love sleeping with a human, and very playful.'));
 });
 
 test('already first-person ShelterLuv notes are not wrapped in awkward extra text', () => {
   const html = renderCatDetail({ name: 'Millie', description: "Hi, I'm Millie, a playful girl who loves people." }, 'https://example.com/adopt');
   assert.ok(html.includes('Hi! I’m Millie. I’m a playful girl who loves people'));
   assert.ok(!html.includes('I’m Hi'));
+});
+
+test('fragment-style ShelterLuv descriptions get a first-person introduction', () => {
+  const html = renderCatDetail({ name: 'Millie', description: 'Incredibly affectionate, loves sleeping with a human, and playful.' }, 'https://example.com/adopt');
+  assert.ok(html.includes('Hi! I’m Millie. I’m incredibly affectionate, love sleeping with a human, and playful.'));
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {

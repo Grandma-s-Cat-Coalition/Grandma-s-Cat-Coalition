@@ -41,7 +41,10 @@ export function buildCatBio(cat) {
   const sourceDescription = String(cat.description || '').trim().replace(/[.!?]+$/, '');
   if (sourceDescription) {
     const intro = new RegExp(`^Hi,?\\s+I['’]m\\s+${name.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')},\\s*`, 'i');
-    const rewritten = sourceDescription.replace(intro, `Hi! I’m ${name}. I’m `);
+    const firstPersonNotes = /\b(I['’]m|I am|I have|I love|I can|I get|I do|my)\b/i.test(sourceDescription);
+    const rewritten = intro.test(sourceDescription)
+      ? sourceDescription.replace(intro, `Hi! I’m ${name}. I’m `)
+      : firstPersonNotes ? sourceDescription : `Hi! I’m ${name}. I’m ${sourceDescription.charAt(0).toLowerCase()}${sourceDescription.slice(1).replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am')}`;
     return `${rewritten}.${waitingSentence}`;
   }
   const descriptionSentence = '';
