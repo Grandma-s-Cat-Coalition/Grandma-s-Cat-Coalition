@@ -106,9 +106,11 @@ export function renderVolunteer(c) {
 
 export function renderDonate(c) {
   const s = c.settings;
-  const donationUrl = isReal(s.donationUrl) ? s.donationUrl : s.zeffyUrl;
+  const donationUrl = isReal(s.zeffyUrl) ? s.zeffyUrl : s.donationUrl;
+  const zeffyPath = isReal(donationUrl) ? new URL(donationUrl).pathname : '';
+  const zeffyEmbed = `<h2>Give securely</h2><div class="zeffy-form"><div data-zeffy-embed data-form-url="${zeffyPath}"></div><div data-zeffy-embed-fallback style="display:none;"><div class="zeffy-fallback-frame"><iframe title="Donation form powered by Zeffy" data-zeffy-embed-src="${esc(donationUrl)}" allowpaymentrequest allowTransparency="true"></iframe></div></div><script src="https://www.zeffy.com/embed/v2/zeffy-embed.js" onerror="document.querySelectorAll('[data-zeffy-embed-fallback]').forEach(function(el){el.style.display='block';el.querySelectorAll('iframe[data-zeffy-embed-src]').forEach(function(f){f.src=f.getAttribute('data-zeffy-embed-src');});});"></script></div>`;
   const give = isReal(donationUrl)
-    ? `<h2>Give securely</h2><p class="section-intro">Choose a one-time or monthly gift, including a custom amount, through our secure ShelterLuv donation form.</p><iframe class="donation-embed" title="Donate to ${esc(s.orgName)}" src="${esc(donationUrl)}" allow="payment"></iframe>`
+    ? zeffyEmbed
     : `<h2>Give securely</h2><div class="notice"><p>Our online donation form is being connected. To donate today, call <a href="${tel(s.phone)}">${esc(s.phone)}</a> or mail a check to ${esc(s.address)}.</p></div>`;
   const other = [
     isReal(s.paypalUrl) && `<a class="button soft" href="${esc(s.paypalUrl)}">PayPal</a>`,

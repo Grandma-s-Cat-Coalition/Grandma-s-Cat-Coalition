@@ -140,10 +140,12 @@ test('CMS collections drive the build: news, board, faq, events', () => {
   assert.ok(events.indexOf('PAST_EVENT') > events.indexOf('past-events'), 'past events are collapsed');
 });
 
-test('donate page reads donationUrl from settings', () => {
-  const real = renderDonate({ ...content, settings: { ...settings, donationUrl: 'https://checkout.shelterluv.com/donate/GCCI', paypalUrl: 'https://paypal.me/test' } });
-  assert.match(real, /<iframe class="donation-embed"[^>]*src="https:\/\/checkout\.shelterluv\.com\/donate\/GCCI/);
-  assert.ok(real.includes('including a custom amount'), 'custom amount guidance renders');
+test('donate page embeds Zeffy campaign from settings', () => {
+  const url = 'https://www.zeffy.com/embed/donation-form/they-have-no-one-else-they-have-us';
+  const real = renderDonate({ ...content, settings: { ...settings, zeffyUrl: url, donationUrl: url, paypalUrl: 'https://paypal.me/test' } });
+  assert.match(real, /data-zeffy-embed data-form-url="\/embed\/donation-form\/they-have-no-one-else-they-have-us"/);
+  assert.ok(real.includes('https://www.zeffy.com/embed/v2/zeffy-embed.js'), 'Zeffy embed script renders');
+  assert.ok(real.includes(`data-zeffy-embed-src="${url}"`), 'Zeffy iframe fallback renders');
   assert.ok(real.includes('https://paypal.me/test'), 'PayPal link renders when set');
   const placeholder = renderDonate({ ...content, settings: { ...settings, donationUrl: '#', zeffyUrl: 'ZEFFY_FORM_URL' } });
   assert.doesNotMatch(placeholder, /<iframe/);
