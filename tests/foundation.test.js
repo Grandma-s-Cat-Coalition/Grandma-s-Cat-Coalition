@@ -239,7 +239,7 @@ test('ShelterLuv descriptions are incorporated into generated first-person bios'
 
 test('already first-person ShelterLuv notes are not wrapped in awkward extra text', () => {
   const html = renderCatDetail({ name: 'Millie', description: "Hi, I'm Millie, a playful girl who loves people." }, 'https://example.com/adopt');
-  assert.ok(html.includes('Hi, I&#39;m Millie, a playful girl who loves people'));
+  assert.ok(html.includes('Hi! I’m Millie. I’m a playful girl who loves people'));
   assert.ok(!html.includes('I’m Hi'));
 });
 

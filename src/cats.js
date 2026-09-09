@@ -39,7 +39,11 @@ export function buildCatBio(cat) {
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? ' I have been here so long I have cabin fever — this place is great, but I want a home, not temporary shelter.' : waitingDays >= 90 ? ' I have been here for many months. This place is great and all, but I’m ready to find my person — are you it?' : waitingDays >= 28 ? ' I have been here for a month now. I like it here, but I would love to find my furever home.' : waitingDays >= 7 ? ' I have been here for a few weeks, and I’m hoping my person finds me soon.' : waitingDays > 0 ? ' I have only been here a little while, but I’m already hoping to meet my furever family.' : '';
   const sourceDescription = String(cat.description || '').trim().replace(/[.!?]+$/, '');
-  if (sourceDescription) return `${sourceDescription}.${waitingSentence}`;
+  if (sourceDescription) {
+    const intro = new RegExp(`^Hi,?\\s+I['’]m\\s+${name.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')},\\s*`, 'i');
+    const rewritten = sourceDescription.replace(intro, `Hi! I’m ${name}. I’m `);
+    return `${rewritten}.${waitingSentence}`;
+  }
   const descriptionSentence = '';
   const closing = ['I’m hoping to meet someone special who will love me for life.', 'If you’re looking for a new family member, I’d love to meet you.', 'I’m ready for a home where I can be loved, spoiled, and part of the family.'][seed % 3];
   return `${opening} ${name}, ${identity}.${descriptionSentence}${traitSentence}${homeSentence}${careSentence}${waitingSentence} ${closing}`;
