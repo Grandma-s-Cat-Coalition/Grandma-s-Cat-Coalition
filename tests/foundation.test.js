@@ -217,35 +217,18 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
 });
 
 test('cat detail generates a factual bio when ShelterLuv has no prose description', () => {
-  const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats', 'Litter Box Trained'], daysAtShelter: 35 }, 'https://example.com/adopt');
+  const html = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats', 'Litter Box Trained'] }, 'https://example.com/adopt');
   assert.ok(!html.includes('This cat is available through'));
   assert.match(html, /(?:Hi! I’m|Hello, I’m|Hi there! My name is) Mia/);
-  assert.ok(html.includes('2 years old'));
+  assert.ok(html.includes('2 years old') && html.includes('female Domestic Short Hair'));
   assert.ok(html.includes('other cats') && html.includes('litter-box trained'));
-  assert.match(html, /furever family|new family member|part of the family|love me for life/);
-  assert.ok(html.includes('I have been here for a while now'));
+  assert.match(html, /forever family|new family member|part of the family|love me for life/);
 });
 
 test('generated bios vary by cat while staying factual', () => {
   const mia = renderCatDetail({ name: 'Mia', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats'] }, 'https://example.com/adopt');
   const zoe = renderCatDetail({ name: 'Zoe', age: '2', sex: 'Female', breed: 'Domestic Short Hair', attributes: ['Good with Cats'] }, 'https://example.com/adopt');
   assert.notEqual(mia, zoe);
-});
-
-test('ShelterLuv descriptions are incorporated into generated first-person bios', () => {
-  const html = renderCatDetail({ name: 'Millie', age: '3M/2W', sex: 'Female', breed: 'Domestic Medium Hair', description: 'Very affectionate, loves sleeping with a human, and very playful.' }, 'https://example.com/adopt');
-  assert.ok(html.includes('Hi! I’m Millie. I’m very affectionate, love sleeping with a human, and very playful.'));
-});
-
-test('already first-person ShelterLuv notes are not wrapped in awkward extra text', () => {
-  const html = renderCatDetail({ name: 'Millie', description: "Hi, I'm Millie, a playful girl who loves people." }, 'https://example.com/adopt');
-  assert.ok(html.includes('Hi! I’m Millie. I’m a playful girl who loves people'));
-  assert.ok(!html.includes('I’m Hi'));
-});
-
-test('fragment-style ShelterLuv descriptions get a first-person introduction', () => {
-  const html = renderCatDetail({ name: 'Millie', description: 'Incredibly affectionate, loves sleeping with a human, and playful.' }, 'https://example.com/adopt');
-  assert.ok(html.includes('Hi! I’m Millie. I’m incredibly affectionate, love sleeping with a human, and playful.'));
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
