@@ -142,9 +142,8 @@ test('CMS collections drive the build: news, board, faq, events', () => {
 
 test('donate page reads donationUrl from settings', () => {
   const real = renderDonate({ ...content, settings: { ...settings, donationUrl: 'https://checkout.shelterluv.com/donate/GCCI', paypalUrl: 'https://paypal.me/test' } });
-  assert.doesNotMatch(real, /<iframe/);
-  assert.match(real, /href="https:\/\/checkout\.shelterluv\.com\/donate\/GCCI"/);
-  assert.ok(real.includes('Payments, receipts, and recurring gifts are handled securely by ShelterLuv'), 'ShelterLuv handoff note renders');
+  assert.match(real, /<iframe class="donation-embed"[^>]*src="https:\/\/checkout\.shelterluv\.com\/donate\/GCCI/);
+  assert.ok(real.includes('including a custom amount'), 'custom amount guidance renders');
   assert.ok(real.includes('https://paypal.me/test'), 'PayPal link renders when set');
   const placeholder = renderDonate({ ...content, settings: { ...settings, donationUrl: '#', zeffyUrl: 'ZEFFY_FORM_URL' } });
   assert.doesNotMatch(placeholder, /<iframe/);
