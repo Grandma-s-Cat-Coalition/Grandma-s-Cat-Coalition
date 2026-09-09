@@ -23,6 +23,7 @@ await mkdir('public', { recursive: true });
 await writeFile('public/robots.txt', 'User-agent: *\nAllow: /\nSitemap: https://grandmascatcoalition.org/sitemap.xml\n');
 await mkdir('public/admin', { recursive: true });
 await copyFile('admin/config.yml', 'public/admin/config.yml');
+await copyFile('admin/config.yml', 'public/config.yml');
 const urls = [...Object.keys(pages).filter(r => r !== '404'), ...newsUrls];
 await writeFile('public/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(r => `<url><loc>https://grandmascatcoalition.org/${r === 'index' ? '' : r}</loc></url>`).join('')}</urlset>`);
 
