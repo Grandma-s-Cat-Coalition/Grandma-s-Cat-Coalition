@@ -108,7 +108,7 @@ export function renderDonate(c) {
   const s = c.settings;
   const donationUrl = isReal(s.donationUrl) ? s.donationUrl : s.zeffyUrl;
   const give = isReal(donationUrl)
-    ? `<h2>Give securely</h2><iframe class="zeffy-embed" title="Donate to ${esc(s.orgName)}" src="${esc(donationUrl)}" allow="payment"></iframe>`
+    ? `<h2>Choose a gift</h2><p class="section-intro">Pick a starting point, then complete your secure donation through ShelterLuv.</p><div class="donation-options"><a class="donation-option" href="${esc(donationUrl)}"><strong>$25</strong><span>Food, litter, and daily supplies</span></a><a class="donation-option" href="${esc(donationUrl)}"><strong>$50</strong><span>Vaccines and basic wellness care</span></a><a class="donation-option" href="${esc(donationUrl)}"><strong>$100</strong><span>Spay, neuter, and recovery support</span></a><a class="donation-option" href="${esc(donationUrl)}"><strong>Monthly</strong><span>Steady support our volunteers can count on</span></a></div><p class="actions"><a class="button" href="${esc(donationUrl)}">Donate securely through ShelterLuv</a></p><p class="donation-note">Payments, receipts, and recurring gifts are handled securely by ShelterLuv for ${esc(s.orgName)}.</p>`
     : `<h2>Give securely</h2><div class="notice"><p>Our online donation form is being connected. To donate today, call <a href="${tel(s.phone)}">${esc(s.phone)}</a> or mail a check to ${esc(s.address)}.</p></div>`;
   const other = [
     isReal(s.paypalUrl) && `<a class="button soft" href="${esc(s.paypalUrl)}">PayPal</a>`,
