@@ -223,7 +223,7 @@ test('cat detail generates a factual bio when ShelterLuv has no prose descriptio
   assert.ok(html.includes('2 years old'));
   assert.ok(html.includes('other cats') && html.includes('litter-box trained'));
   assert.match(html, /furever family|new family member|part of the family|love me for life/);
-  assert.ok(html.includes('I have been here for a month now'));
+  assert.ok(html.includes('I have been here for a while now'));
 });
 
 test('generated bios vary by cat while staying factual', () => {
