@@ -140,11 +140,11 @@ test('CMS collections drive the build: news, board, faq, events', () => {
   assert.ok(events.indexOf('PAST_EVENT') > events.indexOf('past-events'), 'past events are collapsed');
 });
 
-test('donate page reads zeffyUrl from settings', () => {
-  const real = renderDonate({ ...content, settings: { ...settings, zeffyUrl: 'https://www.zeffy.com/embed/donation-form/test', paypalUrl: 'https://paypal.me/test' } });
-  assert.match(real, /<iframe class="zeffy-embed"[^>]*src="https:\/\/www\.zeffy\.com/);
+test('donate page reads donationUrl from settings', () => {
+  const real = renderDonate({ ...content, settings: { ...settings, donationUrl: 'https://checkout.shelterluv.com/donate/GCCI', paypalUrl: 'https://paypal.me/test' } });
+  assert.match(real, /<iframe class="zeffy-embed"[^>]*src="https:\/\/checkout\.shelterluv\.com\/donate\/GCCI/);
   assert.ok(real.includes('https://paypal.me/test'), 'PayPal link renders when set');
-  const placeholder = renderDonate({ ...content, settings: { ...settings, zeffyUrl: 'ZEFFY_FORM_URL' } });
+  const placeholder = renderDonate({ ...content, settings: { ...settings, donationUrl: '#', zeffyUrl: 'ZEFFY_FORM_URL' } });
   assert.doesNotMatch(placeholder, /<iframe/);
   assert.ok(placeholder.includes('mail a check'), 'fallback renders for placeholder');
 });

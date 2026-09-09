@@ -106,9 +106,10 @@ export function renderVolunteer(c) {
 
 export function renderDonate(c) {
   const s = c.settings;
-  const give = isReal(s.zeffyUrl)
-    ? `<h2>Give securely</h2><iframe class="zeffy-embed" title="Donate to ${esc(s.orgName)}" src="${esc(s.zeffyUrl)}" allow="payment"></iframe>`
-    : `<h2>Give securely</h2><div class="notice"><p>Our Zeffy donation form is being connected. To donate today, call <a href="${tel(s.phone)}">${esc(s.phone)}</a> or mail a check to ${esc(s.address)}.</p></div>`;
+  const donationUrl = isReal(s.donationUrl) ? s.donationUrl : s.zeffyUrl;
+  const give = isReal(donationUrl)
+    ? `<h2>Give securely</h2><iframe class="zeffy-embed" title="Donate to ${esc(s.orgName)}" src="${esc(donationUrl)}" allow="payment"></iframe>`
+    : `<h2>Give securely</h2><div class="notice"><p>Our online donation form is being connected. To donate today, call <a href="${tel(s.phone)}">${esc(s.phone)}</a> or mail a check to ${esc(s.address)}.</p></div>`;
   const other = [
     isReal(s.paypalUrl) && `<a class="button soft" href="${esc(s.paypalUrl)}">PayPal</a>`,
     isReal(s.venmoUrl) && `<a class="button soft" href="${esc(s.venmoUrl)}">Venmo</a>`,

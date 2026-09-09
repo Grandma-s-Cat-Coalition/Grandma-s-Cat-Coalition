@@ -21,7 +21,8 @@ collections:
           - {label: Address, name: address, widget: string}
           - {label: EIN, name: ein, widget: string}
           - {label: Facebook URL, name: facebook, widget: string}
-          - {label: Zeffy URL, name: zeffyUrl, widget: string}
+          - {label: Donation URL, name: donationUrl, widget: string}
+          - {label: Zeffy URL, name: zeffyUrl, widget: string, required: false}
           - {label: PayPal URL, name: paypalUrl, widget: string}
           - {label: Venmo URL, name: venmoUrl, widget: string}
           - {label: Amazon wishlist, name: amazonWishlist, widget: string}
