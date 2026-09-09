@@ -234,7 +234,8 @@ test('generated bios vary by cat while staying factual', () => {
 
 test('ShelterLuv descriptions are incorporated into generated first-person bios', () => {
   const html = renderCatDetail({ name: 'Millie', age: '3M/2W', sex: 'Female', breed: 'Domestic Medium Hair', description: 'Very affectionate, loves sleeping with a human, and very playful.' }, 'https://example.com/adopt');
-  assert.ok(html.includes('My foster notes say I’m very affectionate, love sleeping with a human, and very playful.'));
+  assert.ok(html.includes('I’m very affectionate, love sleeping with a human, and very playful.'));
+  assert.ok(!html.includes('foster notes'));
   assert.ok(!html.includes('<p>Very affectionate'));
 });
 
