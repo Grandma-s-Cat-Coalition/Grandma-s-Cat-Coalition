@@ -26,19 +26,25 @@ export function formatAge(age) {
 export function buildCatBio(cat) {
   const name = String(cat.name || 'this cat');
   const age = formatAge(cat.age);
-  const type = [cat.sex?.toLowerCase(), cat.breed].filter(Boolean).join(' ');
   const seed = [...name].reduce((total, character) => total + character.charCodeAt(0), 0);
   const attributes = Array.isArray(cat.attributes) ? cat.attributes : [];
   const has = value => attributes.some(attribute => attribute.toLowerCase() === value.toLowerCase());
   const traits = ['Affectionate', 'Cuddly', 'Lap Cat', 'Purr Machine', 'Playful', 'Talkative', 'Sweet', 'Gentle', 'Calm', 'Shy', 'Curious'].filter(has);
   const compatibility = [has('Good with Cats') && 'other cats', has('Good with Dogs') && 'dogs', (has('Good with Kids') || has('Good with Children')) && 'children'].filter(Boolean);
   const opening = ['Hi! I’m', 'Hello, I’m', 'Hi there! My name is'][seed % 3];
-  const identity = age && type ? `${age} old and a ${type}` : age ? `${age} old` : type || 'an adoptable cat';
-  const traitSentence = traits.length ? ` People here describe me as ${traits.slice(0, -1).join(', ')}${traits.length > 1 ? ' and ' : ''}${traits.at(-1).toLowerCase()}.` : '';
-  const homeSentence = compatibility.length ? ` I do well with ${compatibility.slice(0, -1).join(', ')}${compatibility.length > 1 ? ' and ' : ''}${compatibility.at(-1)}.` : '';
-  const careSentence = has('Litter Box Trained') ? ` I’m also litter-box trained, so I’m ready to settle into home life.` : '';
+  const identity = age ? `${age} old` : 'ready to meet my person';
+  const traitList = traits.map(trait => trait.toLowerCase());
+  const traitSentence = traitList.length ? ` I’m ${traitList.slice(0, -1).join(', ')}${traitList.length > 1 ? ' and ' : ''}${traitList.at(-1)}, and I have so much love to give.` : '';
+  const homeSentence = compatibility.length ? ` I genuinely enjoy spending time with ${compatibility.slice(0, -1).join(', ')}${compatibility.length > 1 ? ' and ' : ''}${compatibility.at(-1)}.` : '';
+  const careSentence = has('Litter Box Trained') ? ` I’m litter-box trained, so you can skip the hard parts and jump right into the fun.` : '';
   const sourceDescription = String(cat.description || '').trim().replace(/[.!?]+$/, '');
-  const descriptionSentence = sourceDescription ? ` My foster notes say I’m ${sourceDescription.charAt(0).toLowerCase()}${sourceDescription.slice(1).replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am')}.` : '';
+  const cleanedDescription = sourceDescription.charAt(0).toLowerCase() + sourceDescription.slice(1)
+    .replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am').replace(/\bhas\b/gi, 'have');
+  const descriptionSentence = sourceDescription ? [
+    ` I am incredibly ${cleanedDescription.replace(/^very\s+/i, '')}.`,
+    ` I have a heart full of love, and I’m ${cleanedDescription}.`,
+    ` One thing you should know about me? I’m ${cleanedDescription}.`,
+  ][seed % 3] : '';
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? ' I have been here so long I have cabin fever — this place is great, but I want a home, not temporary shelter.' : waitingDays >= 90 ? ' I have been here for many months. This place is great and all, but I’m ready to find my person — are you it?' : waitingDays >= 28 ? ' I have been here for a month now. I like it here, but I would love to find my furever home.' : waitingDays >= 7 ? ' I have been here for a few weeks, and I’m hoping my person finds me soon.' : waitingDays > 0 ? ' I have only been here a little while, but I’m already hoping to meet my furever family.' : '';
   const closing = ['I’m hoping to meet someone special who will love me for life.', 'If you’re looking for a new family member, I’d love to meet you.', 'I’m ready for a home where I can be loved, spoiled, and part of the family.'][seed % 3];
