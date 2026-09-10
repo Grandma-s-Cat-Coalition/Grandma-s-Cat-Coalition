@@ -120,7 +120,7 @@ export function renderDonate(c) {
   ].filter(Boolean).join(' ');
   const main = hero('Every gift matters', 'Help cats heal and find home', 'A monthly gift gives our small volunteer rescue dependable support.') +
     `<section class="section"><div class="wrap">${give}</div></section>` +
-    `<section class="section sage"><div class="wrap grid"><div><h2>What your gift can do</h2><p><strong>$25</strong> helps supply food and litter.</p><p><strong>$50</strong> helps with vaccines and basic care.</p><p><strong>$100</strong> helps sponsor spay or neuter care.</p></div><div><h2>Other ways</h2>${other ? `<p class="actions">${other}</p>` : '<p>PayPal, Venmo, Amazon and Chewy wishlist links are coming soon.</p>'}<p>Employer matching may double your impact.</p></div></div></section>`;
+    `<section class="section sage"><div class="wrap grid"><div><h2>What your gift can do</h2><p>Food and litter for cats in foster care.</p><p>Vaccines and basic veterinary care.</p><p>Spay and neuter care for cats who need it most.</p></div><div><h2>Other ways</h2>${other ? `<p class="actions">${other}</p>` : '<p>PayPal, Venmo, Amazon and Chewy wishlist links are coming soon.</p>'}</div></div></section>`;
   return layout({ slug: 'donate', title: `Donate to Help Cats | ${s.orgName}`, description: 'Give once or monthly to fund cat food, veterinary care, fostering, and TNR in Northeast Iowa.', ld: crumbLd('Donate'), main, settings: s });
 }
 

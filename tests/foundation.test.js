@@ -147,6 +147,8 @@ test('donate page embeds Zeffy campaign from settings', () => {
   assert.ok(real.includes('https://www.zeffy.com/embed/v2/zeffy-embed.js'), 'Zeffy embed script renders');
   assert.ok(real.includes(`data-zeffy-embed-src="${url}"`), 'Zeffy iframe fallback renders');
   assert.ok(real.includes('https://paypal.me/test'), 'PayPal link renders when set');
+  assert.doesNotMatch(real, /\$(25|50|100)/, 'gift impact copy does not show donation amounts');
+  assert.ok(!real.includes('Employer matching may double your impact.'), 'employer matching copy is removed');
   const placeholder = renderDonate({ ...content, settings: { ...settings, donationUrl: '#', zeffyUrl: 'ZEFFY_FORM_URL' } });
   assert.doesNotMatch(placeholder, /<iframe/);
   assert.ok(placeholder.includes('mail a check'), 'fallback renders for placeholder');
