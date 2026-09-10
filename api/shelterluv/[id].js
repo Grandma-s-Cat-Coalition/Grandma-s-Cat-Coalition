@@ -24,7 +24,13 @@ const textFrom = value => {
   if (Array.isArray(value)) return value.map(textFrom).find(Boolean) || '';
   return pick(value, ['Note', 'note', 'Memo', 'memo', 'Text', 'text', 'Body', 'body', 'Description', 'description', 'Value', 'value']);
 };
-const memoType = value => typeof value === 'string' ? '' : pick(value, ['Type', 'type', 'MemoType', 'memo_type', 'memoType', 'Category', 'category', 'Name', 'name', 'Label', 'label']);
+const typeText = value => {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) return value.map(typeText).filter(Boolean).join(' ');
+  return pick(value, ['Name', 'name', 'Label', 'label', 'Title', 'title', 'Type', 'type', 'Value', 'value']) || Object.values(value).map(typeText).filter(Boolean).join(' ');
+};
+const memoType = value => typeof value === 'string' ? '' : typeText(pick(value, ['Type', 'type', 'MemoType', 'memo_type', 'memoType', 'Category', 'category', 'Name', 'name', 'Label', 'label']));
 const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_memos', 'AnimalMemo', 'animal_memo', 'Notes', 'notes'].flatMap(name => {
   const value = a?.[name];
   return Array.isArray(value) ? value : value ? [value] : [];

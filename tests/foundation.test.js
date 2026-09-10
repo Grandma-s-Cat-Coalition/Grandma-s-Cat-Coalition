@@ -288,8 +288,10 @@ test('ShelterLuv API has cache; client falls back to embed widget, then notice',
   assert.match(detailApi, /AdoptionFeeGroup/);
   assert.match(detailApi, /AnimalMemos/);
   assert.match(detailApi, /MemoType/);
+  assert.match(detailApi, /typeText/);
   assert.match(listApi, /AnimalMemos/);
   assert.match(listApi, /MemoType/);
+  assert.match(listApi, /typeText/);
   assert.match(detailApi, /embed\/animal/);
   assert.match(detailApi, /Good to know|attributes/);
   const js = await readFile('src/main.js', 'utf8');
