@@ -204,6 +204,7 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
     weight: '3 lb',
     adoptionFee: '$100',
     intakeDate: '2026-09-01',
+    foundLocation: 'a quiet porch on Main Street',
     attributes: ['Good with Cats', 'Litter Box Trained', 'Affectionate'],
     description: '<img onerror=x>',
     photo: 'javascript:alert(1)',
@@ -214,6 +215,7 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
   assert.ok(!html.includes('Location'));
   assert.ok(!html.includes('Animal ID'));
   assert.ok(!html.includes('GCCI-A-1'));
+  assert.ok(html.includes('found near a quiet porch on Main Street') || html.includes('being found near a quiet porch on Main Street'));
   assert.ok(!html.includes('<script>'));
   assert.ok(!html.includes('<img onerror'));
   assert.ok(!html.includes('javascript:'));
@@ -242,6 +244,12 @@ test('ShelterLuv descriptions are incorporated into generated first-person bios'
   assert.ok(html.includes('incredibly affectionate, love sleeping with a human, and very playful') || html.includes('heart full of love'));
   assert.ok(!html.includes('My foster notes say'));
   assert.ok(!html.includes('<p>Very affectionate'));
+});
+
+test('ShelterLuv found history is incorporated into generated first-person bios', () => {
+  const html = renderCatDetail({ name: 'Gabby', age: '4M', sex: 'Female', breed: 'American Shorthair', foundLocation: 'a farm outside Lime Springs' }, 'https://example.com/adopt');
+  assert.ok(html.includes('found near a farm outside Lime Springs') || html.includes('being found near a farm outside Lime Springs'));
+  assert.ok(!html.includes('American Shorthair.'), 'breed stays out of bio prose');
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {

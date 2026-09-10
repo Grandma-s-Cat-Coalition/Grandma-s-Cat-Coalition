@@ -45,10 +45,16 @@ export function buildCatBio(cat) {
     ` I have a heart full of love, and I’m ${cleanedDescription}.`,
     ` One thing you should know about me? I’m ${cleanedDescription}.`,
   ][seed % 3] : '';
+  const foundLocation = String(cat.foundLocation || '').trim().replace(/[.!?]+$/, '');
+  const foundSentence = foundLocation ? [
+    ` My story started when I was found near ${foundLocation}, and now I’m ready for the purrfect place to call home.`,
+    ` I was found near ${foundLocation}, and I’m hoping the next chapter of my story is a soft landing with someone who loves me.`,
+    ` I came to Grandma’s Cat Coalition after being found near ${foundLocation}; now I’m just waiting for my furever person to notice me.`,
+  ][seed % 3] : '';
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? ' I have been here so long I have cabin fever — this place is great, but I want a home, not temporary shelter.' : waitingDays >= 90 ? ' I have been here for many months. This place is great and all, but I’m ready to find my person — are you it?' : waitingDays >= 28 ? ' I have been here for a month now. I like it here, but I would love to find my furever home.' : waitingDays >= 7 ? ' I have been here for a few weeks, and I’m hoping my person finds me soon.' : waitingDays > 0 ? ' I have only been here a little while, but I’m already hoping to meet my furever family.' : '';
   const closing = ['I’m hoping to meet someone special who will love me for life.', 'If you’re looking for a new family member, I’d love to meet you.', 'I’m ready for a home where I can be loved, spoiled, and part of the family.'][seed % 3];
-  return `${opening} ${name}, ${identity}.${descriptionSentence}${traitSentence}${homeSentence}${careSentence}${waitingSentence} ${closing}`;
+  return `${opening} ${name}, ${identity}.${descriptionSentence}${traitSentence}${homeSentence}${careSentence}${foundSentence}${waitingSentence} ${closing}`;
 }
 
 export function renderCatCards(cats, adoptUrl) {

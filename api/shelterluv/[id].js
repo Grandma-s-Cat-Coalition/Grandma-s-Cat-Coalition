@@ -18,6 +18,7 @@ const ageFromBirthday = seconds => {
 const fee = group => Array.isArray(group) && group[0]?.Price !== undefined ? `$${Number(group[0].Price).toFixed(2).replace(/\.00$/, '')}` : '';
 const profileUrl = a => a?.ID ? `https://new.shelterluv.com/matchme/adopt/GCCI/Cat/${encodeURIComponent(a.ID)}` : '';
 const attributes = value => (Array.isArray(value) ? value : []).map(item => typeof item === 'string' ? item : item?.Name || item?.name || item?.label || '').filter(Boolean);
+const foundLocation = a => pick(a, ['FoundLocation', 'found_location', 'Found Location', 'FoundAddress', 'found_address', 'Found Address', 'LostFoundAddress', 'lost_found_address', 'Lost/Found Address', 'IntakeFoundLocation', 'intake_found_location', 'Intake Found Location', 'Origin', 'origin', 'OriginalOrigin', 'original_origin', 'Source', 'source', 'IntakeSource', 'intake_source', 'HistoryNote', 'history_note', 'History Note']);
 
 const mapAnimal = a => ({
   id: pick(a, ['Internal-ID', 'ID']),
@@ -32,6 +33,7 @@ const mapAnimal = a => ({
   intakeDate: dateFromUnix(pick(a, ['LastIntakeUnixTime'])),
   daysAtShelter: daysSince(pick(a, ['LastIntakeUnixTime'])),
   location: pick(a, ['Location', 'location']),
+  foundLocation: foundLocation(a),
   attributes: attributes(a.Attributes || a.attributes),
   description: pick(a, ['Description', 'description', 'kennel_description']),
   profileUrl: profileUrl(a),
@@ -74,6 +76,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ...mapped,
       age: ageFromBirthday(publicRecord.birthday) || mapped.age,
       location: mapped.location || supplemental.location,
+      foundLocation: mapped.foundLocation || supplemental.foundLocation,
       attributes: mapped.attributes.length ? mapped.attributes : supplemental.attributes,
       description: mapped.description || supplemental.description,
       weight: mapped.weight || supplemental.weight,
