@@ -250,6 +250,9 @@ test('ShelterLuv found history is incorporated into generated first-person bios'
   const html = renderCatDetail({ name: 'Gabby', age: '4M', sex: 'Female', breed: 'American Shorthair', foundLocation: 'a farm outside Lime Springs' }, 'https://example.com/adopt');
   assert.ok(html.includes('found near a farm outside Lime Springs') || html.includes('being found near a farm outside Lime Springs'));
   assert.ok(!html.includes('American Shorthair.'), 'breed stays out of bio prose');
+  const natural = renderCatDetail({ name: 'Millie', age: '3M', foundLocation: 'found under a porch' }, 'https://example.com/adopt');
+  assert.ok(natural.includes('found under a porch'));
+  assert.ok(!natural.includes('near under a porch'));
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
@@ -283,6 +286,10 @@ test('ShelterLuv API has cache; client falls back to embed widget, then notice',
   assert.match(detailApi, /LastIntakeUnixTime/);
   assert.match(detailApi, /CurrentWeightPounds/);
   assert.match(detailApi, /AdoptionFeeGroup/);
+  assert.match(detailApi, /AnimalMemos/);
+  assert.match(detailApi, /MemoType/);
+  assert.match(listApi, /AnimalMemos/);
+  assert.match(listApi, /MemoType/);
   assert.match(detailApi, /embed\/animal/);
   assert.match(detailApi, /Good to know|attributes/);
   const js = await readFile('src/main.js', 'utf8');
