@@ -1,4 +1,17 @@
 const pick = (obj, names) => names.map(name => obj?.[name]).find(value => value !== undefined && value !== null && value !== '') || '';
+const deepPick = (value, names, seen = new Set()) => {
+  if (!value || typeof value !== 'object' || seen.has(value)) return '';
+  seen.add(value);
+  const direct = pick(value, names);
+  if (direct) return direct;
+  for (const child of Object.values(value)) {
+    const found = Array.isArray(child)
+      ? child.map(item => deepPick(item, names, seen)).find(Boolean)
+      : deepPick(child, names, seen);
+    if (found) return found;
+  }
+  return '';
+};
 const authHeaders = key => ({ Authorization: `Bearer ${key}`, 'X-Api-Key': key });
 const dateFromUnix = seconds => seconds ? new Date(Number(seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
 const daysSince = seconds => seconds ? Math.max(0, Math.floor((Date.now() - Number(seconds) * 1000) / 86400000)) : 0;
@@ -36,7 +49,8 @@ const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_mem
   return Array.isArray(value) ? value : value ? [value] : [];
 });
 const foundMemo = a => memos(a).map(memo => ({ type: memoType(memo), text: textFrom(memo) })).find(({ type, text }) => text && (/^history$/i.test(type.trim()) || /found|origin|source|history|intake|where/i.test(`${type} ${text}`)))?.text || '';
-const foundLocation = a => pick(a, ['FoundLocation', 'found_location', 'Found Location', 'FoundAddress', 'found_address', 'Found Address', 'LostFoundAddress', 'lost_found_address', 'Lost/Found Address', 'IntakeFoundLocation', 'intake_found_location', 'Intake Found Location', 'Origin', 'origin', 'OriginalOrigin', 'original_origin', 'Source', 'source', 'IntakeSource', 'intake_source', 'HistoryNote', 'history_note', 'History Note']) || foundMemo(a);
+const foundKeys = ['FoundLocation', 'found_location', 'Found Location', 'FoundAddress', 'found_address', 'Found Address', 'FoundAddressString', 'found_address_string', 'Found Address String', 'FoundLocationAddress', 'found_location_address', 'Found Location Address', 'LostFoundAddress', 'lost_found_address', 'Lost/Found Address', 'IntakeFoundLocation', 'intake_found_location', 'Intake Found Location', 'IntakeFoundAddress', 'intake_found_address', 'Intake Found Address', 'Origin', 'origin', 'OriginalOrigin', 'original_origin', 'Source', 'source', 'IntakeSource', 'intake_source', 'HistoryNote', 'history_note', 'History Note'];
+const foundLocation = a => pick(a, foundKeys) || deepPick(pick(a, ['CurrentIntake', 'current_intake', 'LastIntake', 'last_intake', 'Intake', 'intake', 'Intakes', 'intakes', 'History', 'history']), foundKeys) || foundMemo(a);
 const animalsFrom = value => Array.isArray(value) ? value : Array.isArray(value?.animals) ? value.animals : Array.isArray(value?.data) ? value.data : value ? [value] : [];
 
 const fetchJson = async (url, key) => {
