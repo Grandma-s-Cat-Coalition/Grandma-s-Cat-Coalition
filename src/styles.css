@@ -24,6 +24,7 @@ h2{font-size:clamp(1.7rem,4vw,2.25rem)}
 .brand img{display:block;width:68px;height:68px;flex:0 0 68px;object-fit:contain}
 .brand-copy{display:flex;flex-direction:column;gap:.25rem;max-width:280px}
 .brand-copy strong{font-family:var(--font-serif);font-size:1.05rem;line-height:1.1}
+.brand-grandma{font-family:var(--font-script-primary);font-weight:400;font-size:1.55em;line-height:.75;text-transform:none;letter-spacing:0}
 .brand-copy small{font-size:.72rem;line-height:1.25;color:var(--sage-900)}
 .brand .script{font-size:1.5rem}
 .brand .coalition{font-family:var(--font-serif);font-weight:700;letter-spacing:.14em;color:var(--sage-900);font-size:.8rem}
