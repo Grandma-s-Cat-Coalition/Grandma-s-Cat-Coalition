@@ -35,8 +35,33 @@ const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_mem
   const value = a?.[name];
   return Array.isArray(value) ? value : value ? [value] : [];
 });
-const foundMemo = a => memos(a).map(memo => ({ type: memoType(memo), text: textFrom(memo) })).find(({ type, text }) => text && /found|origin|source|history|intake|where/i.test(`${type} ${text}`))?.text || '';
+const foundMemo = a => memos(a).map(memo => ({ type: memoType(memo), text: textFrom(memo) })).find(({ type, text }) => text && (/^history$/i.test(type.trim()) || /found|origin|source|history|intake|where/i.test(`${type} ${text}`)))?.text || '';
 const foundLocation = a => pick(a, ['FoundLocation', 'found_location', 'Found Location', 'FoundAddress', 'found_address', 'Found Address', 'LostFoundAddress', 'lost_found_address', 'Lost/Found Address', 'IntakeFoundLocation', 'intake_found_location', 'Intake Found Location', 'Origin', 'origin', 'OriginalOrigin', 'original_origin', 'Source', 'source', 'IntakeSource', 'intake_source', 'HistoryNote', 'history_note', 'History Note']) || foundMemo(a);
+const animalsFrom = value => Array.isArray(value) ? value : Array.isArray(value?.animals) ? value.animals : Array.isArray(value?.data) ? value.data : value ? [value] : [];
+
+const fetchJson = async (url, key) => {
+  const r = await fetch(url, { headers: authHeaders(key), cache: 'no-store' });
+  if (!r.ok) return null;
+  try { return await r.json(); } catch { return null; }
+};
+
+const supplementalHistory = async (id, key) => {
+  const encoded = encodeURIComponent(id);
+  const urls = [
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/memos`,
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/notes`,
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/history`,
+    `https://new.shelterluv.com/api/v1/memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/notes?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/animal_memos?animal_id=${encoded}`,
+  ];
+  for (const url of urls) {
+    const raw = await fetchJson(url, key);
+    const found = raw && foundMemo({ memos: animalsFrom(raw) });
+    if (found) return found;
+  }
+  return '';
+};
 
 const mapAnimal = a => ({
   id: pick(a, ['Internal-ID', 'ID']),
@@ -80,6 +105,7 @@ export default async function handler(req, res) {
     const mapped = mapAnimal(raw);
     const publicId = String(mapped.animalId || raw.ID || '').includes('-') ? (mapped.animalId || raw.ID) : `GCCI-A-${mapped.animalId || raw.ID}`;
     const publicRecord = await publicAnimal(publicId);
+    const history = await supplementalHistory(mapped.id || id, process.env.SHELTERLUV_API_KEY) || await supplementalHistory(mapped.animalId || id, process.env.SHELTERLUV_API_KEY);
     const supplemental = mapAnimal({
       ID: publicRecord.uniqueId,
       Name: publicRecord.name,
@@ -94,7 +120,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ...mapped,
       age: ageFromBirthday(publicRecord.birthday) || mapped.age,
       location: mapped.location || supplemental.location,
-      foundLocation: mapped.foundLocation || supplemental.foundLocation,
+      foundLocation: mapped.foundLocation || supplemental.foundLocation || history,
       attributes: mapped.attributes.length ? mapped.attributes : supplemental.attributes,
       description: mapped.description || supplemental.description,
       weight: mapped.weight || supplemental.weight,
