@@ -24,7 +24,7 @@ const textFrom = value => {
   if (!value) return '';
   if (typeof value === 'string') return value;
   if (Array.isArray(value)) return value.map(textFrom).find(Boolean) || '';
-  return pick(value, ['Note', 'note', 'Memo', 'memo', 'Text', 'text', 'Body', 'body', 'Description', 'description', 'Value', 'value']);
+  return pick(value, ['Note', 'note', 'Memo', 'memo', 'MemoText', 'memo_text', 'memoText', 'Text', 'text', 'Body', 'body', 'Description', 'description', 'Comments', 'comments', 'Comment', 'comment', 'Details', 'details', 'Message', 'message', 'Value', 'value']);
 };
 const typeText = value => {
   if (!value) return '';
@@ -33,7 +33,7 @@ const typeText = value => {
   return pick(value, ['Name', 'name', 'Label', 'label', 'Title', 'title', 'Type', 'type', 'Value', 'value']) || Object.values(value).map(typeText).filter(Boolean).join(' ');
 };
 const memoType = value => typeof value === 'string' ? '' : typeText(pick(value, ['Type', 'type', 'MemoType', 'memo_type', 'memoType', 'Category', 'category', 'Name', 'name', 'Label', 'label']));
-const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_memos', 'AnimalMemo', 'animal_memo', 'Notes', 'notes'].flatMap(name => {
+const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_memos', 'AnimalMemo', 'animal_memo', 'AnimalMemoItems', 'animal_memo_items', 'MemoHistory', 'memo_history', 'Notes', 'notes', 'History', 'history'].flatMap(name => {
   const value = a?.[name];
   return Array.isArray(value) ? value : value ? [value] : [];
 });
@@ -54,6 +54,8 @@ const supplementalHistory = async (id, key) => {
     `https://new.shelterluv.com/api/v1/memos?animal_id=${encoded}`,
     `https://new.shelterluv.com/api/v1/notes?animal_id=${encoded}`,
     `https://new.shelterluv.com/api/v1/animal_memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/animal-memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/history?animal_id=${encoded}`,
   ];
   for (const url of urls) {
     const raw = await fetchJson(url, key);

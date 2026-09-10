@@ -288,9 +288,15 @@ test('ShelterLuv API has cache; client falls back to embed widget, then notice',
   assert.match(detailApi, /AdoptionFeeGroup/);
   assert.match(detailApi, /AnimalMemos/);
   assert.match(detailApi, /MemoType/);
+  assert.match(detailApi, /MemoText/);
+  assert.match(detailApi, /MemoHistory/);
+  assert.match(detailApi, /animal-memos/);
   assert.match(detailApi, /typeText/);
   assert.match(listApi, /AnimalMemos/);
   assert.match(listApi, /MemoType/);
+  assert.match(listApi, /MemoText/);
+  assert.match(listApi, /MemoHistory/);
+  assert.match(listApi, /animal-memos/);
   assert.match(listApi, /typeText/);
   assert.match(detailApi, /embed\/animal/);
   assert.match(detailApi, /Good to know|attributes/);
