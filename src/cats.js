@@ -67,7 +67,8 @@ export function buildCatBio(cat) {
     .map(sentence => sentence.trim())
     .filter(Boolean);
   const foundFromDescription = memoSentences.find(sentence => /^(?:was\s+)?found\s+(?:at|near|in|on|under|outside|by|from)\b/i.test(sentence)) || '';
-  const sourceDescription = memoSentences.filter(sentence => sentence !== foundFromDescription).join(' ').trim().replace(/[.!?]+$/, '');
+  const backstoryFromDescription = memoSentences.find(sentence => sentence !== foundFromDescription && /\b(?:dumped|abandoned|stray|rescued|rough start|left behind)\b/i.test(sentence)) || '';
+  const sourceDescription = memoSentences.filter(sentence => sentence !== foundFromDescription && sentence !== backstoryFromDescription).join(' ').trim().replace(/[.!?]+$/, '');
   const cleanedDescription = sourceDescription
     ? (sourceDescription.charAt(0).toLowerCase() + sourceDescription.slice(1))
       .replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am').replace(/\bhas\b/gi, 'have')
@@ -91,6 +92,13 @@ export function buildCatBio(cat) {
     `I came to Grandma’s Cat Coalition after being found ${foundPlace}; now I’m just waiting for my furever person to notice me.`,
     `Somebody found me ${foundPlace}, and that moment gave me a second chance I would love to spend with you.`,
     `I was brought here after being found ${foundPlace}; now I am ready for the part where I finally belong.`,
+  ][style] : '';
+  const backstorySentence = backstoryFromDescription ? [
+    'I may have had a rough start, but you would never know it from the sweet, loving heart I still have to give.',
+    'My beginning may not have been easy, but I am choosing love anyway — and I am hoping someone chooses me back.',
+    'I came here after a hard chapter, and now I am ready for the soft, safe, furever part of my story.',
+    'Somewhere along the way, life was not as kind to me as it should have been, but I am still full of love and ready to belong.',
+    'My story may have started with uncertainty, but I am ready for it to turn into warmth, safety, and a person of my own.',
   ][style] : '';
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? [
@@ -135,6 +143,7 @@ export function buildCatBio(cat) {
     opening,
     descriptionSentence.trim(),
     traitSentence,
+    backstorySentence,
     homeSentence,
     careSentence,
     foundSentence,

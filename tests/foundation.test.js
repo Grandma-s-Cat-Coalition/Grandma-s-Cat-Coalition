@@ -258,6 +258,13 @@ test('ShelterLuv found history is incorporated into generated first-person bios'
   assert.ok(fromWebsiteMemo.includes('found at Lidtke Mill in Lime Springs'), 'found note from website memo becomes history');
 });
 
+test('ShelterLuv backstory notes are not treated like personality traits', () => {
+  const html = renderCatDetail({ name: 'Gabby', age: '4M/1W', description: 'Most likely dumped, but you’d never know it by her sweet and loving nature.', attributes: ['Good with Cats', 'Litter Box Trained'], daysAtShelter: 38 }, 'https://example.com/adopt');
+  assert.ok(!html.includes('I am incredibly most likely dumped'));
+  assert.ok(!html.includes('I’m most likely dumped'));
+  assert.match(html, /rough start|hard chapter|not have been easy|not as kind|started with uncertainty/);
+});
+
 test('mobile menu toggles aria-expanded and updates its label', async () => {
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /classList\.toggle\('open'\)/);
