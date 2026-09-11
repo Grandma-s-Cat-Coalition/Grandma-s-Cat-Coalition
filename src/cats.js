@@ -62,9 +62,16 @@ export function buildCatBio(cat) {
     `I have my litter-box routine down, so settling in with me should feel a little easier from day one.`,
     `I’m tidy with my litter box, leaving us free to focus on the happy parts of starting life together.`,
   ][style] : '';
-  const sourceDescription = String(cat.description || '').trim().replace(/[.!?]+$/, '');
-  const cleanedDescription = sourceDescription.charAt(0).toLowerCase() + sourceDescription.slice(1)
-    .replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am').replace(/\bhas\b/gi, 'have');
+  const memoSentences = String(cat.description || '')
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map(sentence => sentence.trim())
+    .filter(Boolean);
+  const foundFromDescription = memoSentences.find(sentence => /^(?:was\s+)?found\s+(?:at|near|in|on|under|outside|by|from)\b/i.test(sentence)) || '';
+  const sourceDescription = memoSentences.filter(sentence => sentence !== foundFromDescription).join(' ').trim().replace(/[.!?]+$/, '');
+  const cleanedDescription = sourceDescription
+    ? (sourceDescription.charAt(0).toLowerCase() + sourceDescription.slice(1))
+      .replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am').replace(/\bhas\b/gi, 'have')
+    : '';
   const descriptionSentence = sourceDescription ? [
     ` I am incredibly ${cleanedDescription.replace(/^very\s+/i, '')}.`,
     ` I have a heart full of love, and I’m ${cleanedDescription}.`,
@@ -72,7 +79,7 @@ export function buildCatBio(cat) {
     ` If you ask what makes me special, I’d say this: I’m ${cleanedDescription}.`,
     ` My little heart is happiest when I get to show you that I’m ${cleanedDescription}.`,
   ][style] : '';
-  const foundLocation = String(cat.foundLocation || '').trim().replace(/[.!?]+$/, '');
+  const foundLocation = String(cat.foundLocation || foundFromDescription).trim().replace(/[.!?]+$/, '');
   const foundStory = foundLocation
     .replace(/^(?:found|located|discovered|rescued)\s+/i, '')
     .replace(/^(?:found|located|discovered|rescued)\s*/i, '')

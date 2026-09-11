@@ -253,6 +253,9 @@ test('ShelterLuv found history is incorporated into generated first-person bios'
   const natural = renderCatDetail({ name: 'Millie', age: '3M', foundLocation: 'found under a porch' }, 'https://example.com/adopt');
   assert.ok(natural.includes('found under a porch'));
   assert.ok(!natural.includes('near under a porch'));
+  const fromWebsiteMemo = renderCatDetail({ name: 'Millie', age: '3M', description: 'Incredibly affectionate, loves sleeping with a human. Found at Lidtke Mill in Lime Springs.' }, 'https://example.com/adopt');
+  assert.ok(!fromWebsiteMemo.includes('I’m found at'), 'found note is not treated like a personality trait');
+  assert.ok(fromWebsiteMemo.includes('found at Lidtke Mill in Lime Springs'), 'found note from website memo becomes history');
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
