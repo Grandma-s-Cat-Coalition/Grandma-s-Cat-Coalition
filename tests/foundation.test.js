@@ -215,7 +215,7 @@ test('cat detail page and renderer expose the requested ShelterLuv facts safely'
   assert.ok(!html.includes('Location'));
   assert.ok(!html.includes('Animal ID'));
   assert.ok(!html.includes('GCCI-A-1'));
-  assert.ok(html.includes('found near a quiet porch on Main Street') || html.includes('being found near a quiet porch on Main Street'));
+  assert.ok(html.includes('found near a quiet porch on Main Street') || html.includes('being found near a quiet porch on Main Street') || html.includes('Somebody found me near a quiet porch on Main Street'));
   assert.ok(!html.includes('<script>'));
   assert.ok(!html.includes('<img onerror'));
   assert.ok(!html.includes('javascript:'));
@@ -262,7 +262,8 @@ test('ShelterLuv backstory notes are not treated like personality traits', () =>
   const html = renderCatDetail({ name: 'Gabby', age: '4M/1W', description: 'Most likely dumped, but you’d never know it by her sweet and loving nature.', attributes: ['Good with Cats', 'Litter Box Trained'], daysAtShelter: 38 }, 'https://example.com/adopt');
   assert.ok(!html.includes('I am incredibly most likely dumped'));
   assert.ok(!html.includes('I’m most likely dumped'));
-  assert.match(html, /rough start|hard chapter|not have been easy|not as kind|started with uncertainty/);
+  assert.match(html, /likely being dumped|the hurt of likely being dumped/);
+  assert.match(html, /rough start|hard way to start|soft, safe, furever|not as kind|warmth, safety/);
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {

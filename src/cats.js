@@ -26,8 +26,11 @@ export function formatAge(age) {
 export function buildCatBio(cat) {
   const name = String(cat.name || 'this cat');
   const age = formatAge(cat.age);
-  const seed = [...name].reduce((total, character) => total + character.charCodeAt(0), 0);
-  const style = seed % 5;
+  const bioKey = `${name}|${cat.id || cat.animalId || cat.profileUrl || ''}`;
+  const seed = [...bioKey].reduce((total, character) => ((total * 31) + character.charCodeAt(0)) >>> 0, 7);
+  const signature = seed + name.length * 7 + name.charCodeAt(0) * 3 + name.charCodeAt(name.length - 1) * 5;
+  const variantFactors = [1, 7, 13, 29, 37, 53, 71, 97, 131];
+  const variant = offset => (Math.floor(signature / variantFactors[offset % variantFactors.length]) + offset) % 5;
   const attributes = Array.isArray(cat.attributes) ? cat.attributes : [];
   const has = value => attributes.some(attribute => attribute.toLowerCase() === value.toLowerCase());
   const traits = ['Affectionate', 'Cuddly', 'Lap Cat', 'Purr Machine', 'Playful', 'Talkative', 'Sweet', 'Gentle', 'Calm', 'Shy', 'Curious'].filter(has);
@@ -38,7 +41,7 @@ export function buildCatBio(cat) {
     age ? `Hello from ${name}! I’m ${age} old and ready for somebody to fall in love with me.` : `Hello from ${name}! I’m ready for somebody to fall in love with me.`,
     age ? `I’m ${name}, ${age} old, and I have been waiting for the right heart to find mine.` : `I’m ${name}, and I have been waiting for the right heart to find mine.`,
     age ? `Hi there, I’m ${name}. I may be only ${age} old, but I already know I’m meant to be somebody’s whole heart.` : `Hi there, I’m ${name}, and I know I’m meant to be somebody’s whole heart.`,
-  ][style];
+  ][variant(0)];
   const traitList = traits.map(trait => trait.toLowerCase());
   const list = items => items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : items[0] || '';
   const traitSentence = traitList.length ? [
@@ -47,21 +50,21 @@ export function buildCatBio(cat) {
     `If you are hoping for ${list(traitList)} energy in your home, I might be your purrfect match.`,
     `My personality is all ${list(traitList)}, and I would love to share that with a family of my own.`,
     `I bring a sweet mix of ${list(traitList)} charm, and I am saving all of it for someone special.`,
-  ][style] : '';
+  ][variant(1)] : '';
   const homeSentence = compatibility.length ? [
     `I genuinely enjoy spending time with ${list(compatibility)}, so I could settle into a home with plenty of love already in it.`,
     `I have room in my heart for ${list(compatibility)}, which makes dreaming about a furever family even easier.`,
     `I do well with ${list(compatibility)}, and I would love a home where everyone has a little love to give me back.`,
     `A house with ${list(compatibility)} sounds just fine to me, as long as there is a cozy spot with my name on it.`,
     `I am comfortable around ${list(compatibility)}, and I am ready to become part of the everyday rhythm of a real home.`,
-  ][style] : '';
+  ][variant(2)] : '';
   const careSentence = has('Litter Box Trained') ? [
     `I’m litter-box trained, so you can skip the hard parts and jump right into the fun.`,
     `The litter-box part? Already handled. That leaves more time for cuddles, playtime, and falling in love.`,
     `I already know my litter-box manners, which means we can get straight to the good stuff.`,
     `I have my litter-box routine down, so settling in with me should feel a little easier from day one.`,
     `I’m tidy with my litter box, leaving us free to focus on the happy parts of starting life together.`,
-  ][style] : '';
+  ][variant(3)] : '';
   const memoSentences = String(cat.description || '')
     .split(/(?<=[.!?])\s+|\n+/)
     .map(sentence => sentence.trim())
@@ -79,7 +82,7 @@ export function buildCatBio(cat) {
     ` One thing you should know about me? I’m ${cleanedDescription}.`,
     ` If you ask what makes me special, I’d say this: I’m ${cleanedDescription}.`,
     ` My little heart is happiest when I get to show you that I’m ${cleanedDescription}.`,
-  ][style] : '';
+  ][variant(4)] : '';
   const foundLocation = String(cat.foundLocation || foundFromDescription).trim().replace(/[.!?]+$/, '');
   const foundStory = foundLocation
     .replace(/^(?:found|located|discovered|rescued)\s+/i, '')
@@ -92,14 +95,23 @@ export function buildCatBio(cat) {
     `I came to Grandma’s Cat Coalition after being found ${foundPlace}; now I’m just waiting for my furever person to notice me.`,
     `Somebody found me ${foundPlace}, and that moment gave me a second chance I would love to spend with you.`,
     `I was brought here after being found ${foundPlace}; now I am ready for the part where I finally belong.`,
-  ][style] : '';
-  const backstorySentence = backstoryFromDescription ? [
-    'I may have had a rough start, but you would never know it from the sweet, loving heart I still have to give.',
-    'My beginning may not have been easy, but I am choosing love anyway — and I am hoping someone chooses me back.',
-    'I came here after a hard chapter, and now I am ready for the soft, safe, furever part of my story.',
-    'Somewhere along the way, life was not as kind to me as it should have been, but I am still full of love and ready to belong.',
-    'My story may have started with uncertainty, but I am ready for it to turn into warmth, safety, and a person of my own.',
-  ][style] : '';
+  ][variant(5)] : '';
+  const backstoryText = backstoryFromDescription.toLowerCase();
+  const backstoryReason = backstoryText.includes('dumped') ? 'likely being dumped'
+    : backstoryText.includes('abandoned') ? 'being abandoned'
+      : backstoryText.includes('left behind') ? 'being left behind'
+        : backstoryText.includes('stray') ? 'coming in as a stray'
+          : backstoryText.includes('rescued') ? 'needing rescue'
+            : backstoryText.includes('rough start') ? 'a rough start'
+              : '';
+  const backstoryChapter = backstoryReason === 'a rough start' ? 'a rough first chapter' : `the hurt of ${backstoryReason}`;
+  const backstorySentence = backstoryReason ? [
+    `I may have had a rough start from ${backstoryReason}, but you would never know it from the sweet, loving heart I still have to give.`,
+    `My beginning may not have been easy — ${backstoryReason} is a hard way to start a story — but I am choosing love anyway, and I am hoping someone chooses me back.`,
+    `I came here after ${backstoryReason}, and now I am ready for the soft, safe, furever part of my story.`,
+    `Life was not as kind to me as it should have been after ${backstoryReason}, but I am still full of love and ready to belong.`,
+    `My story may have started with ${backstoryChapter}, but I am ready for it to turn into warmth, safety, and a person of my own.`,
+  ][variant(6)] : '';
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? [
     'I have been here so long I have cabin fever; this place is kind, but I want a home, not temporary shelter.',
@@ -107,38 +119,38 @@ export function buildCatBio(cat) {
     'I have been waiting for so long that my heart is starting to feel overdue for its person.',
     'This place has cared for me, but I have been here long enough to know I want a couch, a window, and a human who calls me theirs.',
     'I have been here a very long time, and I am so ready for the quiet magic of being chosen.',
-  ][style] : waitingDays >= 90 ? [
+  ][variant(7)] : waitingDays >= 90 ? [
     'I have been here for many months. This place is great and all, but I am ready to find my person. Are you it?',
     'After many months of waiting, I still believe my person is out there looking for me too.',
     'I have spent many months here dreaming about the day someone sees me and says, “That one is mine.”',
     'I have been patient for many months, but my little heart is ready to unpack itself in a furever home.',
     'Many months is a long time to wait for love, and I am hoping my turn is finally close.',
-  ][style] : waitingDays >= 28 ? [
+  ][variant(7)] : waitingDays >= 28 ? [
     'I have been here for a month now. I like it here, but I would love to find my furever home.',
     'A month is long enough to know I am grateful for this place, and even more ready for a family.',
     'I have spent about a month waiting, practicing my hopeful little face for the person who comes for me.',
     'I have been here a month, and I am starting to wonder if today might be the day my person finds me.',
     'After a month here, I am ready for my story to move from “waiting” to “home.”',
-  ][style] : waitingDays >= 7 ? [
+  ][variant(7)] : waitingDays >= 7 ? [
     'I have been here for a few weeks, and I am hoping my person finds me soon.',
     'I have only been waiting a few weeks, but I am already dreaming about a home with my name in it.',
     'A few weeks here have been safe and kind, and now I am ready to see what furever feels like.',
     'I have been here a few weeks, just long enough to start wondering who will choose me.',
     'It has been a few weeks, and I keep hoping the next hello is the one that changes everything.',
-  ][style] : waitingDays > 0 ? [
+  ][variant(7)] : waitingDays > 0 ? [
     'I have only been here a little while, but I am already hoping to meet my furever family.',
     'I am still pretty new here, but I already know I would rather be settling into a home.',
     'I just arrived not long ago, and I am keeping my paws crossed for a quick love story.',
     'I have not been here long, but my heart is already looking for somewhere to land.',
     'I am new to this chapter, and I would love for it to lead straight to you.',
-  ][style] : '';
+  ][variant(7)] : '';
   const closing = [
     'I’m hoping to meet someone special who will love me for life.',
     'If you are looking for a new family member, I would love to meet you.',
     'I’m ready for a home where I can be loved, spoiled, and part of the family.',
     'Maybe I am the little someone your home has been missing.',
     'Come meet me, and let’s see if we are the beginning of something wonderful.',
-  ][style];
+  ][variant(8)];
   const pieces = [
     opening,
     descriptionSentence.trim(),
