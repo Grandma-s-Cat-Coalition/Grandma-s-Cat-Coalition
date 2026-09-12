@@ -71,7 +71,8 @@ export function buildCatBio(cat) {
     .filter(Boolean);
   const foundFromDescription = memoSentences.find(sentence => /^(?:was\s+)?found\s+(?:at|near|in|on|under|outside|by|from)\b/i.test(sentence)) || '';
   const backstoryFromDescription = memoSentences.find(sentence => sentence !== foundFromDescription && /\b(?:dumped|abandoned|stray|rescued|rough start|left behind)\b/i.test(sentence)) || '';
-  const sourceDescription = memoSentences.filter(sentence => sentence !== foundFromDescription && sentence !== backstoryFromDescription).join(' ').trim().replace(/[.!?]+$/, '');
+  const motherhoodFromDescription = memoSentences.find(sentence => sentence !== foundFromDescription && sentence !== backstoryFromDescription && /\b(?:litter|kittens?|pregnant|spayed)\b/i.test(sentence)) || '';
+  const sourceDescription = memoSentences.filter(sentence => sentence !== foundFromDescription && sentence !== backstoryFromDescription && sentence !== motherhoodFromDescription).join(' ').trim().replace(/[.!?]+$/, '');
   const cleanedDescription = sourceDescription
     ? (sourceDescription.charAt(0).toLowerCase() + sourceDescription.slice(1))
       .replace(/\bloves\b/gi, 'love').replace(/\bis\b/gi, 'am').replace(/\bhas\b/gi, 'have')
@@ -111,6 +112,14 @@ export function buildCatBio(cat) {
     `I came here after ${backstoryReason}, and now I am ready for the soft, safe, furever part of my story.`,
     `Life was not as kind to me as it should have been after ${backstoryReason}, but I am still full of love and ready to belong.`,
     `My story may have started with ${backstoryChapter}, but I am ready for it to turn into warmth, safety, and a person of my own.`,
+  ][variant(6)] : '';
+  const kittenCount = motherhoodFromDescription.match(/\b(?:litter of\s*)?(\d+)\s+kittens?\b/i)?.[1] || '';
+  const motherhoodSentence = motherhoodFromDescription ? [
+    kittenCount ? `I even raised my little litter of ${kittenCount} kittens, and now that I have been spayed, I am ready for someone to take care of me for a change.` : 'I have already been through my mama-cat chapter, and now that I have been spayed, I am ready for a peaceful home where I can be loved for me.',
+    kittenCount ? `After caring for my ${kittenCount} kittens and being spayed, I am ready to stop worrying about everyone else and finally settle into a furever home of my own.` : 'After my mama-cat days and being spayed, I am ready for the soft, spoiled part of life.',
+    kittenCount ? `I was a mama to ${kittenCount} kittens, and now that they have had their start, I am hoping my own fresh start is next.` : 'I have known what it means to be a mama, and now I am ready for a home that makes me feel safe, chosen, and adored.',
+    kittenCount ? `My little family of ${kittenCount} kittens has been part of my story, and now that I have been spayed, I am ready for my own happy ending.` : 'That mama chapter is behind me now, and I am ready to be somebody’s cherished girl.',
+    kittenCount ? `I brought ${kittenCount} kittens through their beginning, and now I would love a gentle beginning of my own with someone who sees how special I am.` : 'I have carried a lot in my little life, and now I am ready to be cared for, comforted, and loved.',
   ][variant(6)] : '';
   const waitingDays = Number(cat.daysAtShelter) || 0;
   const waitingSentence = waitingDays >= 180 ? [
@@ -156,6 +165,7 @@ export function buildCatBio(cat) {
     descriptionSentence.trim(),
     traitSentence,
     backstorySentence,
+    motherhoodSentence,
     homeSentence,
     careSentence,
     foundSentence,

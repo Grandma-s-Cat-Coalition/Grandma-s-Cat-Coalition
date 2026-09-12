@@ -266,6 +266,15 @@ test('ShelterLuv backstory notes are not treated like personality traits', () =>
   assert.match(html, /rough start|hard way to start|soft, safe, furever|not as kind|warmth, safety/);
 });
 
+test('ShelterLuv kitten and spay notes become warm first-person history', () => {
+  const html = renderCatDetail({ name: 'Onyx Midnight', age: '1Y/2M/3W', description: 'Found on Merrill st, Lime Springs. Had her litter of 4 kittens and has since been spayed.', attributes: ['Good with Cats', 'Litter Box Trained'], daysAtShelter: 84 }, 'https://example.com/adopt');
+  assert.ok(!html.includes('I am incredibly had her litter'));
+  assert.ok(!html.includes('Had her litter'));
+  assert.match(html, /4 kittens/);
+  assert.match(html, /spayed|fresh start|mama|little family|take care of me/);
+  assert.match(html, /found me on Merrill st, Lime Springs|found on Merrill st, Lime Springs/);
+});
+
 test('mobile menu toggles aria-expanded and updates its label', async () => {
   const js = await readFile('src/main.js', 'utf8');
   assert.match(js, /classList\.toggle\('open'\)/);

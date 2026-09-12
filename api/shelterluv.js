@@ -51,9 +51,14 @@ const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_mem
   return Array.isArray(value) ? value : value ? [value] : [];
 });
 const foundMemo = a => memos(a).map(memo => ({ type: memoType(memo), text: textFrom(memo) })).find(({ type, text }) => text && (/^history$/i.test(type.trim()) || /found|origin|source|history|intake|where/i.test(`${type} ${text}`)))?.text || '';
+const publicMemoTexts = a => [...new Set(memos(a)
+  .map(memo => ({ type: memoType(memo), text: textFrom(memo).trim() }))
+  .filter(({ type, text }) => text && (/kennel|website/i.test(type) || (!type && !/medical|internal|private|deceased|outcome/i.test(text))))
+  .map(({ text }) => text))];
 const foundKeys = ['FoundLocation', 'found_location', 'Found Location', 'FoundAddress', 'found_address', 'Found Address', 'FoundAddressString', 'found_address_string', 'Found Address String', 'FoundLocationAddress', 'found_location_address', 'Found Location Address', 'LostFoundAddress', 'lost_found_address', 'Lost/Found Address', 'IntakeFoundLocation', 'intake_found_location', 'Intake Found Location', 'IntakeFoundAddress', 'intake_found_address', 'Intake Found Address', 'Origin', 'origin', 'OriginalOrigin', 'original_origin', 'Source', 'source', 'IntakeSource', 'intake_source', 'HistoryNote', 'history_note', 'History Note'];
 const foundLocation = a => pick(a, foundKeys) || deepPick(pick(a, ['CurrentIntake', 'current_intake', 'LastIntake', 'last_intake', 'Intake', 'intake', 'Intakes', 'intakes', 'History', 'history']), foundKeys) || foundMemo(a);
 const animalsFrom = value => Array.isArray(value) ? value : Array.isArray(value?.animals) ? value.animals : Array.isArray(value?.data) ? value.data : value ? [value] : [];
+const combineText = (...values) => [...new Set(values.flat().filter(Boolean).map(value => String(value).trim()).filter(Boolean))].join(' ');
 const fetchJson = async (url, key) => {
   const r = await fetch(url, { headers: authHeaders(key), cache: 'no-store' });
   if (!r.ok) return null;
@@ -79,4 +84,22 @@ const supplementalHistory = async (id, key) => {
   return '';
 };
 
-export default async function handler(req,res){if(req.method!=='GET')return res.status(405).json({error:'Method not allowed'});if(!process.env.SHELTERLUV_API_KEY)return res.status(503).json({error:'ShelterLuv is not configured'});try{const r=await fetch('https://new.shelterluv.com/api/v1/animals?status_type=publishable',{headers:authHeaders(process.env.SHELTERLUV_API_KEY),cache:'no-store'});if(!r.ok)throw 0;const raw=await r.json(),animals=raw.animals||raw;const cats=await Promise.all(animals.filter(a=>!a.Type||/cat/i.test(a.Type)).map(async a=>{const id=a.ID||a['Internal-ID'];const publicRecord=await publicAnimal(id);const history=await supplementalHistory(a['Internal-ID']||id,process.env.SHELTERLUV_API_KEY)||await supplementalHistory(a.ID||id,process.env.SHELTERLUV_API_KEY);return {id:a['Internal-ID']||a.ID,name:a.Name||publicRecord.name,photo:a.CoverPhoto||publicRecord.photos?.find(photo=>photo.isCover)?.url,age:ageFromBirthday(publicRecord.birthday)||a.Age,sex:a.Sex||publicRecord.sex,breed:a.Breed||publicRecord.breed,description:a.Description||publicRecord.description||publicRecord.kennel_description,foundLocation:foundLocation(a)||foundLocation(publicRecord)||history,daysAtShelter:daysSince(publicRecord.intake_date),profileUrl:animalUrl(a)};}));res.setHeader('Cache-Control','no-store, no-cache, must-revalidate');return res.status(200).json(cats)}catch{return res.status(502).json({error:'Unable to load animals'})}}
+const supplementalPublicMemos = async (id, key) => {
+  const encoded = encodeURIComponent(id);
+  const urls = [
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/memos`,
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/notes`,
+    `https://new.shelterluv.com/api/v1/memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/notes?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/animal_memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/animal-memos?animal_id=${encoded}`,
+  ];
+  const texts = [];
+  for (const url of urls) {
+    const raw = await fetchJson(url, key);
+    if (raw) texts.push(...publicMemoTexts({ memos: animalsFrom(raw) }));
+  }
+  return combineText(texts);
+};
+
+export default async function handler(req,res){if(req.method!=='GET')return res.status(405).json({error:'Method not allowed'});if(!process.env.SHELTERLUV_API_KEY)return res.status(503).json({error:'ShelterLuv is not configured'});try{const r=await fetch('https://new.shelterluv.com/api/v1/animals?status_type=publishable',{headers:authHeaders(process.env.SHELTERLUV_API_KEY),cache:'no-store'});if(!r.ok)throw 0;const raw=await r.json(),animals=raw.animals||raw;const cats=await Promise.all(animals.filter(a=>!a.Type||/cat/i.test(a.Type)).map(async a=>{const id=a.ID||a['Internal-ID'];const publicRecord=await publicAnimal(id);const history=await supplementalHistory(a['Internal-ID']||id,process.env.SHELTERLUV_API_KEY)||await supplementalHistory(a.ID||id,process.env.SHELTERLUV_API_KEY);const publicMemoText=combineText(publicMemoTexts(a),await supplementalPublicMemos(a['Internal-ID']||id,process.env.SHELTERLUV_API_KEY),await supplementalPublicMemos(a.ID||id,process.env.SHELTERLUV_API_KEY));return {id:a['Internal-ID']||a.ID,name:a.Name||publicRecord.name,photo:a.CoverPhoto||publicRecord.photos?.find(photo=>photo.isCover)?.url,age:ageFromBirthday(publicRecord.birthday)||a.Age,sex:a.Sex||publicRecord.sex,breed:a.Breed||publicRecord.breed,description:combineText(a.Description||publicRecord.description||publicRecord.kennel_description,publicMemoText),foundLocation:foundLocation(a)||foundLocation(publicRecord)||history,daysAtShelter:daysSince(publicRecord.intake_date),profileUrl:animalUrl(a)};}));res.setHeader('Cache-Control','no-store, no-cache, must-revalidate');return res.status(200).json(cats)}catch{return res.status(502).json({error:'Unable to load animals'})}}

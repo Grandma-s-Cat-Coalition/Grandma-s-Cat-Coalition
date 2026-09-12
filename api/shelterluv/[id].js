@@ -49,9 +49,14 @@ const memos = a => ['Memos', 'memos', 'Memo', 'memo', 'AnimalMemos', 'animal_mem
   return Array.isArray(value) ? value : value ? [value] : [];
 });
 const foundMemo = a => memos(a).map(memo => ({ type: memoType(memo), text: textFrom(memo) })).find(({ type, text }) => text && (/^history$/i.test(type.trim()) || /found|origin|source|history|intake|where/i.test(`${type} ${text}`)))?.text || '';
+const publicMemoTexts = a => [...new Set(memos(a)
+  .map(memo => ({ type: memoType(memo), text: textFrom(memo).trim() }))
+  .filter(({ type, text }) => text && (/kennel|website/i.test(type) || (!type && !/medical|internal|private|deceased|outcome/i.test(text))))
+  .map(({ text }) => text))];
 const foundKeys = ['FoundLocation', 'found_location', 'Found Location', 'FoundAddress', 'found_address', 'Found Address', 'FoundAddressString', 'found_address_string', 'Found Address String', 'FoundLocationAddress', 'found_location_address', 'Found Location Address', 'LostFoundAddress', 'lost_found_address', 'Lost/Found Address', 'IntakeFoundLocation', 'intake_found_location', 'Intake Found Location', 'IntakeFoundAddress', 'intake_found_address', 'Intake Found Address', 'Origin', 'origin', 'OriginalOrigin', 'original_origin', 'Source', 'source', 'IntakeSource', 'intake_source', 'HistoryNote', 'history_note', 'History Note'];
 const foundLocation = a => pick(a, foundKeys) || deepPick(pick(a, ['CurrentIntake', 'current_intake', 'LastIntake', 'last_intake', 'Intake', 'intake', 'Intakes', 'intakes', 'History', 'history']), foundKeys) || foundMemo(a);
 const animalsFrom = value => Array.isArray(value) ? value : Array.isArray(value?.animals) ? value.animals : Array.isArray(value?.data) ? value.data : value ? [value] : [];
+const combineText = (...values) => [...new Set(values.flat().filter(Boolean).map(value => String(value).trim()).filter(Boolean))].join(' ');
 
 const fetchJson = async (url, key) => {
   const r = await fetch(url, { headers: authHeaders(key), cache: 'no-store' });
@@ -77,6 +82,24 @@ const supplementalHistory = async (id, key) => {
     if (found) return found;
   }
   return '';
+};
+
+const supplementalPublicMemos = async (id, key) => {
+  const encoded = encodeURIComponent(id);
+  const urls = [
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/memos`,
+    `https://new.shelterluv.com/api/v1/animals/${encoded}/notes`,
+    `https://new.shelterluv.com/api/v1/memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/notes?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/animal_memos?animal_id=${encoded}`,
+    `https://new.shelterluv.com/api/v1/animal-memos?animal_id=${encoded}`,
+  ];
+  const texts = [];
+  for (const url of urls) {
+    const raw = await fetchJson(url, key);
+    if (raw) texts.push(...publicMemoTexts({ memos: animalsFrom(raw) }));
+  }
+  return combineText(texts);
 };
 
 const mapAnimal = a => ({
@@ -122,6 +145,11 @@ export default async function handler(req, res) {
     const publicId = String(mapped.animalId || raw.ID || '').includes('-') ? (mapped.animalId || raw.ID) : `GCCI-A-${mapped.animalId || raw.ID}`;
     const publicRecord = await publicAnimal(publicId);
     const history = await supplementalHistory(mapped.id || id, process.env.SHELTERLUV_API_KEY) || await supplementalHistory(mapped.animalId || id, process.env.SHELTERLUV_API_KEY);
+    const publicMemoText = combineText(
+      publicMemoTexts(raw),
+      await supplementalPublicMemos(mapped.id || id, process.env.SHELTERLUV_API_KEY),
+      await supplementalPublicMemos(mapped.animalId || id, process.env.SHELTERLUV_API_KEY),
+    );
     const supplemental = mapAnimal({
       ID: publicRecord.uniqueId,
       Name: publicRecord.name,
@@ -138,7 +166,7 @@ export default async function handler(req, res) {
       location: mapped.location || supplemental.location,
       foundLocation: mapped.foundLocation || supplemental.foundLocation || history,
       attributes: mapped.attributes.length ? mapped.attributes : supplemental.attributes,
-      description: mapped.description || supplemental.description,
+      description: combineText(mapped.description || supplemental.description, publicMemoText),
       weight: mapped.weight || supplemental.weight,
       photo: mapped.photo || supplemental.photo,
       daysAtShelter: mapped.daysAtShelter || daysSince(publicRecord.intake_date),
