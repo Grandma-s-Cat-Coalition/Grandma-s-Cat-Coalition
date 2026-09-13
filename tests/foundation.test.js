@@ -273,6 +273,8 @@ test('ShelterLuv kitten and spay notes become warm first-person history', () => 
   assert.match(html, /4 kittens/);
   assert.match(html, /spayed|fresh start|mama|little family|take care of me/);
   assert.match(html, /found me on Merrill st, Lime Springs|found on Merrill st, Lime Springs/);
+  assert.ok(!html.includes('for a month now'));
+  assert.match(html, /couple of months|nearly three months|long enough/);
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {

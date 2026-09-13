@@ -134,6 +134,12 @@ export function buildCatBio(cat) {
     'I have spent many months here dreaming about the day someone sees me and says, “That one is mine.”',
     'I have been patient for many months, but my little heart is ready to unpack itself in a furever home.',
     'Many months is a long time to wait for love, and I am hoping my turn is finally close.',
+  ][variant(7)] : waitingDays >= 60 ? [
+    'I have been here for a couple of months now, and I am so ready for the day someone says, “You’re coming home with me.”',
+    'After a couple of months of waiting, I am still keeping my heart open for the person who is meant to find me.',
+    'I have spent nearly three months hoping my furever family is getting closer every day.',
+    'A couple of months is a long time to wait when all I really want is a home, a window, and someone to love me.',
+    'I have been here long enough to be grateful for the care, but even more ready for a real home of my own.',
   ][variant(7)] : waitingDays >= 28 ? [
     'I have been here for a month now. I like it here, but I would love to find my furever home.',
     'A month is long enough to know I am grateful for this place, and even more ready for a family.',
