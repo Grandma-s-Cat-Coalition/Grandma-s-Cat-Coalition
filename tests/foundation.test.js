@@ -274,7 +274,16 @@ test('ShelterLuv kitten and spay notes become warm first-person history', () => 
   assert.match(html, /spayed|fresh start|mama|little family|take care of me/);
   assert.match(html, /found me on Merrill st, Lime Springs|found on Merrill st, Lime Springs/);
   assert.ok(!html.includes('for a month now'));
-  assert.match(html, /couple of months|nearly three months|long enough/);
+  assert.match(html, /couple few months|nearly three months|long enough/);
+});
+
+test('cat waiting-time bios distinguish month, couple months, and couple few months', () => {
+  const month = renderCatDetail({ name: 'June', age: '2Y', daysAtShelter: 35 }, 'https://example.com/adopt');
+  const coupleMonths = renderCatDetail({ name: 'June', age: '2Y', daysAtShelter: 50 }, 'https://example.com/adopt');
+  const coupleFewMonths = renderCatDetail({ name: 'June', age: '2Y', daysAtShelter: 75 }, 'https://example.com/adopt');
+  assert.match(month, /month/);
+  assert.match(coupleMonths, /couple months/);
+  assert.match(coupleFewMonths, /couple few months|nearly three months|long enough/);
 });
 
 test('mobile menu toggles aria-expanded and updates its label', async () => {
