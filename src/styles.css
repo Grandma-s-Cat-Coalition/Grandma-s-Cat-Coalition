@@ -111,8 +111,9 @@ blockquote{border-left:4px solid var(--plum-200);margin:1rem 0 0;padding:.4rem 0
 details.past-events summary{cursor:pointer;font-weight:900;color:var(--plum-900)}
 
 /* Donate */
+.donate-form-section{padding:0;background:transparent}
 .donation-embed,.zeffy-embed{width:100%;min-height:760px;border:0;border-radius:var(--radius);box-shadow:var(--shadow);background:var(--paper)}
-.zeffy-form{width:100%;min-height:0;border-radius:var(--radius);box-shadow:var(--shadow);background:var(--paper);overflow:hidden;line-height:0}
+.zeffy-form{width:100%;min-height:0;border-radius:0;box-shadow:none;background:transparent;overflow:hidden;line-height:0}
 .zeffy-form [data-zeffy-embed],.zeffy-form iframe{display:block}
 .zeffy-fallback-frame{position:relative;overflow:hidden;height:640px;width:100%}
 .zeffy-fallback-frame iframe{position:absolute;border:0;inset:0;width:100%;height:100%}

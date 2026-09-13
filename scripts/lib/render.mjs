@@ -108,19 +108,26 @@ export function renderDonate(c) {
   const s = c.settings;
   const donationUrl = isReal(s.zeffyUrl) ? s.zeffyUrl : s.donationUrl;
   const zeffyPath = isReal(donationUrl) ? new URL(donationUrl).pathname : '';
-  const zeffyEmbed = `<h2>Give securely</h2><div class="zeffy-form"><div data-zeffy-embed data-form-url="${zeffyPath}"></div><div data-zeffy-embed-fallback style="display:none;"><div class="zeffy-fallback-frame"><iframe title="Donation form powered by Zeffy" data-zeffy-embed-src="${esc(donationUrl)}" allowpaymentrequest allowTransparency="true"></iframe></div></div><script src="https://www.zeffy.com/embed/v2/zeffy-embed.js" onerror="document.querySelectorAll('[data-zeffy-embed-fallback]').forEach(function(el){el.style.display='block';el.querySelectorAll('iframe[data-zeffy-embed-src]').forEach(function(f){f.src=f.getAttribute('data-zeffy-embed-src');});});"></script></div>`;
+  const zeffyEmbed = `<div class="zeffy-form"><div data-zeffy-embed data-form-url="${zeffyPath}"></div><div data-zeffy-embed-fallback style="display:none;"><div class="zeffy-fallback-frame"><iframe title="Donation form powered by Zeffy" data-zeffy-embed-src="${esc(donationUrl)}" allowpaymentrequest allowTransparency="true"></iframe></div></div><script src="https://www.zeffy.com/embed/v2/zeffy-embed.js" onerror="document.querySelectorAll('[data-zeffy-embed-fallback]').forEach(function(el){el.style.display='block';el.querySelectorAll('iframe[data-zeffy-embed-src]').forEach(function(f){f.src=f.getAttribute('data-zeffy-embed-src');});});"></script></div>`;
   const give = isReal(donationUrl)
     ? zeffyEmbed
     : `<h2>Give securely</h2><div class="notice"><p>Our online donation form is being connected. To donate today, call <a href="${tel(s.phone)}">${esc(s.phone)}</a> or mail a check to ${esc(s.address)}.</p></div>`;
+  const paymentOptions = [
+    ['PayPal', s.paypalUrl],
+    ['Venmo', s.venmoUrl],
+    ['Cash App', s.cashAppUrl],
+  ].map(([label, url]) => isReal(url) ? `<a class="button soft" href="${esc(url)}">${label}</a>` : `<span class="button soft disabled" aria-disabled="true">${label} coming soon</span>`).join(' ');
+  const wishlistOptions = [
+    ['Amazon wishlist', s.amazonWishlist],
+    ['Chewy wishlist', s.chewyWishlist],
+  ].map(([label, url]) => isReal(url) ? `<a class="button soft" href="${esc(url)}">${label}</a>` : `<span class="button soft disabled" aria-disabled="true">${label} coming soon</span>`).join(' ');
   const other = [
-    isReal(s.paypalUrl) && `<a class="button soft" href="${esc(s.paypalUrl)}">PayPal</a>`,
-    isReal(s.venmoUrl) && `<a class="button soft" href="${esc(s.venmoUrl)}">Venmo</a>`,
-    isReal(s.amazonWishlist) && `<a class="button soft" href="${esc(s.amazonWishlist)}">Amazon wishlist</a>`,
-    isReal(s.chewyWishlist) && `<a class="button soft" href="${esc(s.chewyWishlist)}">Chewy wishlist</a>`,
+    `<h3>Other ways to pay</h3><p class="actions">${paymentOptions}</p>`,
+    `<h3>Wish lists</h3><p class="actions">${wishlistOptions}</p>`,
   ].filter(Boolean).join(' ');
   const main = hero('Every gift matters', 'Help cats heal and find home', 'A monthly gift gives our small volunteer rescue dependable support.') +
-    `<section class="section"><div class="wrap">${give}</div></section>` +
-    `<section class="section sage"><div class="wrap grid"><div><h2>What your gift can do</h2><p>Food and litter for cats in foster care.</p><p>Vaccines and basic veterinary care.</p><p>Spay and neuter care for cats who need it most.</p></div><div><h2>Other ways</h2>${other ? `<p class="actions">${other}</p>` : '<p>PayPal, Venmo, Amazon and Chewy wishlist links are coming soon.</p>'}</div></div></section>`;
+    `<section class="donate-form-section" aria-label="Give securely">${give}</section>` +
+    `<section class="section sage"><div class="wrap grid"><div><h2>What your gift can do</h2><p>Food and litter for cats in foster care.</p><p>Vaccines and basic veterinary care.</p><p>Spay and neuter care for cats who need it most.</p></div><div><h2>Other ways</h2>${other}</div></div></section>`;
   return layout({ slug: 'donate', title: `Donate to Help Cats | ${s.orgName}`, description: 'Give once or monthly to fund cat food, veterinary care, fostering, and TNR in Northeast Iowa.', ld: crumbLd('Donate'), main, settings: s });
 }
 

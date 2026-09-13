@@ -25,6 +25,7 @@ collections:
           - {label: Zeffy URL, name: zeffyUrl, widget: string, required: false}
           - {label: PayPal URL, name: paypalUrl, widget: string}
           - {label: Venmo URL, name: venmoUrl, widget: string}
+          - {label: Cash App URL, name: cashAppUrl, widget: string, required: false}
           - {label: Amazon wishlist, name: amazonWishlist, widget: string}
           - {label: Chewy wishlist, name: chewyWishlist, widget: string}
           - {label: Hero title, name: heroTitle, widget: string}
